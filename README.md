@@ -18,6 +18,7 @@ Built with Svelte 5 and Vite on Cloudflare Workers with a Durable Object; game r
 - **Streaks, statistics and a shareable result.**
 - **Archive:** replay any safe from the last 30 days. Archive games never count toward the streak or stats, and friends only see today.
 - **Weekly game** on `/week`: every ISO week draws one safe type and up to two modifiers, the same for everyone. See below.
+- **Monday reminders:** an optional Web Push notification when a new weekly safe starts (on iOS, from the installed app).
 - **Mutual friends, live:** share your personal link; whoever opens it sends a friend request you accept or decline. Friends see each other's tries live, counted by the server from real guesses rather than self-reported. No accounts needed.
 - **Installable PWA that works offline:** history, stats and the notepad work without a connection; guesses need the server.
 - **9 languages:** cs, en, sk, de, pl, es, fr, it, pt, picked from the browser and switchable.
@@ -58,6 +59,7 @@ shared/               pure rules shared by the Worker, the app and the tests
 src/worker.js         POST /api/guess, /api/week, /api/friends (WebSocket), static assets
 src/social.js         SQLite-backed Durable Object: players, friend requests, friendships, results
 src/weekly.js         weekly game inside the Durable Object: draw cache, daily rations, judging, board
+src/push.js           Web Push: VAPID signing, push-service allowlist
 test/                 node:test suites
 e2e/                  headless Chrome scenarios, each against its own throwaway Worker
 ```
@@ -79,9 +81,12 @@ To try a particular weekly safe locally, pin it in `.dev.vars`: `WEEK_SPEC={"typ
 ## Deployment
 
 ```sh
-npx wrangler secret put SECRET   # once
+npx wrangler secret put SECRET      # once
+npx wrangler secret put VAPID_KEY   # once: a P-256 private key as JWK, for the Monday reminders
 npm run deploy
 ```
+
+A key can be made with `node -e "crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign']).then(k=>crypto.subtle.exportKey('jwk',k.privateKey)).then(j=>console.log(JSON.stringify(j)))"`; put the same kind of key in `.dev.vars` as `VAPID_KEY='...'` for local work.
 
 ## License
 
