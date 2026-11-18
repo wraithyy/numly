@@ -1,8 +1,9 @@
 // The social graph and daily results in one SQLite-backed Durable Object.
 // Friendships are mutual: opening someone's link sends a request they accept or decline,
 // and only friends see each other's results. Tries are counted from real guesses on the server.
-import { MAX_FRIENDS, cleanName, compareRows, isPlayer, isPub, publicId } from '../public/js/friends.js';
-import { gameDay, shiftDay } from '../public/js/logic.js';
+import { MAX_FRIENDS, cleanName, compareRows, isPlayer, isPub, publicId } from '../shared/friends.js';
+import { gameDay, shiftDay } from '../shared/logic.js';
+import { WEEK_MIGRATIONS, WEEK_SCHEMA, Weekly } from './weekly.js';
 
 const MAX_PENDING = 50;
 const KEEP_DAYS = 3;
@@ -20,9 +21,17 @@ const SCHEMA = [
 ];
 
 export class Social {
-  constructor(ctx) {
+  constructor(ctx, env) {
     this.ctx = ctx;
-    for (const stmt of SCHEMA) ctx.storage.sql.exec(stmt);
+    for (const stmt of [...SCHEMA, ...WEEK_SCHEMA]) ctx.storage.sql.exec(stmt);
+    for (const stmt of WEEK_MIGRATIONS) {
+      try {
+        ctx.storage.sql.exec(stmt);
+      } catch (err) {
+        if (!/duplicate column/i.test(String(err?.message))) throw err; // already migrated
+      }
+    }
+    this.weekly = new Weekly(this, env);
   }
 
   q(query, ...params) {
@@ -130,7 +139,7 @@ export class Social {
       `SELECT p.pub, p.name FROM requests q JOIN players p ON p.pub = q.to_pub WHERE q.from_pub = ? ORDER BY q.at`,
       pub,
     );
-    return { type: 'state', rows, incoming, outgoing };
+    return { type: 'state', rows, incoming, outgoing, week: this.weekly.board(pub) };
   }
 
   // ------------------------------------------------------------ transport
@@ -155,12 +164,27 @@ export class Social {
 
   async alarm() {
     this.q(`DELETE FROM results WHERE day < ?`, shiftDay(gameDay(), -KEEP_DAYS));
+    this.weekly.cleanup();
     await this.ctx.storage.setAlarm(Date.now() + DAY_MS);
   }
 
+  /** Internal weekly API: { action: 'view' | 'guess', pub, name, week, guess }. */
+  async weekRequest(req) {
+    const { action, pub, name, week, guess } = await req.json();
+    await this.ensureCleanup();
+    // Just looking creates no player row; the first try does.
+    if (action === 'view') return Response.json(await this.weekly.view(pub));
+    this.touch(pub, name);
+    const { status, body } = await this.weekly.guess(pub, week, guess);
+    if (status === 200) this.notify(this.related(pub));
+    return Response.json(body, { status });
+  }
+
   async fetch(req) {
+    const { pathname } = new URL(req.url);
+    if (pathname === '/week' && req.method === 'POST') return this.weekRequest(req);
     // Internal: a guess scored by the Worker.
-    if (new URL(req.url).pathname === '/guess' && req.method === 'POST') {
+    if (pathname === '/guess' && req.method === 'POST') {
       const event = await req.json();
       this.recordGuess(event);
       await this.ensureCleanup();

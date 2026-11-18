@@ -1,3 +1,5 @@
+import { WEEK_I18N } from './i18n-week.js';
+
 // UI strings. {x} placeholders are filled by t(key, vars); `codes` is keyed by Intl.PluralRules categories.
 export const I18N = {
   cs: {
@@ -496,6 +498,8 @@ export const I18N = {
     codes: { one: 'código possível', other: 'códigos possíveis' },
   },
 };
+
+for (const lang of Object.keys(I18N)) Object.assign(I18N[lang], WEEK_I18N[lang]);
 
 export const LANGS = Object.keys(I18N);
 

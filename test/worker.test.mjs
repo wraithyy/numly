@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker, { codeFor } from '../src/worker.js';
-import { gameDay, shiftDay, msUntilNextDay } from '../public/js/logic.js';
-import { publicId } from '../public/js/friends.js';
+import { gameDay, shiftDay, msUntilNextDay } from '../shared/logic.js';
+import { publicId } from '../shared/friends.js';
 
 const events = [];
 const SOCIAL = {
@@ -77,4 +77,18 @@ test('guesses without a valid player id are scored but not recorded', async () =
 test('friends endpoint only accepts WebSocket upgrades', async () => {
   const res = await worker.fetch(new Request('http://x/api/friends'), env);
   assert.equal(res.status, 426);
+});
+
+test('week API validates before reaching the Durable Object', async () => {
+  const week = body => worker.fetch(new Request('http://x/api/week', { method: 'POST', body: JSON.stringify(body) }), env);
+  assert.equal((await worker.fetch(new Request('http://x/api/week'), env)).status, 405);
+  assert.equal((await week({ action: 'view', player: 'x' })).status, 400);
+  assert.equal((await week({ action: 'drop', player: 'player-123456789' })).status, 400);
+  assert.equal((await week({ action: 'guess', player: 'player-123456789', guess: 5 })).status, 400);
+  const before = events.length;
+  assert.equal((await week({ action: 'view', player: 'player-123456789' })).status, 204);
+  const sent = events.at(-1);
+  assert.equal(events.length, before + 1);
+  assert.equal(sent.body.pub, await publicId('player-123456789'));
+  assert.ok(!JSON.stringify(sent.body).includes('player-123456789')); // the raw id never reaches storage
 });

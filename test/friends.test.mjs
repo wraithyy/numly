@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cleanName, compareRows, isPub, publicId } from '../public/js/friends.js';
+import { cleanName, compareRows, isPub, publicId } from '../shared/friends.js';
 
 test('names are cleaned and capped', () => {
   assert.equal(cleanName('  Pepa\u0000  z\tBrna  '), 'Pepa z Brna');

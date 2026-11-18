@@ -2,22 +2,9 @@
 // cached as the offline fallback; fonts are cache-first. The API is never cached: the code
 // lives on the server, so guesses and the live board need the network.
 
-const CACHE = 'numly-v3';
-const SHELL = [
-  '/',
-  '/style.css',
-  '/manifest.webmanifest',
-  '/icons/icon.svg',
-  '/icons/icon-192.png',
-  '/js/main.js',
-  '/js/logic.js',
-  '/js/i18n.js',
-  '/js/storage.js',
-  '/js/audio.js',
-  '/js/fx.js',
-  '/js/friends.js',
-  '/js/friends-ui.js',
-];
+const CACHE = 'numly-v4';
+// Filled in by the build (vite.config.js) with the hashed app files.
+const SHELL = self.__SHELL;
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', event => {
@@ -54,6 +41,11 @@ async function networkFirst(request, url) {
     // Offline. Invite links (/?g=…, /?f=…) must open too, so the lookup ignores the query string.
     const cached = await cache.match(url.pathname, { ignoreSearch: true });
     if (cached) return cached;
+    // Client-side routes (/week) are the same app shell.
+    if (request.mode === 'navigate') {
+      const shell = await cache.match('/');
+      if (shell) return shell;
+    }
     throw err;
   }
 }

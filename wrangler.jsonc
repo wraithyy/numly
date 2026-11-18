@@ -3,7 +3,13 @@
   "name": "numly",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
-  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // client-side routes such as /week get index.html; the API must reach the Worker first
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
   "routes": [{ "pattern": "numly.jkvapil.cz", "custom_domain": true }],
   "durable_objects": { "bindings": [{ "name": "SOCIAL", "class_name": "Social" }] },
   "migrations": [

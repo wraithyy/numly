@@ -6,6 +6,8 @@ the right place, but never which ones.
 
 **Play:** https://numly.jkvapil.cz
 
+Built with Svelte 5 and Vite on Cloudflare Workers with a Durable Object; game rules are plain, dependency-free JS.
+
 ## Features
 
 - **Safe-door interface:** a one-time-code style input, tumbler lights and a spinning wheel.
@@ -26,18 +28,17 @@ For each guess the Worker answers only with the number of hits.
 The day is decided by the server's clock in `Europe/Prague`, so moving a device's date forward cannot unlock tomorrow's safe early.
 
 ```
-public/           static site, plain ES modules, no build step
-  js/logic.js     pure game rules, shared with the Worker
-  js/main.js      UI and game flow
-  js/i18n.js      translations
-  js/audio.js     synthesised sound effects
-  js/fx.js        win particles
-  js/friends.js   friends helpers, shared with the Durable Object
-  js/friends-ui.js nickname, friend requests and live results over a WebSocket
-  sw.js           offline shell (network-first, cache as fallback, API never cached)
-src/worker.js     POST /api/guess, /api/friends (WebSocket), static assets
-src/social.js     SQLite-backed Durable Object: players, friend requests, friendships, daily results
-test/             node:test suites for the rules, translations and API
+web/                  Svelte 5 app (Vite)
+  src/daily/          daily game: state and reveal (game.svelte.js), safe, history, notepad, dialogs
+  src/lib/            translations, sound, particles, storage, friends client over a WebSocket
+  sw.js               offline shell (network-first, cache as fallback, API never cached)
+shared/               pure rules shared by the Worker, the app and the tests
+  logic.js            daily rules, game day, notepad deduction
+  friends.js          friends helpers
+  week.js             weekly game: draw, judging, ranking
+src/worker.js         POST /api/guess, /api/friends (WebSocket), static assets
+src/social.js         SQLite-backed Durable Object: players, friend requests, friendships, results
+test/                 node:test suites
 ```
 
 ## Development
@@ -45,7 +46,8 @@ test/             node:test suites for the rules, translations and API
 ```sh
 npm install
 printf 'SECRET=%s\n' "$(openssl rand -hex 32)" > .dev.vars
-npm run dev    # http://127.0.0.1:8790
+npm run api    # builds once, Worker + API on http://127.0.0.1:8790
+npm run dev    # Vite with hot reload on http://127.0.0.1:5173, proxies /api to the Worker
 npm test
 ```
 

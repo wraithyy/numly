@@ -33,7 +33,7 @@ h1 {
   text-shadow: 0 1px 0 rgba(255,255,255,.18), 0 -1px 0 rgba(0,0,0,.7);
 }
 .meta { margin: 6px 0 0; font-size: 11px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
-.tools { display: flex; gap: 6px; align-items: center; }
+.tools { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; align-items: center; }
 .plate {
   font: 700 12px/1 var(--mono); letter-spacing: .12em; padding: 8px 10px; border-radius: 6px;
   background: var(--plate); border: 1px solid var(--line); color: var(--muted);
@@ -214,7 +214,20 @@ dialog h2 { margin: 0 0 14px; font: 900 26px/1 var(--display); letter-spacing: .
 
 #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
+/* Daily <-> weekly: the header stays put, the page slides in from the side it was opened from. */
+@view-transition { navigation: auto; }
+header { view-transition-name: header; }
+::view-transition-old(root) { animation: 180ms ease-in both vt-out; }
+::view-transition-new(root) { animation: 260ms cubic-bezier(.2, .8, .2, 1) both vt-in; }
+html:active-view-transition-type(back)::view-transition-old(root) { animation-name: vt-out-back; }
+html:active-view-transition-type(back)::view-transition-new(root) { animation-name: vt-in-back; }
+@keyframes vt-out { to { opacity: 0; transform: translateX(-24px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateX(32px); } }
+@keyframes vt-out-back { to { opacity: 0; transform: translateX(24px); } }
+@keyframes vt-in-back { from { opacity: 0; transform: translateX(-32px); } }
+
 @media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
   *, *::before { animation: none !important; transition: none !important; }
   .door.open { transform: none; visibility: hidden; }
 }
@@ -297,3 +310,74 @@ dialog h2 { margin: 0 0 14px; font: 900 26px/1 var(--display); letter-spacing: .
   font: 900 13px/1.2 var(--display); letter-spacing: .14em; text-transform: uppercase;
   color: #ffb340; border: 2px solid #ffb340; background: rgba(255,179,64,.08);
 }
+
+/* link to the other game, with a dot while the week is unsolved */
+a.icon { color: inherit; text-decoration: none; }
+.icon .dot {
+  position: absolute; top: -3px; right: -3px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--amber); box-shadow: 0 0 0 2px var(--bg), 0 0 8px var(--glow);
+}
+
+/* weekly game */
+.weekcard { margin: 22px 0 0; padding: 14px 16px; border-radius: 14px; background: var(--plate); border: 1px solid var(--line); }
+.weekcard h2 { margin: 0; font: 900 24px/1 var(--display); letter-spacing: .14em; color: var(--brass); }
+.weekcard p { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.mods { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; }
+.mods b {
+  display: inline-block; margin-right: 6px; padding: 2px 7px; border-radius: 4px; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, transparent); border: 1px solid color-mix(in srgb, var(--amber) 45%, transparent);
+}
+.otp.long { gap: clamp(4px, 1.4vw, 8px); margin-left: 0; margin-right: 0; }
+.otp.long input { font-size: clamp(20px, 6.4vw, 32px); border-radius: 8px; }
+.otp.long .nudge svg { width: 16px; }
+.led.small { width: 10px; height: 10px; }
+.leds:has(.small) { gap: 5px; }
+.near { margin: 6px 10px 0; text-align: right; font-size: 11px; letter-spacing: .12em; color: var(--brass-hi); }
+.loot.long { font-size: clamp(30px, 9vw, 44px); letter-spacing: .08em; }
+.limits { display: flex; justify-content: center; gap: 14px; margin: 4px 0 0; font-size: 11.5px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+.limits .out { color: var(--cross); }
+.log.week .row .g { font-size: clamp(14px, 4.4vw, 19px); letter-spacing: .14em; }
+.log.week .row { grid-template-columns: 2.4em 1fr auto auto; }
+.log.week .pin { width: 5px; }
+.log.week .k small { margin-left: 4px; color: var(--brass-hi); }
+.weekboard, .lastweek { margin-top: 22px; }
+.lastweek p { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.lastweek code { font: 700 16px var(--mono); letter-spacing: .2em; color: var(--fg); }
+.clues { margin-top: 18px; }
+.clues ol { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.clues .row { grid-template-columns: 1fr auto auto; gap: 8px; padding: 8px 10px; }
+.clues .row .g { font-size: 17px; letter-spacing: .22em; }
+.clues .pin { width: 5px; height: 14px; }
+/* wall of boxes: 5x5 cells, hits per row on the right and per column below */
+.wall { display: grid; gap: 6px; margin: 14px 0 12px; align-items: center; }
+.wall input {
+  touch-action: none; width: 100%; min-width: 0; aspect-ratio: 1; padding: 0; border: 0; border-radius: 7px; text-align: center;
+  font: 700 clamp(17px, 5.4vw, 24px)/1 var(--mono); color: var(--digit); caret-color: var(--amber); text-shadow: 0 0 10px rgba(255,170,60,.6);
+  background: linear-gradient(#08090a, #17191c); box-shadow: inset 0 3px 8px #000, 0 0 0 2px rgba(0,0,0,.6), 0 0 0 3px var(--bezel);
+}
+.wall input:focus { outline: none; box-shadow: inset 0 3px 8px #000, 0 0 0 2px rgba(0,0,0,.6), 0 0 0 3px var(--brass-hi), 0 0 16px var(--glow); }
+.wall input.tap { animation: tap .14s; }
+.wall input.roll-up { animation: roll-up .16s ease-out; }
+.wall input.roll-down { animation: roll-down .16s ease-out; }
+.wall .hit { text-align: center; font: 900 18px/1 var(--display); color: var(--amber); text-shadow: 0 0 10px var(--glow); }
+.gridscore { font: 900 18px/1 var(--display); letter-spacing: .1em; color: var(--muted); }
+.gridscore.on { color: var(--amber); text-shadow: 0 0 10px var(--glow); }
+.loot.wall { display: grid; gap: 0; font-size: clamp(22px, 7vw, 30px); letter-spacing: .3em; line-height: 1.15; margin: 6px 0 4px !important; }
+.lastweek code { word-break: break-all; }
+/* heist chain */
+.heist { margin-top: 18px; }
+.chain { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.chain li {
+  display: grid; justify-items: center; gap: 2px; padding: 8px 2px; border-radius: 10px; min-width: 0;
+  background: var(--plate); border: 1px solid var(--line); color: var(--muted); font-size: 11px;
+}
+.chain b { font: 900 18px/1 var(--display); }
+.chain span { font: 700 clamp(10px, 3vw, 13px) var(--mono); letter-spacing: .08em; }
+.chain small { font-size: 10px; }
+.chain li.done { color: var(--fg); border-color: var(--brass); }
+.chain li.done b { color: var(--brass); }
+.chain li.now { border-color: var(--amber); box-shadow: 0 0 14px var(--glow); color: var(--amber); }
+.links { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 4px; font-size: 12.5px; color: var(--fg); }
+.links li::before { content: "→ "; color: var(--amber); }
+.log.week .g.mini { display: grid; font-size: 10px; line-height: 1.15; letter-spacing: .2em; }
+.log.week .pin.tall { width: auto; min-width: 12px; height: auto; background: none; font-size: 11px; color: var(--amber); }

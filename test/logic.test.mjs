@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { scoreOf, nextStats, streakNow, consistentCodes, digitCounts } from '../public/js/logic.js';
-import { I18N, LANGS, detectLang, translator } from '../public/js/i18n.js';
+import { scoreOf, nextStats, streakNow, consistentCodes, digitCounts } from '../shared/logic.js';
+import { I18N, LANGS, detectLang, translator } from '../web/src/lib/i18n.js';
 
 test('scoreOf counts exact positional matches only', () => {
   assert.equal(scoreOf('12345', '12345'), 5);

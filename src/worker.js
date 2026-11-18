@@ -1,7 +1,7 @@
 // Numly API. The daily code is derived from a server-only secret, so it never ships to the browser;
 // clients only ever learn how many digits of a guess are in the right place.
-import { LEN, scoreOf, gameDay } from '../public/js/logic.js';
-import { cleanName, isPlayer, publicId } from '../public/js/friends.js';
+import { LEN, scoreOf, gameDay } from '../shared/logic.js';
+import { cleanName, isPlayer, publicId } from '../shared/friends.js';
 
 export { Social } from './social.js';
 
@@ -60,6 +60,26 @@ async function handleGuess(req, env) {
   return json({ hits });
 }
 
+// Weekly game: the Durable Object draws the week, enforces try limits and judges guesses.
+async function handleWeek(req, env) {
+  if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+  if (!env.SECRET) return json({ error: 'server not configured' }, 500);
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return json({ error: 'invalid json' }, 400);
+  }
+  const { action, player, name, week, guess } = body ?? {};
+  if (!isPlayer(player)) return json({ error: 'invalid player' }, 400);
+  if (action !== 'view' && action !== 'guess') return json({ error: 'invalid action' }, 400);
+  if (action === 'guess' && (typeof guess !== 'string' || typeof week !== 'string')) return json({ error: 'invalid guess' }, 400);
+
+  const forward = { action, pub: await publicId(player), name: cleanName(name) || undefined, week, guess };
+  const res = await social(env).fetch('https://social/week', { method: 'POST', body: JSON.stringify(forward) });
+  return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+}
+
 // Live friends feed and friend requests over one WebSocket.
 function handleFriends(req, env) {
   if (req.headers.get('Upgrade') !== 'websocket') return json({ error: 'expected websocket' }, 426);
@@ -71,6 +91,7 @@ export default {
     const { pathname } = new URL(req.url);
     if (pathname === '/api/guess') return handleGuess(req, env);
     if (pathname === '/api/friends') return handleFriends(req, env);
+    if (pathname === '/api/week') return handleWeek(req, env);
     return env.ASSETS.fetch(req);
   },
 };

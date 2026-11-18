@@ -1,25 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DatabaseSync } from 'node:sqlite';
 import { Social } from '../src/social.js';
-
-// Minimal stand-in for a Durable Object's ctx, backed by Node's built-in SQLite.
-function fakeCtx() {
-  const db = new DatabaseSync(':memory:');
-  return {
-    storage: {
-      sql: {
-        exec(query, ...params) {
-          const stmt = db.prepare(query);
-          // node:sqlite returns null-prototype rows; spread them into plain objects like workerd does.
-          const rows = stmt.columns().length ? stmt.all(...params).map(r => ({ ...r })) : (stmt.run(...params), []);
-          return { toArray: () => rows };
-        },
-      },
-    },
-    getWebSockets: () => [],
-  };
-}
+import { fakeCtx } from './helpers/fake-ctx.mjs';
 
 const DAY = '2026-11-18';
 const A = 'aaaaaaaaaaaaaaaa';
