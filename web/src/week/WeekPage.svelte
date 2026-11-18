@@ -9,6 +9,7 @@
   import Heist from './Heist.svelte';
   import WeekHelp from './WeekHelp.svelte';
   import WeekStats from './WeekStats.svelte';
+  import WeekNotes from './WeekNotes.svelte';
   import { load } from '../lib/storage.js';
   import { ui } from '../lib/app.svelte.js';
   import { startFriends } from '../lib/friends.svelte.js';
@@ -73,6 +74,7 @@
         <span class:out={wk.view.todayLeft === 0}>{t('todayLeft', { n: wk.view.todayLeft })}</span>
       </p>
     {/if}
+    {#if spec.type !== 'grid'}<WeekNotes />{/if}
     <WeekLog />
     <WeekBoard />
 

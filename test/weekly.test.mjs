@@ -41,10 +41,11 @@ test('only the current week accepts guesses, and they must fit the spec', async 
   assert.equal((await s.weekly.guess(A, WEEK, '1234567A', MON)).status, 400);
 });
 
-test('five tries per day, more the next day, none after solving', async () => {
+test('a daily ration, more the next day, none after solving', async () => {
   const { s, env } = setup();
   const code = await codeOf(env);
-  for (let i = 0; i < 5; i++) assert.equal((await s.weekly.guess(A, WEEK, wrongFor(code), MON + i)).status, 200);
+  const { perDay } = (await s.weekly.game(WEEK)).spec;
+  for (let i = 0; i < perDay; i++) assert.equal((await s.weekly.guess(A, WEEK, wrongFor(code), MON + i)).status, 200);
   const blocked = await s.weekly.guess(A, WEEK, code, MON + 9);
   assert.equal(blocked.status, 429);
   assert.equal(blocked.body.todayLeft, 0);
@@ -52,7 +53,7 @@ test('five tries per day, more the next day, none after solving', async () => {
   const solved = await s.weekly.guess(A, WEEK, code, TUE);
   assert.equal(solved.status, 200);
   assert.deepEqual(solved.body.result, { hits: 8, solved: true });
-  assert.equal(solved.body.tries.length, 6);
+  assert.equal(solved.body.tries.length, perDay + 1);
   assert.equal(solved.body.solved, true);
   assert.equal((await s.weekly.guess(A, WEEK, code, TUE + 1)).status, 409);
 });
@@ -60,9 +61,10 @@ test('five tries per day, more the next day, none after solving', async () => {
 test('alarm rations each day but never locks the week', async () => {
   const { s, env } = setup({ type: 'big', mods: ['alarm'] });
   const wrong = wrongFor(await codeOf(env));
+  const { perDay } = (await s.weekly.game(WEEK)).spec;
   for (let day = 0; day < 7; day++) {
     const at = MON + day * 864e5;
-    for (let i = 0; i < 4; i++) assert.equal((await s.weekly.guess(A, WEEK, wrong, at + i)).status, 200, `day ${day} try ${i + 1}`);
+    for (let i = 0; i < perDay; i++) assert.equal((await s.weekly.guess(A, WEEK, wrong, at + i)).status, 200, `day ${day} try ${i + 1}`);
     const blocked = await s.weekly.guess(A, WEEK, wrong, at + 9);
     assert.equal(blocked.status, 429);
     assert.equal(blocked.body.todayLeft, 0);

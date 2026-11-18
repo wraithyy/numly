@@ -38,7 +38,7 @@ test('draws respect the compatibility matrix and vary', () => {
 test('big vault codes fit their alphabet', () => {
   for (let n = 0; n < 300; n++) {
     const { spec, secret } = makeWeek(bytesOf(n), ['big']);
-    assert.match(secret.code, spec.mods.includes('hex') ? /^[0-9A-F]{6}$/ : /^\d{8}$/);
+    assert.match(secret.code, spec.mods.includes('hex') ? /^[0-9A-F]{5}$/ : /^\d{6}$/);
   }
 });
 
@@ -170,4 +170,11 @@ test('alarm tightens the daily ration; nothing caps the week', () => {
     const alarm = makeWeek(bytesOf(5), [type], { type, mods: ['alarm'] }).spec;
     assert.ok(alarm.perDay > 0 && alarm.perDay < calm.perDay, type);
   }
+});
+
+test('the big safe is 6 digits (5 hex); the live week W47 keeps its 8', () => {
+  const bytes = bytesOf(9);
+  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: [] }, '2026-W48').secret.code, /^\d{6}$/);
+  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: ['hex'] }, '2026-W48').secret.code, /^[0-9A-F]{5}$/);
+  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: [] }, '2026-W47').secret.code, /^\d{8}$/);
 });

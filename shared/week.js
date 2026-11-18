@@ -23,16 +23,14 @@ export const readyTypes = week => {
 };
 
 const MAX_MODS = 2;
-const PER_DAY = 5; // big vault: tries per game day
 // The weekly game never locks: it is rationed per day so it is worth coming back to.
-// Alarm tightens the ration. A simulated methodical player needs ~24 tries for 8 digits,
-// so even under alarm the big safe falls within the week.
-const ALARM_PER_DAY = { big: 4, grid: 4, heist: 7 };
-const CIPHER_PER_DAY = 1; // the clues decide it; a try a day keeps guessing honest
+// A methodical player needs ~24 tries for 8 digits, a casual one two or three times that,
+// so the ration lets the first finish in a few days and the second by Sunday. Alarm tightens it.
+const PER_DAY = { big: 10, grid: 8, heist: 15, cipher: 1 }; // cipher: the clues decide it
+const ALARM_PER_DAY = { big: 7, grid: 6, heist: 10 };
 const GRID_SIZE = 5;
 const HEIST_SAFES = 5;
 const HEIST_LEN = 4;
-const HEIST_PER_DAY = 10;
 const DIGITS = '0123456789ABCDEF';
 
 // ---------------------------------------------------------------- calendar
@@ -123,7 +121,7 @@ export function drawRules(rng, ready) {
  * The week's game from its secret bytes. `force` ({ type, mods }) pins the draw for local testing.
  * Returns { spec, secret }: spec is safe to publish (see publicSpec), secret never leaves the server.
  */
-export function makeWeek(bytes, ready = ['big'], force = null) {
+export function makeWeek(bytes, ready = ['big'], force = null, week = null) {
   const rng = rngFrom(bytes);
   const { type, mods } = force ?? drawRules(rng, ready);
   const has = m => mods.includes(m);
@@ -132,33 +130,35 @@ export function makeWeek(bytes, ready = ['big'], force = null) {
     const code = randomCode(rng, LEN, 10); // cipher.js searches codes of the daily length
     const sum = has('sum') ? { sum: digitSum(code) } : {};
     const clues = makeCipher(rng, code, has('sum'));
-    return { spec: { type, mods, len: LEN, base: 10, perDay: CIPHER_PER_DAY, clues, ...sum }, secret: { code } };
+    return { spec: { type, mods, len: LEN, base: 10, perDay: PER_DAY.cipher, clues, ...sum }, secret: { code } };
   }
 
   if (type === 'grid') {
     const code = randomCode(rng, GRID_SIZE * GRID_SIZE, 10);
-    const spec = { type, mods, len: code.length, base: 10, size: GRID_SIZE, ...limits(type, has('alarm'), PER_DAY) };
+    const spec = { type, mods, len: code.length, base: 10, size: GRID_SIZE, ...limits(type, has('alarm')) };
     return { spec, secret: { code } };
   }
 
   if (type === 'heist') return makeHeist(rng, type, mods);
 
   const base = has('hex') ? 16 : 10;
-  const len = base === 16 ? 6 : 8;
+  // Eight digits proved too many to hold in your head. ponytail: the W47 branch keeps that live week's
+  // code; delete it once W47 is no longer shown as last week (from 2026-W49).
+  const len = week && week < '2026-W48' ? (base === 16 ? 6 : 8) : base === 16 ? 5 : 6;
   const code = randomCode(rng, len, base);
   const spec = {
     type,
     mods,
     len,
     base,
-    ...limits(type, has('alarm'), PER_DAY),
+    ...limits(type, has('alarm')),
     ...(has('sum') && { sum: digitSum(code) }),
   };
   const secret = { code, ...(has('liar') && drawLie(rng)) };
   return { spec, secret };
 }
 
-const limits = (type, alarm, perDay) => ({ perDay: alarm ? ALARM_PER_DAY[type] : perDay });
+const limits = (type, alarm) => ({ perDay: (alarm ? ALARM_PER_DAY : PER_DAY)[type] });
 
 const drawLie = rng => ({ lieAt: 2 + (rng() % 5), lieDir: rng() % 2 ? 1 : -1 });
 
@@ -185,7 +185,7 @@ function makeHeist(rng, type, mods) {
     len: HEIST_LEN,
     base,
     safes: HEIST_SAFES,
-    ...limits(type, has('alarm'), HEIST_PER_DAY),
+    ...limits(type, has('alarm')),
     ...(has('sum') && { sums: codes.map(digitSum) }),
   };
   return { spec, secret: { codes, links, ...(has('liar') && drawLie(rng)) } };

@@ -198,6 +198,11 @@ h1 {
 .pc.no { color: var(--muted); opacity: .3; text-decoration: line-through; text-decoration-thickness: 2px; background: transparent; }
 .pc.sure { color: #1a1206; border-color: var(--brass); background: linear-gradient(var(--brass-hi), var(--brass)); box-shadow: 0 0 10px var(--glow); }
 .pc:disabled { cursor: default; }
+.wnotes summary { cursor: pointer; list-style: none; }
+.wnotes summary::-webkit-details-marker { display: none; }
+.wnotes[open] summary { color: var(--brass); }
+.wnotes .padgrid { padding: 0; }
+.wnotes .btn { margin-top: 12px; }
 
 /* stats */
 dialog { width: min(380px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--bg2); color: var(--fg); }
