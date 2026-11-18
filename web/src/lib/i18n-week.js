@@ -1,4 +1,4 @@
-// Weekly game strings, merged into I18N by i18n.js.
+// Weekly game and archive strings, merged into I18N by i18n.js.
 export const WEEK_I18N = {
   cs: {
     weekHowTitle: 'TÝDENNÍ TREZOR', weekStatsTitle: 'TÝDENNÍ STATISTIKY', sWeeks: 'Týdny',
@@ -18,6 +18,7 @@ export const WEEK_I18N = {
     lastWeek: 'Minulý týden', weekHits: '{n} z {len} na místě.', weekNear: '{n} jinde', weekMissing: 'Kód má {len} znaků.',
     weekBoard: 'PŘÁTELÉ TENTO TÝDEN', weekProgress: 'nejlépe {n}', loading: 'Načítám trezor…',
     wrongWeek: 'Týden se změnil. Obnov stránku.', weekDays: 'd',
+    archiveTitle: 'ARCHIV', archiveNote: 'Starší trezory z posledních 30 dní. Nepočítají se do série ani statistik.', archiveEmpty: 'Zatím prázdný. Hra začala dnes.', archiveMeta: 'Archiv · trezor #{d}', backToday: 'Dnešní trezor', arcSolved: 'otevřeno', arcPlaying: 'rozehráno', arcNone: 'nehráno',
   },
   en: {
     weekHowTitle: 'WEEKLY SAFE', weekStatsTitle: 'WEEKLY STATISTICS', sWeeks: 'Weeks',
@@ -37,6 +38,7 @@ export const WEEK_I18N = {
     lastWeek: 'Last week', weekHits: '{n} of {len} in place.', weekNear: '{n} elsewhere', weekMissing: 'The code has {len} characters.',
     weekBoard: 'FRIENDS THIS WEEK', weekProgress: 'best {n}', loading: 'Loading the safe…',
     wrongWeek: 'The week has changed. Reload the page.', weekDays: 'd',
+    archiveTitle: 'ARCHIVE', archiveNote: 'Older safes from the last 30 days. They never count toward your streak or stats.', archiveEmpty: 'Empty for now. The game started today.', archiveMeta: 'Archive · safe #{d}', backToday: 'Today’s safe', arcSolved: 'opened', arcPlaying: 'in progress', arcNone: 'not played',
   },
   sk: {
     weekHowTitle: 'TÝŽDENNÝ TREZOR', weekStatsTitle: 'TÝŽDENNÉ ŠTATISTIKY', sWeeks: 'Týždne',
@@ -56,6 +58,7 @@ export const WEEK_I18N = {
     lastWeek: 'Minulý týždeň', weekHits: '{n} z {len} na mieste.', weekNear: '{n} inde', weekMissing: 'Kód má {len} znakov.',
     weekBoard: 'PRIATELIA TENTO TÝŽDEŇ', weekProgress: 'najlepšie {n}', loading: 'Načítavam trezor…',
     wrongWeek: 'Týždeň sa zmenil. Obnov stránku.', weekDays: 'd',
+    archiveTitle: 'ARCHÍV', archiveNote: 'Staršie trezory z posledných 30 dní. Nepočítajú sa do série ani štatistík.', archiveEmpty: 'Zatiaľ prázdny. Hra začala dnes.', archiveMeta: 'Archív · trezor #{d}', backToday: 'Dnešný trezor', arcSolved: 'otvorené', arcPlaying: 'rozohrané', arcNone: 'nehrané',
   },
   de: {
     weekHowTitle: 'WOCHENTRESOR', weekStatsTitle: 'WOCHENSTATISTIK', sWeeks: 'Wochen',
@@ -75,6 +78,7 @@ export const WEEK_I18N = {
     lastWeek: 'Letzte Woche', weekHits: '{n} von {len} an der richtigen Stelle.', weekNear: '{n} woanders', weekMissing: 'Der Code hat {len} Zeichen.',
     weekBoard: 'FREUNDE DIESE WOCHE', weekProgress: 'bestes {n}', loading: 'Tresor wird geladen…',
     wrongWeek: 'Die Woche hat gewechselt. Lade die Seite neu.', weekDays: 'T',
+    archiveTitle: 'ARCHIV', archiveNote: 'Ältere Tresore der letzten 30 Tage. Sie zählen nicht für Serie oder Statistik.', archiveEmpty: 'Noch leer. Das Spiel hat heute begonnen.', archiveMeta: 'Archiv · Tresor #{d}', backToday: 'Heutiger Tresor', arcSolved: 'geöffnet', arcPlaying: 'begonnen', arcNone: 'nicht gespielt',
   },
   pl: {
     weekHowTitle: 'SEJF TYGODNIA', weekStatsTitle: 'STATYSTYKI TYGODNIOWE', sWeeks: 'Tygodnie',
@@ -94,6 +98,7 @@ export const WEEK_I18N = {
     lastWeek: 'Poprzedni tydzień', weekHits: '{n} z {len} na miejscu.', weekNear: '{n} gdzie indziej', weekMissing: 'Kod ma {len} znaków.',
     weekBoard: 'ZNAJOMI W TYM TYGODNIU', weekProgress: 'najlepiej {n}', loading: 'Ładuję sejf…',
     wrongWeek: 'Tydzień się zmienił. Odśwież stronę.', weekDays: 'd',
+    archiveTitle: 'ARCHIWUM', archiveNote: 'Starsze sejfy z ostatnich 30 dni. Nie liczą się do serii ani statystyk.', archiveEmpty: 'Na razie puste. Gra wystartowała dziś.', archiveMeta: 'Archiwum · sejf #{d}', backToday: 'Dzisiejszy sejf', arcSolved: 'otwarty', arcPlaying: 'w toku', arcNone: 'nie grany',
   },
   es: {
     weekHowTitle: 'CAJA SEMANAL', weekStatsTitle: 'ESTADÍSTICAS SEMANALES', sWeeks: 'Semanas',
@@ -113,6 +118,7 @@ export const WEEK_I18N = {
     lastWeek: 'Semana pasada', weekHits: '{n} de {len} en su sitio.', weekNear: '{n} en otro sitio', weekMissing: 'El código tiene {len} caracteres.',
     weekBoard: 'AMIGOS ESTA SEMANA', weekProgress: 'mejor {n}', loading: 'Cargando la caja…',
     wrongWeek: 'La semana ha cambiado. Recarga la página.', weekDays: 'd',
+    archiveTitle: 'ARCHIVO', archiveNote: 'Cajas anteriores de los últimos 30 días. No cuentan para la racha ni las estadísticas.', archiveEmpty: 'Vacío por ahora. El juego empezó hoy.', archiveMeta: 'Archivo · caja #{d}', backToday: 'La caja de hoy', arcSolved: 'abierta', arcPlaying: 'en curso', arcNone: 'sin jugar',
   },
   fr: {
     weekHowTitle: 'COFFRE DE LA SEMAINE', weekStatsTitle: 'STATISTIQUES HEBDO', sWeeks: 'Semaines',
@@ -132,6 +138,7 @@ export const WEEK_I18N = {
     lastWeek: 'Semaine dernière', weekHits: '{n} sur {len} bien placés.', weekNear: '{n} ailleurs', weekMissing: 'Le code a {len} caractères.',
     weekBoard: 'AMIS CETTE SEMAINE', weekProgress: 'meilleur {n}', loading: 'Chargement du coffre…',
     wrongWeek: 'La semaine a changé. Recharge la page.', weekDays: 'j',
+    archiveTitle: 'ARCHIVES', archiveNote: 'Les coffres des 30 derniers jours. Ils ne comptent ni pour la série ni pour les stats.', archiveEmpty: 'Vide pour l’instant. Le jeu a commencé aujourd’hui.', archiveMeta: 'Archives · coffre #{d}', backToday: 'Le coffre du jour', arcSolved: 'ouvert', arcPlaying: 'en cours', arcNone: 'pas joué',
   },
   it: {
     weekHowTitle: 'CASSAFORTE SETTIMANALE', weekStatsTitle: 'STATISTICHE SETTIMANALI', sWeeks: 'Settimane',
@@ -151,6 +158,7 @@ export const WEEK_I18N = {
     lastWeek: 'Settimana scorsa', weekHits: '{n} su {len} al posto giusto.', weekNear: '{n} altrove', weekMissing: 'Il codice ha {len} caratteri.',
     weekBoard: 'AMICI QUESTA SETTIMANA', weekProgress: 'migliore {n}', loading: 'Caricamento della cassaforte…',
     wrongWeek: 'La settimana è cambiata. Ricarica la pagina.', weekDays: 'g',
+    archiveTitle: 'ARCHIVIO', archiveNote: 'Le casseforti degli ultimi 30 giorni. Non contano per la serie né per le statistiche.', archiveEmpty: 'Vuoto per ora. Il gioco è iniziato oggi.', archiveMeta: 'Archivio · cassaforte #{d}', backToday: 'La cassaforte di oggi', arcSolved: 'aperta', arcPlaying: 'in corso', arcNone: 'non giocata',
   },
   pt: {
     weekHowTitle: 'COFRE SEMANAL', weekStatsTitle: 'ESTATÍSTICAS SEMANAIS', sWeeks: 'Semanas',
@@ -170,5 +178,6 @@ export const WEEK_I18N = {
     lastWeek: 'Semana passada', weekHits: '{n} de {len} no lugar.', weekNear: '{n} em outro lugar', weekMissing: 'O código tem {len} caracteres.',
     weekBoard: 'AMIGOS NESTA SEMANA', weekProgress: 'melhor {n}', loading: 'Carregando o cofre…',
     wrongWeek: 'A semana mudou. Recarregue a página.', weekDays: 'd',
+    archiveTitle: 'ARQUIVO', archiveNote: 'Cofres dos últimos 30 dias. Não contam para a sequência nem para as estatísticas.', archiveEmpty: 'Vazio por enquanto. O jogo começou hoje.', archiveMeta: 'Arquivo · cofre #{d}', backToday: 'O cofre de hoje', arcSolved: 'aberto', arcPlaying: 'em andamento', arcNone: 'não jogado',
   },
 };

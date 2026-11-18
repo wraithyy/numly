@@ -1,18 +1,21 @@
 // Daily game state and actions. Components render this state; the timing of the reveal
 // (tumbler clicks, LEDs, the door) is driven from here.
-import { LEN, consistentCodes, digitCounts, gameDay, nextStats } from '../../../shared/logic.js';
+import { LEN, archiveDays, consistentCodes, dayNumber, digitCounts, gameDay, nextStats } from '../../../shared/logic.js';
 import { load, store } from '../lib/storage.js';
 import { restartAnimation, vibrate } from '../lib/dom.js';
 import { burst } from '../lib/fx.js';
 import { sfx, ui } from '../lib/app.svelte.js';
 
-const FIRST_DAY = '2026-11-18';
 export const today = gameDay(); // the server checks this against its own clock
-export const dayNo = String(Math.round((Date.parse(today) - Date.parse(FIRST_DAY)) / 864e5) + 1).padStart(3, '0');
+// `/?day=YYYY-MM-DD` replays a past safe from the archive; anything else is today's.
+const asked = new URLSearchParams(location.search).get('day');
+export const archived = archiveDays(today).includes(asked);
+export const day = archived ? asked : today;
+export const dayNo = String(dayNumber(day)).padStart(3, '0');
 
 // The code itself lives only on the server; we keep each guess and the hit count it returned.
-const GAME_KEY = `numly2-${today}`;
-const PAD_USED_KEY = `numly-pad-used-${today}`;
+const GAME_KEY = `numly2-${day}`;
+const PAD_USED_KEY = `numly-pad-used-${day}`;
 const saved = load(GAME_KEY, { guesses: [], hits: {} });
 
 export const game = $state({
@@ -55,7 +58,7 @@ export function markPadUsed() {
   if (!game.padOn || game.padUsed || won()) return;
   game.padUsed = true;
   store(PAD_USED_KEY, true);
-  friendsHook.markPad(); // friends see it right away, not only with the next guess
+  if (!archived) friendsHook.markPad(); // friends see it right away, not only with the next guess
 }
 
 export function togglePad() {
@@ -69,7 +72,7 @@ async function askSafe(guess) {
   const res = await fetch('/api/guess', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ day: today, guess, pad: game.padUsed, ...friendsHook.guessInfo() }),
+    body: JSON.stringify({ day, guess, pad: game.padUsed, ...friendsHook.guessInfo() }),
   });
   const body = await res.json();
   if (!res.ok || !Number.isInteger(body.hits)) {
@@ -211,8 +214,10 @@ function endTurn(message) {
 }
 
 function win() {
-  game.stats = nextStats(game.stats, today, game.guesses.length);
-  store('numly-stats', game.stats);
+  if (!archived) {
+    game.stats = nextStats(game.stats, today, game.guesses.length);
+    store('numly-stats', game.stats);
+  }
   game.newest = true;
   game.ledsWin = true;
   game.msg = '';

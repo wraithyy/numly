@@ -53,3 +53,15 @@ test('every language has every key and covers its plural forms', () => {
   assert.equal(detectLang(['ja']), 'en');
   assert.equal(translator('cs')('hits', { n: 3 }), 'Zapadlo 3 z 5 západek.');
 });
+
+test('the archive offers up to 30 past days, never before launch', async () => {
+  const { archiveDays, dayNumber, FIRST_DAY } = await import('../shared/logic.js');
+  assert.deepEqual(archiveDays(FIRST_DAY), []);
+  assert.deepEqual(archiveDays('2026-11-20'), ['2026-11-19', '2026-11-18']);
+  const late = archiveDays('2027-03-01');
+  assert.equal(late.length, 30);
+  assert.equal(late[0], '2027-02-28');
+  assert.ok(!late.includes('2027-03-01'));
+  assert.equal(dayNumber(FIRST_DAY), 1);
+  assert.equal(dayNumber('2026-11-20'), 3);
+});

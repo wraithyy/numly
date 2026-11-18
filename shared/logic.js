@@ -56,3 +56,20 @@ export function digitCounts(codes) {
   for (const code of codes) for (let p = 0; p < LEN; p++) counts[p][code[p]]++;
   return counts;
 }
+
+/** The day the game launched: day #001, and the oldest day the archive offers. */
+export const FIRST_DAY = '2026-11-18';
+const ARCHIVE_DAYS = 30;
+
+export const dayNumber = day => Math.round((Date.parse(day) - Date.parse(FIRST_DAY)) / DAY_MS) + 1;
+
+/** Past days that can still be replayed, newest first. They never count toward the streak or stats. */
+export function archiveDays(today) {
+  const days = [];
+  for (let n = 1; n <= ARCHIVE_DAYS; n++) {
+    const day = shiftDay(today, -n);
+    if (day < FIRST_DAY) break;
+    days.push(day);
+  }
+  return days;
+}

@@ -297,6 +297,14 @@ html:active-view-transition-type(back)::view-transition-new(root) { animation-na
 .linkbtn { padding: 0; border: 0; background: none; color: var(--muted); font-size: 12px; text-decoration: underline; }
 
 .subtitle { margin: 16px 0 0; font: 900 14px/1 var(--display); letter-spacing: .2em; color: var(--muted); }
+#stats .note { margin: 8px 0 10px; }
+.archive { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 4px; max-height: 40vh; overflow-y: auto; }
+.archive a { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--fg); text-decoration: none; font-size: 13px; }
+.archive a:hover, .archive a:focus-visible { border-color: var(--brass); }
+.archive span { color: var(--muted); }
+.archive em { margin-left: auto; font-style: normal; font-size: 12px; color: var(--muted); }
+.archive .solved em { color: var(--brass-hi); }
+.archive .current a { border-color: var(--brass); }
 .rank.has-x { grid-template-columns: 2em 1fr auto 24px; }
 .rank .x {
   width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: none;

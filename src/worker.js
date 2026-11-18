@@ -1,6 +1,6 @@
 // Numly API. The daily code is derived from a server-only secret, so it never ships to the browser;
 // clients only ever learn how many digits of a guess are in the right place.
-import { LEN, scoreOf, gameDay } from '../shared/logic.js';
+import { LEN, archiveDays, scoreOf, gameDay } from '../shared/logic.js';
 import { cleanName, isPlayer, publicId } from '../shared/friends.js';
 
 export { Social } from './social.js';
@@ -37,13 +37,15 @@ async function handleGuess(req, env) {
   if (typeof guess !== 'string' || !/^\d{5}$/.test(guess)) return json({ error: 'guess must be 5 digits' }, 400);
 
   // The server's clock decides the day, so moving the phone's date forward cannot unlock tomorrow's safe.
+  // Past days come from the archive: playable, but friends only ever see today.
   const today = gameDay();
-  if (day !== today) return json({ error: 'wrong day', day: today }, 409);
+  const archived = day !== today && archiveDays(today).includes(day);
+  if (day !== today && !archived) return json({ error: 'wrong day', day: today }, 409);
 
-  const hits = scoreOf(guess, await codeFor(today, env.SECRET));
+  const hits = scoreOf(guess, await codeFor(day, env.SECRET));
 
   // Count the try for friends' views. A board hiccup must never cost the player their answer.
-  if (env.SOCIAL && isPlayer(player)) {
+  if (!archived && env.SOCIAL && isPlayer(player)) {
     const event = {
       pub: await publicId(player),
       name: cleanName(name) || undefined,

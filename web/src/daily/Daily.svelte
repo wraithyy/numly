@@ -13,12 +13,13 @@
   import { gameWeek } from '../../../shared/week.js';
   import { weekDone } from '../week/week.svelte.js';
   import { startFriends, guessInfo, markPad } from '../lib/friends.svelte.js';
-  import { game, refs, today, dayNo, won, fillFrom, submit, connectFriends } from './game.svelte.js';
+  import { game, refs, today, dayNo, archived, won, fillFrom, submit, connectFriends } from './game.svelte.js';
 
   let help, stats, friendsDlg;
 
   connectFriends({ guessInfo, markPad });
-  startFriends({ padUsed: () => game.padUsed });
+  // Friends only ever see today's game, also while replaying the archive.
+  startFriends({ padUsed: () => (archived ? load(`numly-pad-used-${today}`, false) : game.padUsed) });
 
   // A status line in the previous language would look broken.
   $effect(() => {
@@ -49,9 +50,9 @@
 
 <main>
   <Header
-    meta={ui.t('meta', { d: dayNo })}
+    meta={ui.t(archived ? 'archiveMeta' : 'meta', { d: dayNo })}
     streak={streakNow(game.stats, today)}
-    nav={{ href: '/week', label: ui.t('weekBtn'), dot: !weekDone(gameWeek()) }}
+    nav={archived ? { href: '/', label: ui.t('backToday') } : { href: '/week', label: ui.t('weekBtn'), dot: !weekDone(gameWeek()) }}
     onFriends={() => friendsDlg.show()}
     onHelp={() => help.show()}
     onStats={() => stats.show()}

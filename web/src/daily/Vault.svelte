@@ -1,7 +1,7 @@
 <script>
   import { LEN, msUntilNextDay } from '../../../shared/logic.js';
   import { ui } from '../lib/app.svelte.js';
-  import { game, refs, dayNo, pad, won, stepDigit, fillFrom, submit } from './game.svelte.js';
+  import { game, refs, dayNo, archived, pad, won, stepDigit, fillFrom, submit } from './game.svelte.js';
 
   let { onStats } = $props();
   const t = $derived(ui.t);
@@ -93,7 +93,7 @@
         <p class="loot">{game.guesses.at(-1)}</p>
         <p>{shareFailed ? t('copyFail') : `${t('tries', { n: game.guesses.length })} · ${t('safeNo', { d: dayNo })}`}</p>
         {#if game.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
-        <p class="next"><span>{t('next')}</span> <b>{countdown}</b></p>
+        {#if !archived}<p class="next"><span>{t('next')}</span> <b>{countdown}</b></p>{/if}
         <div class="actions">
           <button class="btn gold" onclick={share}>{shareLabel ?? t('share')}</button>
           <button class="btn" onclick={onStats}>{t('stats')}</button>

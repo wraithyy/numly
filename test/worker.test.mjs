@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker, { codeFor } from '../src/worker.js';
-import { gameDay, shiftDay, msUntilNextDay } from '../shared/logic.js';
+import { FIRST_DAY, archiveDays, gameDay, shiftDay, msUntilNextDay } from '../shared/logic.js';
 import { publicId } from '../shared/friends.js';
 
 const events = [];
@@ -41,12 +41,22 @@ test('non-API paths go to static assets', async () => {
   assert.equal(await res.text(), 'asset');
 });
 
-test('only today in the game timezone is playable, so a shifted device clock cannot unlock tomorrow', async () => {
-  for (const day of [shiftDay(today, 1), shiftDay(today, -1)]) {
+test('a shifted device clock cannot unlock tomorrow; the past only within the archive', async () => {
+  for (const day of [shiftDay(today, 1), shiftDay(today, -31), FIRST_DAY < today ? shiftDay(FIRST_DAY, -1) : shiftDay(today, -1)]) {
     const res = await guess({ day, guess: '12345' });
-    assert.equal(res.status, 409);
+    assert.equal(res.status, 409, day);
     assert.equal((await res.json()).day, today);
   }
+});
+
+test('an archive day is judged against its own code and never reaches friends', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-25T12:00:00Z') });
+  const day = archiveDays(gameDay())[0];
+  assert.equal(day, '2026-11-24');
+  const before = events.length;
+  const res = await guess({ day, guess: await codeFor(day, env.SECRET), player: 'a'.repeat(43) });
+  assert.deepEqual(await res.json(), { hits: 5 });
+  assert.equal(events.length, before);
 });
 
 test('gameDay follows Europe/Prague and the countdown stays within a day', () => {
