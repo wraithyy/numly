@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Numly</title>
+<meta name="description" content="Daily safe-cracking number game. Guess the 5-digit code from how many digits are in place.">
+<meta name="theme-color" content="#0c0d0f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -11,13 +18,16 @@
 </head>
 <body>
 <main>
+  <p class="offline" id="offline" role="status" data-t="offlineBanner" hidden></p>
   <header>
     <div>
       <h1>NUMLY</h1>
       <p class="meta" id="meta"></p>
     </div>
     <div class="tools">
+      <button class="plate hot" id="installBtn" data-t="install" hidden></button>
       <span class="plate" id="streak" data-ta="title:streakTitle"></span>
+      <button class="icon" id="friendsBtn" data-ta="aria-label:friendsTitle,title:friendsTitle"><svg viewBox="0 0 24 24"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7M22 21v-1a7 7 0 0 0-4-6.3"/></svg><span class="badge" id="friendsBadge" hidden></span></button>
       <button class="icon" id="helpBtn" data-ta="aria-label:help,title:help"><svg viewBox="0 0 24 24"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.4-1.5 1.2-1.5 2.2v.6M12 18h.01"/></svg></button>
       <button class="icon" id="statsBtn" data-ta="aria-label:stats,title:stats"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></button>
       <button class="icon" id="muteBtn" data-ta="aria-label:sound,title:sound"></button>
@@ -31,6 +41,7 @@
         <p class="eyebrow" data-t="opened"></p>
         <p class="loot" id="loot"></p>
         <p id="lootInfo"></p>
+        <p class="padbadge" id="padBadge" hidden></p>
         <p class="next"><span data-t="next"></span> <b id="cd">--:--:--</b></p>
         <div class="actions">
           <button class="btn gold" id="share" data-t="share"></button>
@@ -79,6 +90,34 @@
   </div>
   <p class="note" data-t="note"></p>
   <form method="dialog"><button class="btn gold wide" data-t="go"></button></form>
+</dialog>
+
+<dialog id="friends" class="friendsdlg">
+  <div class="teambar">
+    <h2 data-t="friendsTitle"></h2>
+    <span class="live" id="live" hidden></span>
+  </div>
+  <p class="note" id="friendsNote"></p>
+  <form class="nameform" id="nameForm" hidden>
+    <input id="nameInput" maxlength="20" autocomplete="nickname" enterkeyhint="done" data-ta="placeholder:namePh,aria-label:namePh">
+    <button class="btn gold" id="nameBtn"></button>
+  </form>
+  <div id="friendsBody" hidden>
+    <div id="incomingBox" hidden>
+      <h3 class="subtitle" data-t="requestsTitle"></h3>
+      <ul class="reqs" id="incoming"></ul>
+    </div>
+    <ol class="ranks" id="friendRanks"></ol>
+    <div id="outgoingBox" hidden>
+      <h3 class="subtitle" data-t="pendingTitle"></h3>
+      <ul class="reqs" id="outgoing"></ul>
+    </div>
+    <div class="teamactions">
+      <button class="btn gold" id="friendLinkBtn" data-t="myLink"></button>
+      <button class="linkbtn" id="renameBtn" data-t="rename"></button>
+    </div>
+  </div>
+  <form method="dialog"><button class="btn wide" data-t="close"></button></form>
 </dialog>
 
 <dialog id="stats">

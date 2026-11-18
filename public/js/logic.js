@@ -3,6 +3,17 @@
 export const LEN = 5;
 const DAY_MS = 864e5;
 
+/** One shared calendar for everyone: the server's clock in this timezone decides which safe is "today". */
+export const GAME_TZ = 'Europe/Prague';
+export const gameDay = (now = Date.now()) => new Date(now).toLocaleDateString('sv', { timeZone: GAME_TZ });
+
+/** Milliseconds until the next safe, i.e. midnight in GAME_TZ. */
+export function msUntilNextDay(now = Date.now()) {
+  // A Date whose local fields read as wall-clock time in GAME_TZ; good enough for a countdown.
+  const wall = new Date(new Date(now).toLocaleString('en-US', { timeZone: GAME_TZ }));
+  return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate() + 1) - wall;
+}
+
 /** Number of digits that match the code exactly by position. */
 export const scoreOf = (guess, code) => [...guess].filter((d, i) => d === code[i]).length;
 

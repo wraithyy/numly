@@ -4,6 +4,12 @@
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
   "assets": { "directory": "./public", "binding": "ASSETS" },
-  "routes": [{ "pattern": "numly.jkvapil.cz", "custom_domain": true }]
+  "routes": [{ "pattern": "numly.jkvapil.cz", "custom_domain": true }],
+  "durable_objects": { "bindings": [{ "name": "SOCIAL", "class_name": "Social" }] },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Board"] },
+    // v2: per-day boards replaced by one SQLite-backed social graph with mutual friendships
+    { "tag": "v2", "deleted_classes": ["Board"], "new_sqlite_classes": ["Social"] }
+  ]
   // SECRET: `npx wrangler secret put SECRET` in production, .dev.vars locally
 }
