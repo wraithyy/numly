@@ -178,3 +178,27 @@ test('the big safe is 6 digits (5 hex); the live week W47 keeps its 8', () => {
   assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: ['hex'] }, '2026-W48').secret.code, /^[0-9A-F]{5}$/);
   assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: [] }, '2026-W47').secret.code, /^\d{8}$/);
 });
+
+test('the automatic notepad keeps only codes that fit every try', async () => {
+  const { candidates, padAllowed } = await import('../shared/week.js');
+  const spec = { type: 'heist', mods: [], len: 4, base: 10 };
+  const secret = { code: '1234' };
+  const tries = ['1200', '5634', '1000'].map(guess => ({ guess, ...judge(spec, secret, guess, 1) }));
+  const all = candidates(spec, tries);
+  assert.ok(all.left > 1);
+  [...secret.code].forEach((c, i) => assert.ok(all.counts[i][+c] > 0)); // the real code always survives
+  assert.equal(candidates(spec, tries, { sum: 10, fixed: { at: 3, char: '4' } }).counts[2][3] > 0, true);
+  const exact = candidates(spec, [...tries, { guess: '1235', hits: 3 }, { guess: '1239', hits: 3 }, { guess: '1834', hits: 3 }, { guess: '7234', hits: 3 }]);
+  assert.equal(exact.left, 1);
+
+  const mm = { ...spec, mods: ['mastermind'] };
+  const near = candidates(mm, [{ guess: '4321', ...judge(mm, secret, '4321', 1) }]);
+  assert.ok(near.left < candidates(spec, [{ guess: '4321', hits: 0 }]).left);
+
+  assert.ok(padAllowed({ type: 'big', mods: [], len: 6, base: 10 }));
+  assert.ok(padAllowed({ type: 'big', mods: ['hex'], len: 5, base: 16 }));
+  assert.ok(!padAllowed({ type: 'big', mods: [], len: 8, base: 10 }));
+  assert.ok(!padAllowed({ type: 'big', mods: ['liar'], len: 6, base: 10 }));
+  assert.ok(!padAllowed({ type: 'cipher', mods: [], len: 5, base: 10 }));
+  assert.ok(!padAllowed({ type: 'grid', mods: [], len: 25, base: 10 }));
+});

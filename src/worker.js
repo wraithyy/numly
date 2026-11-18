@@ -72,12 +72,12 @@ async function handleWeek(req, env) {
   } catch {
     return json({ error: 'invalid json' }, 400);
   }
-  const { action, player, name, week, guess } = body ?? {};
+  const { action, player, name, week, guess, pad } = body ?? {};
   if (!isPlayer(player)) return json({ error: 'invalid player' }, 400);
   if (action !== 'view' && action !== 'guess') return json({ error: 'invalid action' }, 400);
   if (action === 'guess' && (typeof guess !== 'string' || typeof week !== 'string')) return json({ error: 'invalid guess' }, 400);
 
-  const forward = { action, pub: await publicId(player), name: cleanName(name) || undefined, week, guess };
+  const forward = { action, pub: await publicId(player), name: cleanName(name) || undefined, week, guess, pad: pad === true };
   const res = await social(env).fetch('https://social/week', { method: 'POST', body: JSON.stringify(forward) });
   return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 }

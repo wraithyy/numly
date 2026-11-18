@@ -19,6 +19,7 @@ export const WEEK_SCHEMA = [
 export const WEEK_MIGRATIONS = [
   `ALTER TABLE week_tries ADD COLUMN detail TEXT`, // grid: { rows, cols }; heist: { safe, opened }
   `ALTER TABLE week_tries ADD COLUMN progress INTEGER`, // board progress: best hits, or safes opened in a heist
+  `ALTER TABLE week_tries ADD COLUMN pad INTEGER`, // the automatic notepad was on: friends see it on the board
 ];
 
 /** The answer as shown once the week is over. */
@@ -98,7 +99,7 @@ export class Weekly {
   }
 
   /** Returns { status, body }. 409: another week or already solved; 429: out of tries for today. */
-  async guess(pub, week, guess, now = Date.now()) {
+  async guess(pub, week, guess, now = Date.now(), pad = false) {
     const current = gameWeek(now);
     if (week !== current) return { status: 409, body: { error: 'wrong week', week: current } };
     const { spec, secret } = await this.game(week);
@@ -111,8 +112,8 @@ export class Weekly {
     const n = this.tries(week, pub).length + 1;
     const { result, detail, solved, progress } = this.score(spec, secret, week, pub, guess, n);
     this.db.q(
-      `INSERT INTO week_tries (week, pub, n, guess, hits, near, solved, day, at, detail, progress) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      week, pub, n, guess, result.hits, result.near ?? null, solved ? 1 : 0, today, now, detail && JSON.stringify(detail), progress,
+      `INSERT INTO week_tries (week, pub, n, guess, hits, near, solved, day, at, detail, progress, pad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      week, pub, n, guess, result.hits, result.near ?? null, solved ? 1 : 0, today, now, detail && JSON.stringify(detail), progress, pad ? 1 : 0,
     );
     return { status: 200, body: { result, ...(await this.view(pub, week, today)) } };
   }
@@ -139,13 +140,13 @@ export class Weekly {
     const rows = this.db
       .q(
         `SELECT p.pub, p.name, COUNT(t.n) AS tries, COALESCE(MAX(t.solved), 0) AS solved,
-                MIN(t.at) AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress
+                MIN(t.at) AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress, COALESCE(MAX(t.pad), 0) AS pad
          FROM players p LEFT JOIN week_tries t ON t.pub = p.pub AND t.week = ?
          WHERE p.pub = ? OR p.pub IN (SELECT b FROM friends WHERE a = ?)
          GROUP BY p.pub`,
         week, pub, pub,
       )
-      .map(r => ({ ...r, solved: Boolean(r.solved) }))
+      .map(r => ({ ...r, solved: Boolean(r.solved), pad: Boolean(r.pad) }))
       .sort(compareWeek(spec));
     return { week, mods: spec.mods, rows };
   }

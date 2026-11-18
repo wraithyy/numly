@@ -251,3 +251,36 @@ export const compareWeek = spec => (a, b) => {
   if (spec.mods.includes('timer')) return a.solvedAt - a.firstAt - (b.solvedAt - b.firstAt) || a.tries - b.tries;
   return a.tries - b.tries || a.solvedAt - b.solvedAt;
 };
+
+// ---------------------------------------------------------------- automatic notepad
+
+const PAD_MAX_CODES = 2 ** 21; // a 6-digit or 5-hex safe; 8 digits would freeze the phone
+
+/** The automatic notepad needs an exact answer per try: no grid (too big), no cipher (it would solve the clues), no liar. */
+export const padAllowed = spec =>
+  (spec.type === 'big' || spec.type === 'heist') && !spec.mods.includes('liar') && spec.base ** spec.len <= PAD_MAX_CODES;
+
+/**
+ * Codes still consistent with the tries: { left, counts[slot][char index] }.
+ * `sum` is the published digit sum; `fixed` ({ at, char }) a heist link already revealed.
+ */
+export function candidates(spec, tries, { sum = null, fixed = null } = {}) {
+  const { len, base } = spec;
+  const mastermind = spec.mods.includes('mastermind');
+  const counts = Array.from({ length: len }, () => Array(base).fill(0));
+  let left = 0;
+  for (let n = 0; n < base ** len; n++) {
+    const code = n.toString(base).toUpperCase().padStart(len, '0');
+    if (fixed && code[fixed.at] !== fixed.char) continue;
+    if (sum !== null && digitSum(code) !== sum) continue;
+    const fits = tries.every(t => {
+      let hits = 0;
+      for (let i = 0; i < len; i++) if (t.guess[i] === code[i]) hits++;
+      return hits === t.hits && (!mastermind || common(t.guess, code) - hits === t.near);
+    });
+    if (!fits) continue;
+    left++;
+    for (let i = 0; i < len; i++) counts[i][DIGITS.indexOf(code[i])]++;
+  }
+  return { left, counts };
+}

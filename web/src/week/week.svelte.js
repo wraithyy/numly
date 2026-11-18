@@ -6,7 +6,7 @@ import { burst } from '../lib/fx.js';
 import { load, store } from '../lib/storage.js';
 import { player, sfx, ui } from '../lib/app.svelte.js';
 import { friends } from '../lib/friends.svelte.js';
-import { nextWeekStats } from '../../../shared/week.js';
+import { nextWeekStats, padAllowed } from '../../../shared/week.js';
 
 const DIGITS = '0123456789ABCDEF';
 
@@ -23,18 +23,21 @@ export const wk = $state({
   newest: false,
   busy: false,
   stats: load('numly-week-stats', { won: 0, streak: 0, best: 0, last: null, hist: {} }),
+  padOn: load('numly-week-pad', false), // the automatic notepad, a preference across weeks
+  padUsed: false, // sticky for the week once switched on: every later try carries it
 });
 
 export const refs = { cells: [], door: null, vault: null, fx: null };
 
 /** Remembered per week so the daily page can show a dot until the week is solved. */
 export const weekDoneKey = week => `numly-week-done-${week}`;
+const padUsedKey = week => `numly-week-pad-used-${week}`;
 
 async function api(body) {
   const res = await fetch('/api/week', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ player, name: friends.name || undefined, ...body }),
+    body: JSON.stringify({ player, name: friends.name || undefined, pad: wk.padUsed, ...body }),
   });
   const data = await res.json();
   return { ok: res.ok, status: res.status, data };
@@ -42,6 +45,8 @@ async function api(body) {
 
 function apply(view, instant) {
   wk.view = view;
+  wk.padUsed = load(padUsedKey(view.week), false);
+  markPadUsed();
   wk.digits = Array(view.spec.len).fill('');
   const lastTry = view.tries.at(-1);
   wk.leds = lastTry?.hits ?? 0;
@@ -102,6 +107,20 @@ export function setGuess(guess) {
   wk.digits = [...guess];
   refs.cells.forEach(c => restartAnimation(c, 'tap'));
   refs.cells.at(-1)?.focus({ preventScroll: true });
+  sfx.key();
+}
+
+/** Switching the notepad on before the week is solved marks it, even if it is switched off again. */
+function markPadUsed() {
+  if (!wk.padOn || wk.padUsed || !wk.view || wk.view.solved || !padAllowed(wk.view.spec)) return;
+  wk.padUsed = true;
+  store(padUsedKey(wk.view.week), true);
+}
+
+export function togglePad() {
+  wk.padOn = !wk.padOn;
+  store('numly-week-pad', wk.padOn);
+  markPadUsed();
   sfx.key();
 }
 

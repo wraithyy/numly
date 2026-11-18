@@ -202,6 +202,8 @@ h1 {
 .wnotes summary::-webkit-details-marker { display: none; }
 .wnotes[open] summary { color: var(--brass); }
 .wnotes .padgrid { padding: 0; }
+.wnotes .padbar { margin-top: 12px; }
+.wnotes .padbar .toggle { font-size: 13px; }
 .wnotes .btn { margin-top: 12px; }
 
 /* stats */

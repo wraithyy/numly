@@ -17,7 +17,7 @@
         <li class="rank" class:solved={p.solved} class:me={p.pub === friends.myPub}>
           <span class="pos">{p.solved ? i + 1 : '–'}</span>
           <span class="who">{p.name || '?'}{#if p.pub === friends.myPub}<small>{t('you')}</small>{/if}</span>
-          <span class="what">{what(p)}</span>
+          <span class="what">{what(p)}{#if p.pad}<span class="tag">{t('padMark')}</span>{/if}</span>
         </li>
       {/each}
     </ol>

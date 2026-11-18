@@ -87,9 +87,9 @@ test('the friends board ranks the week and rides along with the live state', asy
   const code = await codeOf(env);
   await s.weekly.guess(B, WEEK, wrongFor(code), MON);
   await s.weekly.guess(B, WEEK, code, MON + 1);
-  await s.weekly.guess(A, WEEK, wrongFor(code), MON + 2);
+  await s.weekly.guess(A, WEEK, wrongFor(code), MON + 2, true); // with the automatic notepad
   const board = s.weekly.board(A, WEEK);
-  assert.deepEqual(board.rows.map(r => [r.name, r.tries, r.solved]), [['Bob', 2, true], ['Ann', 1, false]]);
+  assert.deepEqual(board.rows.map(r => [r.name, r.tries, r.solved, r.pad]), [['Bob', 2, true, false], ['Ann', 1, false, true]]);
   assert.equal(s.state(A).week === null || Array.isArray(s.state(A).week.rows), true);
 });
 
