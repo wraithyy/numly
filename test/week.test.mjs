@@ -172,11 +172,9 @@ test('alarm tightens the daily ration; nothing caps the week', () => {
   }
 });
 
-test('the big safe is 6 digits (5 hex); the live week W47 keeps its 8', () => {
-  const bytes = bytesOf(9);
-  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: [] }, '2026-W48').secret.code, /^\d{6}$/);
-  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: ['hex'] }, '2026-W48').secret.code, /^[0-9A-F]{5}$/);
-  assert.match(makeWeek(bytes, ['big'], { type: 'big', mods: [] }, '2026-W47').secret.code, /^\d{8}$/);
+test('the big safe is 6 digits (5 hex)', () => {
+  assert.match(makeWeek(bytesOf(9), ['big'], { type: 'big', mods: [] }).secret.code, /^\d{6}$/);
+  assert.match(makeWeek(bytesOf(9), ['big'], { type: 'big', mods: ['hex'] }).secret.code, /^[0-9A-F]{5}$/);
 });
 
 test('the automatic notepad keeps only codes that fit every try', async () => {

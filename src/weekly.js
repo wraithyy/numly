@@ -42,7 +42,7 @@ function forcedSpec(raw) {
 export async function weekGame(env, week) {
   const key = await crypto.subtle.importKey('raw', enc.encode(env.SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const bytes = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(`week:${week}`)));
-  return makeWeek(bytes, readyTypes(week), forcedSpec(env.WEEK_SPEC), week);
+  return makeWeek(bytes, readyTypes(week), forcedSpec(env.WEEK_SPEC));
 }
 
 export class Weekly {

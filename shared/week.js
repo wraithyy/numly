@@ -121,7 +121,7 @@ export function drawRules(rng, ready) {
  * The week's game from its secret bytes. `force` ({ type, mods }) pins the draw for local testing.
  * Returns { spec, secret }: spec is safe to publish (see publicSpec), secret never leaves the server.
  */
-export function makeWeek(bytes, ready = ['big'], force = null, week = null) {
+export function makeWeek(bytes, ready = ['big'], force = null) {
   const rng = rngFrom(bytes);
   const { type, mods } = force ?? drawRules(rng, ready);
   const has = m => mods.includes(m);
@@ -142,9 +142,7 @@ export function makeWeek(bytes, ready = ['big'], force = null, week = null) {
   if (type === 'heist') return makeHeist(rng, type, mods);
 
   const base = has('hex') ? 16 : 10;
-  // Eight digits proved too many to hold in your head. ponytail: the W47 branch keeps that live week's
-  // code; delete it once W47 is no longer shown as last week (from 2026-W49).
-  const len = week && week < '2026-W48' ? (base === 16 ? 6 : 8) : base === 16 ? 5 : 6;
+  const len = base === 16 ? 5 : 6; // eight digits proved too many to hold in your head
   const code = randomCode(rng, len, base);
   const spec = {
     type,

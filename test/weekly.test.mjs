@@ -52,7 +52,7 @@ test('a daily ration, more the next day, none after solving', async () => {
 
   const solved = await s.weekly.guess(A, WEEK, code, TUE);
   assert.equal(solved.status, 200);
-  assert.deepEqual(solved.body.result, { hits: 8, solved: true });
+  assert.deepEqual(solved.body.result, { hits: 6, solved: true });
   assert.equal(solved.body.tries.length, perDay + 1);
   assert.equal(solved.body.solved, true);
   assert.equal((await s.weekly.guess(A, WEEK, code, TUE + 1)).status, 409);
@@ -74,7 +74,7 @@ test('alarm rations each day but never locks the week', async () => {
 test('mastermind and hex flow through to the player', async () => {
   const { s, env } = setup({ type: 'big', mods: ['hex', 'mastermind'] });
   const code = await codeOf(env);
-  assert.match(code, /^[0-9A-F]{6}$/);
+  assert.match(code, /^[0-9A-F]{5}$/);
   const reversed = [...code].reverse().join('');
   const res = await s.weekly.guess(A, WEEK, reversed, MON);
   assert.equal(res.status, 200);
@@ -148,7 +148,7 @@ test('migrations are safe to run twice', () => {
 test('golden draws: shipped weeks never change (update only for weeks that have not started)', async () => {
   const { createHash } = await import('node:crypto');
   const golden = {
-    '2026-W47': ['big', ['hex', 'sum'], 'f84a10f81d8d6dc1'],
+    '2026-W47': ['big', ['hex', 'sum'], 'a792305f66da8020'], // re-pinned: the big safe went from 8 to 6 digits mid-week, tries reset
     '2026-W48': ['grid', ['alarm', 'timer'], 'c73cfcc2e9181d06'],
     '2026-W49': ['heist', ['sum', 'timer'], '8b935fb410e4d2e4'],
     '2026-W50': ['grid', ['timer'], 'cab40bdc69b83afc'],
@@ -168,11 +168,11 @@ test('the first-release week_tries table is migrated and keeps working', async (
      week TEXT NOT NULL, pub TEXT NOT NULL, n INTEGER NOT NULL,
      guess TEXT NOT NULL, hits INTEGER NOT NULL, near INTEGER, solved INTEGER NOT NULL, day TEXT NOT NULL, at INTEGER NOT NULL,
      PRIMARY KEY (week, pub, n))`);
-  ctx.storage.sql.exec(`INSERT INTO week_tries VALUES ('${WEEK}', '${A}', 1, '00000000', 3, NULL, 0, '2026-11-16', ${MON})`);
+  ctx.storage.sql.exec(`INSERT INTO week_tries VALUES ('${WEEK}', '${A}', 1, '000000', 3, NULL, 0, '2026-11-16', ${MON})`);
   const env = { SECRET: 'test-secret', WEEK_SPEC: JSON.stringify({ type: 'big', mods: [] }) };
   const s = new Social(ctx, env);
   s.touch(A, 'Ann');
-  const res = await s.weekly.guess(A, WEEK, '11111111', MON + 1);
+  const res = await s.weekly.guess(A, WEEK, '111111', MON + 1);
   assert.equal(res.status, 200);
   assert.equal(res.body.tries.length, 2);
   assert.equal(s.weekly.board(A, WEEK).rows[0].progress >= 3, true); // old rows fall back to hits
