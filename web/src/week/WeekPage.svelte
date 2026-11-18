@@ -10,6 +10,7 @@
   import WeekHelp from './WeekHelp.svelte';
   import WeekStats from './WeekStats.svelte';
   import WeekNotes from './WeekNotes.svelte';
+  import WeekPush from './WeekPush.svelte';
   import { load } from '../lib/storage.js';
   import { ui } from '../lib/app.svelte.js';
   import { startFriends } from '../lib/friends.svelte.js';
@@ -77,6 +78,7 @@
     {#if spec.type !== 'grid'}<WeekNotes />{/if}
     <WeekLog />
     <WeekBoard />
+    <WeekPush />
 
     <section class="lastweek">
       <h3 class="subtitle">{t('lastWeek')}</h3>

@@ -138,3 +138,31 @@ export async function heist({ base, env }) {
     p.close();
   }
 }
+
+/**
+ * Monday reminders: the toggle, and what the service worker shows for a push in the player's language.
+ * Subscribing itself needs a real push service, so the push is delivered through DevTools instead.
+ */
+export async function reminders({ base }) {
+  const p = await browser(base, 9316);
+  const registrations = [];
+  p.on('ServiceWorker.workerRegistrationUpdated', ({ registrations: r }) => registrations.push(...r));
+  try {
+    await p.send('Browser.grantPermissions', { origin: base, permissions: ['notifications'] });
+    await p.reset();
+    await p.go('/week', 2500);
+    check('reminder toggle shown', await p.ev(`!!document.querySelector('.weekpush .toggle')`));
+    await p.send('ServiceWorker.enable');
+    await sleep(500);
+    const reg = registrations.find(r => !r.isDeleted);
+    check('service worker registered', Boolean(reg));
+    await p.ev(`caches.open('numly-prefs').then(c => c.put('/lang', new Response('cs')))`);
+    await p.send('ServiceWorker.deliverPushMessage', { origin: base, registrationId: reg.registrationId, data: '' });
+    await sleep(1000);
+    const shown = await p.ev(`navigator.serviceWorker.getRegistration().then(r => r.getNotifications()).then(n => n.map(x => x.title + ' | ' + x.body))`);
+    check('push shows a Czech notification', shown?.[0] === 'Nový týdenní trezor | Je pondělí a čeká tě nový trezor.', JSON.stringify(shown));
+    check('no page errors', !p.errors.length, p.errors.join(' | '));
+  } finally {
+    p.close();
+  }
+}

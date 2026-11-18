@@ -2,7 +2,7 @@
 // Pick scenarios by name: `npm run e2e -- heist friends`.
 import { cleanup, failed, startServer } from './lib.mjs';
 import { archive, daily, friends } from './daily.mjs';
-import { big, cipher, grid, heist } from './week.mjs';
+import { big, cipher, grid, heist, reminders } from './week.mjs';
 
 const SCENARIOS = [
   ['daily', daily, null],
@@ -12,6 +12,7 @@ const SCENARIOS = [
   ['cipher', cipher, { type: 'cipher', mods: [] }],
   ['grid', grid, { type: 'grid', mods: [] }],
   ['heist', heist, { type: 'heist', mods: ['sum'] }],
+  ['reminders', reminders, null],
 ];
 
 const only = process.argv.slice(2);

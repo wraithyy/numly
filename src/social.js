@@ -4,6 +4,8 @@
 import { MAX_FRIENDS, cleanName, compareRows, isPlayer, isPub, publicId } from '../shared/friends.js';
 import { gameDay, shiftDay } from '../shared/logic.js';
 import { WEEK_MIGRATIONS, WEEK_SCHEMA, Weekly } from './weekly.js';
+import { gameWeek } from '../shared/week.js';
+import { isPushEndpoint, sendPush } from './push.js';
 
 const MAX_PENDING = 50;
 const KEEP_DAYS = 3;
@@ -18,11 +20,19 @@ const SCHEMA = [
      day TEXT NOT NULL, pub TEXT NOT NULL,
      tries INTEGER NOT NULL DEFAULT 0, solved INTEGER NOT NULL DEFAULT 0, pad INTEGER NOT NULL DEFAULT 0, solved_at INTEGER,
      PRIMARY KEY (day, pub))`,
+  // Weekly reminders. Not tied to a player: the push endpoint is all a reminder needs.
+  `CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, at INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
 ];
+
+const MAX_PUSH_SUBS = 10000; // a cap, so a flood of fake subscriptions cannot grow storage without bound
+const PUSH_SUBJECT = 'https://numly.jkvapil.cz';
+const PUSH_BATCH = 20;
 
 export class Social {
   constructor(ctx, env) {
     this.ctx = ctx;
+    this.env = env;
     for (const stmt of [...SCHEMA, ...WEEK_SCHEMA]) ctx.storage.sql.exec(stmt);
     for (const stmt of WEEK_MIGRATIONS) {
       try {
@@ -168,6 +178,46 @@ export class Social {
     await this.ctx.storage.setAlarm(Date.now() + DAY_MS);
   }
 
+  // ------------------------------------------------------------ weekly reminders
+
+  /** { action: 'subscribe' | 'unsubscribe', endpoint }. The service worker knows the player's language. */
+  async pushRequest(req) {
+    const { action, endpoint } = await req.json();
+    if (!isPushEndpoint(endpoint)) return Response.json({ error: 'invalid endpoint' }, { status: 400 });
+    if (action === 'unsubscribe') {
+      this.q(`DELETE FROM push_subs WHERE endpoint = ?`, endpoint);
+      return new Response(null, { status: 204 });
+    }
+    if (action !== 'subscribe') return Response.json({ error: 'invalid request' }, { status: 400 });
+    const known = this.q(`SELECT 1 FROM push_subs WHERE endpoint = ?`, endpoint).length > 0;
+    if (!known && this.q(`SELECT COUNT(*) AS n FROM push_subs`)[0].n >= MAX_PUSH_SUBS) return Response.json({ error: 'full' }, { status: 503 });
+    this.q(`INSERT OR IGNORE INTO push_subs (endpoint, at) VALUES (?, ?)`, endpoint, Date.now());
+    return new Response(null, { status: 204 });
+  }
+
+  /**
+   * Monday's reminder, once per week. The cron fires late on Sunday UTC at both possible offsets,
+   * so it only acts once the game timezone has reached Monday. Returns how many were sent.
+   */
+  async pushWeek(now = Date.now(), fetchFn = fetch) {
+    const monday = new Date(`${gameDay(now)}T00:00:00Z`).getUTCDay() === 1;
+    const week = gameWeek(now);
+    if (!monday || !this.env?.VAPID_KEY || this.q(`SELECT v FROM kv WHERE k = 'pushed'`)[0]?.v === week) return 0;
+    this.q(`INSERT INTO kv (k, v) VALUES ('pushed', ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v`, week);
+    const jwk = JSON.parse(this.env.VAPID_KEY);
+    const subs = this.q(`SELECT endpoint FROM push_subs`);
+    let sent = 0;
+    for (let i = 0; i < subs.length; i += PUSH_BATCH) {
+      const results = await Promise.allSettled(subs.slice(i, i + PUSH_BATCH).map(s => sendPush(s.endpoint, jwk, PUSH_SUBJECT, fetchFn)));
+      results.forEach((r, k) => {
+        if (r.status === 'fulfilled' && (r.value === 404 || r.value === 410)) this.q(`DELETE FROM push_subs WHERE endpoint = ?`, subs[i + k].endpoint);
+        else if (r.status === 'fulfilled' && r.value < 300) sent++;
+        else console.error('Push failed:', r.status === 'fulfilled' ? r.value : r.reason);
+      });
+    }
+    return sent;
+  }
+
   /** Internal weekly API: { action: 'view' | 'guess', pub, name, week, guess }. */
   async weekRequest(req) {
     const { action, pub, name, week, guess, pad } = await req.json();
@@ -183,6 +233,8 @@ export class Social {
   async fetch(req) {
     const { pathname } = new URL(req.url);
     if (pathname === '/week' && req.method === 'POST') return this.weekRequest(req);
+    if (pathname === '/push' && req.method === 'POST') return this.pushRequest(req);
+    if (pathname === '/push-week' && req.method === 'POST') return Response.json({ sent: await this.pushWeek() });
     // Internal: a guess scored by the Worker.
     if (pathname === '/guess' && req.method === 'POST') {
       const event = await req.json();

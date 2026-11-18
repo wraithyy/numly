@@ -204,6 +204,8 @@ h1 {
 .wnotes .padgrid { padding: 0; }
 .wnotes .padbar { margin-top: 12px; }
 .wnotes .padbar .toggle { font-size: 13px; }
+.weekpush { margin-top: 22px; border-top: 1px dashed var(--line); padding-top: 14px; }
+.weekpush .toggle { font-size: 13px; }
 .wnotes .btn { margin-top: 12px; }
 
 /* stats */

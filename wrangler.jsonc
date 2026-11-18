@@ -12,10 +12,13 @@
   },
   "routes": [{ "pattern": "numly.jkvapil.cz", "custom_domain": true }],
   "durable_objects": { "bindings": [{ "name": "SOCIAL", "class_name": "Social" }] },
+  // Monday 00:10 in Europe/Prague is 23:10 or 22:10 on Sunday UTC (winter, summer); the Durable
+  // Object acts only once it is Monday there, and once per week.
+  "triggers": { "crons": ["10 22,23 * * SUN"] },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["Board"] },
     // v2: per-day boards replaced by one SQLite-backed social graph with mutual friendships
     { "tag": "v2", "deleted_classes": ["Board"], "new_sqlite_classes": ["Social"] }
   ]
-  // SECRET: `npx wrangler secret put SECRET` in production, .dev.vars locally
+  // SECRET and VAPID_KEY (a P-256 private JWK): `npx wrangler secret put` in production, .dev.vars locally
 }

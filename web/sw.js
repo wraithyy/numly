@@ -6,6 +6,19 @@ const CACHE = 'numly-v4';
 // Filled in by the build (vite.config.js) with the hashed app files.
 const SHELL = self.__SHELL;
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+// The page keeps the player's language here, so a payload-free push can still speak it.
+const PREFS = 'numly-prefs';
+const PUSH_TEXT = {
+  cs: ['Nový týdenní trezor', 'Je pondělí a čeká tě nový trezor.'],
+  en: ['A new weekly safe', 'It is Monday and a new safe is waiting.'],
+  sk: ['Nový týždenný trezor', 'Je pondelok a čaká ťa nový trezor.'],
+  de: ['Ein neuer Wochentresor', 'Es ist Montag und ein neuer Tresor wartet.'],
+  pl: ['Nowy sejf tygodnia', 'Jest poniedziałek i czeka nowy sejf.'],
+  es: ['Nueva caja semanal', 'Es lunes y te espera una nueva caja.'],
+  fr: ['Nouveau coffre de la semaine', 'C’est lundi, un nouveau coffre t’attend.'],
+  it: ['Nuova cassaforte settimanale', 'È lunedì e ti aspetta una nuova cassaforte.'],
+  pt: ['Novo cofre semanal', 'É segunda e um novo cofre espera por você.'],
+};
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -15,7 +28,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches
       .keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== PREFS).map(k => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -58,3 +71,18 @@ async function cacheFirst(request) {
   if (response.ok || response.type === 'opaque') cache.put(request, response.clone());
   return response;
 }
+
+self.addEventListener('push', event => {
+  event.waitUntil(
+    (async () => {
+      const lang = await (await (await caches.open(PREFS)).match('/lang'))?.text();
+      const [title, body] = PUSH_TEXT[lang] ?? PUSH_TEXT.en;
+      await self.registration.showNotification(title, { body, icon: '/icons/icon-192.png', tag: 'numly-week' });
+    })(),
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(self.clients.openWindow('/week'));
+});

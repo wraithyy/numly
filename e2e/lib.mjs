@@ -14,7 +14,15 @@ const tempDir = prefix => {
   temps.push(dir);
   return dir;
 };
-export const cleanup = () => temps.splice(0).forEach(d => rmSync(d, { recursive: true, force: true }));
+// Chrome may still be flushing its profile right after it is killed, so retry, and never fail a run over it.
+export const cleanup = () =>
+  temps.splice(0).forEach(d => {
+    try {
+      rmSync(d, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+    } catch (err) {
+      console.log(`  (could not remove ${d}: ${err.code})`);
+    }
+  });
 
 let failures = 0;
 export const failed = () => failures;
@@ -24,8 +32,14 @@ export function check(name, ok, extra = '') {
 }
 
 /** `wrangler dev` on the built dist/ with a pinned secret and, optionally, a forced weekly spec. */
+// A throwaway VAPID key, so the reminder toggle shows up; nothing is ever pushed to a real service.
+const vapidKey = crypto.subtle
+  .generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign'])
+  .then(k => crypto.subtle.exportKey('jwk', k.privateKey))
+  .then(({ kty, crv, x, y, d }) => JSON.stringify({ kty, crv, x, y, d }));
+
 export async function startServer(port, weekSpec = null) {
-  const vars = ['--var', `SECRET:${SECRET}`, ...(weekSpec ? ['--var', `WEEK_SPEC:${JSON.stringify(weekSpec)}`] : [])];
+  const vars = ['--var', `SECRET:${SECRET}`, '--var', `VAPID_KEY:${await vapidKey}`, ...(weekSpec ? ['--var', `WEEK_SPEC:${JSON.stringify(weekSpec)}`] : [])];
   const proc = spawn('npx', ['wrangler', 'dev', '--port', String(port), '--ip', '127.0.0.1', '--persist-to', tempDir('numly-e2e-'), ...vars], { stdio: 'ignore', detached: true });
   const base = `http://127.0.0.1:${port}`;
   for (let i = 0; i < 120; i++) {
@@ -54,12 +68,14 @@ export async function browser(base, port, { width = 500, height = 1000, mobile =
   let id = 0;
   const pending = new Map();
   const errors = [];
+  const listeners = [];
   ws.onmessage = e => {
     const m = JSON.parse(e.data);
     // Headless Chrome sometimes aborts a cross-document view transition from inside the browser;
     // the page just loads without the slide, and no page code can catch it.
     const d = m.method === 'Runtime.exceptionThrown' && m.params.exceptionDetails;
     if (d && !d.exception?.description?.includes('ViewTransition opt-in disabled')) errors.push(`${d.exception?.description} @ ${d.url ?? ''}:${d.lineNumber}`);
+    if (m.method) listeners.filter(l => l.method === m.method).forEach(l => l.fn(m.params));
     if (m.id && pending.has(m.id)) {
       pending.get(m.id)(m);
       pending.delete(m.id);
@@ -95,7 +111,8 @@ export async function browser(base, port, { width = 500, height = 1000, mobile =
   };
   const text = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.textContent ?? null`);
   const pubOf = () => ev(`(async () => { const p = JSON.parse(localStorage.getItem('numly-player')); const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('numly:' + p)); return [...new Uint8Array(d)].slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join(''); })()`);
-  return { send, ev, go, reset, type, text, pubOf, errors, close: () => { ws.close(); proc.kill(); } };
+  const on = (method, fn) => listeners.push({ method, fn });
+  return { send, on, ev, go, reset, type, text, pubOf, errors, close: () => { ws.close(); proc.kill(); } };
 }
 
 /** Makes `a` and `b` friends through `b` opening `a`'s link. */

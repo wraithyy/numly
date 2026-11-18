@@ -2,6 +2,7 @@
 // clients only ever learn how many digits of a guess are in the right place.
 import { LEN, archiveDays, scoreOf, gameDay } from '../shared/logic.js';
 import { cleanName, isPlayer, publicId } from '../shared/friends.js';
+import { publicKeyOf } from './push.js';
 
 export { Social } from './social.js';
 
@@ -82,6 +83,21 @@ async function handleWeek(req, env) {
   return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 }
 
+// Weekly reminders. GET: the key a browser subscribes with; POST: { action, endpoint }.
+async function handlePush(req, env) {
+  if (!env.VAPID_KEY) return json({ error: 'push not configured' }, 503);
+  if (req.method === 'GET') return json({ key: publicKeyOf(JSON.parse(env.VAPID_KEY)) });
+  if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return json({ error: 'invalid json' }, 400);
+  }
+  const { action, endpoint } = body ?? {};
+  return social(env).fetch('https://social/push', { method: 'POST', body: JSON.stringify({ action, endpoint }) });
+}
+
 // Live friends feed and friend requests over one WebSocket.
 function handleFriends(req, env) {
   if (req.headers.get('Upgrade') !== 'websocket') return json({ error: 'expected websocket' }, 426);
@@ -94,6 +110,11 @@ export default {
     if (pathname === '/api/guess') return handleGuess(req, env);
     if (pathname === '/api/friends') return handleFriends(req, env);
     if (pathname === '/api/week') return handleWeek(req, env);
+    if (pathname === '/api/push') return handlePush(req, env);
     return env.ASSETS.fetch(req);
+  },
+  // Cron, late on Sunday UTC: the Durable Object sends Monday's reminder once the game timezone is there.
+  scheduled(event, env, ctx) {
+    ctx.waitUntil(social(env).fetch('https://social/push-week', { method: 'POST' }));
   },
 };
