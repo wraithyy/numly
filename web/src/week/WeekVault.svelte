@@ -48,6 +48,25 @@
   }
   const swipeEnd = () => (swipeY = null);
 
+  // One sparkline character per try (hits out of the code length), so a long week still fits a message.
+  const BARS = '▁▂▃▄▅▆▇█';
+  let shareLabel = $state(null);
+  let shareFailed = $state(false);
+  async function share() {
+    const tries = wk.view.tries;
+    const line = tries.slice(-40).map(x => BARS[Math.round((x.hits / spec.len) * (BARS.length - 1))]).join('');
+    const rules = [t(`type_${spec.type}`), ...spec.mods.map(m => t(`mod_${m}`))].join(' · ');
+    const head = [`Numly · ${t('weekMeta', { w: weekNo })}`, t('tries', { n: tries.length }), wk.padUsed && `\u{1F4DD} ${t('withPad')}`].filter(Boolean).join(' · ');
+    const text = `${head}\n${rules}\n${line}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      shareLabel = t('copied');
+    } catch (err) {
+      console.error('Clipboard write failed:', err);
+      shareFailed = true;
+    }
+  }
+
   let countdown = $state('');
   $effect(() => {
     if (!wk.open) return;
@@ -71,8 +90,10 @@
       <div>
         <p class="eyebrow">{t('opened')}</p>
         <p class="loot long" class:wall={grid}>{#each loot as line, i (i)}<span>{line}</span>{/each}</p>
-        <p>{t('weekSolved', { n: wk.view.tries.length })}</p>
+        <p>{shareFailed ? t('copyFail') : t('weekSolved', { n: wk.view.tries.length })}</p>
+        {#if wk.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
         <p class="next"><span>{t('weekEnds')}</span> <b>{countdown}</b></p>
+        <div class="actions"><button class="btn gold" onclick={share}>{shareLabel ?? t('share')}</button></div>
       </div>
     {/if}
   </div>

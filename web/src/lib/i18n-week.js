@@ -2,7 +2,7 @@
 export const WEEK_I18N = {
   cs: {
     weekHowTitle: 'TÝDENNÍ TREZOR', weekStatsTitle: 'TÝDENNÍ STATISTIKY', sWeeks: 'Týdny',
-    weekSteps: '<li>Každé pondělí se vylosuje <b>jeden typ trezoru</b> a k němu až dva <b>modifikátory</b>. Pro všechny stejné.</li><li>Kód platí celý týden. Pokusy hlídá server, takže hraješ odkudkoli.</li><li>Pravidla tohoto týdne jsou na kartě nahoře.</li><li>V neděli o půlnoci se kód odhalí a začne nový týden.</li>',
+    weekSteps: '<li>Každé pondělí se vylosuje <b>jeden typ trezoru</b> a k němu až dva <b>modifikátory</b>. Pro všechny stejné.</li><li>Kód platí celý týden. Pokusy hlídá server, takže hraješ odkudkoli.</li><li>Pravidla tohoto týdne jsou na kartě nahoře.</li><li>Každý den dostaneš <b>novou dávku pokusů</b>. Nic se nezamyká, na kód můžeš bušit až do neděle.</li><li>Pod trezorem jsou <b>poznámky</b>: ruční, nebo automatické. Automatiku uvidí přátelé v žebříčku.</li><li>V neděli o půlnoci se kód odhalí a začne nový týden.</li>',
     type_grid: 'STĚNA SCHRÁNEK', type_grid_d: 'Mřížka 5×5 číslic. Po každém pokusu trezor hlásí zásahy v každém řádku a sloupci.', type_heist: 'LOUPEŽ', type_heist_d: 'Pět trezorů za sebou, kódy po {len} znacích. Otevřený trezor prozradí stopu k dalšímu.',
     heistLink: '{n}. znak {b} = {m}. znak {a}', safeOpened: 'Trezor {s} otevřen! Další v řadě.', heistLinks: 'STOPY',
     type_cipher: 'ŠIFRA', type_cipher_d: 'Z vodítek níže jde odvodit právě jeden kód.', cluesTitle: 'VODÍTKA',
@@ -24,7 +24,7 @@ export const WEEK_I18N = {
   },
   en: {
     weekHowTitle: 'WEEKLY SAFE', weekStatsTitle: 'WEEKLY STATISTICS', sWeeks: 'Weeks',
-    weekSteps: '<li>Every Monday draws <b>one type of safe</b> and up to two <b>modifiers</b>. The same for everyone.</li><li>The code holds all week. The server keeps your tries, so you can play from anywhere.</li><li>This week’s rules are on the card at the top.</li><li>At midnight on Sunday the code is revealed and a new week starts.</li>',
+    weekSteps: '<li>Every Monday draws <b>one type of safe</b> and up to two <b>modifiers</b>. The same for everyone.</li><li>The code holds all week. The server keeps your tries, so you can play from anywhere.</li><li>This week’s rules are on the card at the top.</li><li>Every day brings a <b>fresh ration of tries</b>. Nothing locks: keep at the code until Sunday.</li><li>Below the safe are <b>notes</b>: by hand, or automatic. Friends see the automatic ones on the board.</li><li>At midnight on Sunday the code is revealed and a new week starts.</li>',
     type_grid: 'THE WALL OF BOXES', type_grid_d: 'A 5×5 grid of digits. After each try the safe reports hits in every row and column.', type_heist: 'THE HEIST', type_heist_d: 'Five safes in a row, {len}-character codes. Each opened safe gives a clue to the next.',
     heistLink: '{b} char {n} = {a} char {m}', safeOpened: 'Safe {s} is open! On to the next.', heistLinks: 'CLUES',
     type_cipher: 'THE CIPHER', type_cipher_d: 'Exactly one code fits the clues below.', cluesTitle: 'CLUES',
@@ -46,7 +46,7 @@ export const WEEK_I18N = {
   },
   sk: {
     weekHowTitle: 'TÝŽDENNÝ TREZOR', weekStatsTitle: 'TÝŽDENNÉ ŠTATISTIKY', sWeeks: 'Týždne',
-    weekSteps: '<li>Každý pondelok sa vylosuje <b>jeden typ trezoru</b> a k nemu až dva <b>modifikátory</b>. Pre všetkých rovnaké.</li><li>Kód platí celý týždeň. Pokusy stráži server, takže hráš odkiaľkoľvek.</li><li>Pravidlá tohto týždňa sú na karte hore.</li><li>V nedeľu o polnoci sa kód odhalí a začne nový týždeň.</li>',
+    weekSteps: '<li>Každý pondelok sa vylosuje <b>jeden typ trezoru</b> a k nemu až dva <b>modifikátory</b>. Pre všetkých rovnaké.</li><li>Kód platí celý týždeň. Pokusy stráži server, takže hráš odkiaľkoľvek.</li><li>Pravidlá tohto týždňa sú na karte hore.</li><li>Každý deň dostaneš <b>novú dávku pokusov</b>. Nič sa nezamyká, na kód môžeš búchať až do nedele.</li><li>Pod trezorom sú <b>poznámky</b>: ručné alebo automatické. Automatiku uvidia priatelia v rebríčku.</li><li>V nedeľu o polnoci sa kód odhalí a začne nový týždeň.</li>',
     type_grid: 'STENA SCHRÁNOK', type_grid_d: 'Mriežka 5×5 číslic. Po každom pokuse trezor hlási zásahy v každom riadku a stĺpci.', type_heist: 'LÚPEŽ', type_heist_d: 'Päť trezorov za sebou, kódy po {len} znakoch. Otvorený trezor prezradí stopu k ďalšiemu.',
     heistLink: '{n}. znak {b} = {m}. znak {a}', safeOpened: 'Trezor {s} otvorený! Ďalší v rade.', heistLinks: 'STOPY',
     type_cipher: 'ŠIFRA', type_cipher_d: 'Z indícií nižšie sa dá odvodiť práve jeden kód.', cluesTitle: 'INDÍCIE',
@@ -68,7 +68,7 @@ export const WEEK_I18N = {
   },
   de: {
     weekHowTitle: 'WOCHENTRESOR', weekStatsTitle: 'WOCHENSTATISTIK', sWeeks: 'Wochen',
-    weekSteps: '<li>Jeden Montag werden <b>ein Tresortyp</b> und bis zu zwei <b>Modifikatoren</b> ausgelost. Für alle gleich.</li><li>Der Code gilt die ganze Woche. Der Server speichert deine Versuche, du kannst also überall spielen.</li><li>Die Regeln dieser Woche stehen auf der Karte oben.</li><li>Sonntag um Mitternacht wird der Code aufgedeckt und eine neue Woche beginnt.</li>',
+    weekSteps: '<li>Jeden Montag werden <b>ein Tresortyp</b> und bis zu zwei <b>Modifikatoren</b> ausgelost. Für alle gleich.</li><li>Der Code gilt die ganze Woche. Der Server speichert deine Versuche, du kannst also überall spielen.</li><li>Die Regeln dieser Woche stehen auf der Karte oben.</li><li>Jeden Tag gibt es <b>neue Versuche</b>. Nichts sperrt: bleib bis Sonntag dran.</li><li>Unter dem Tresor liegen <b>Notizen</b>: von Hand oder automatisch. Die Automatik sehen Freunde in der Wertung.</li><li>Sonntag um Mitternacht wird der Code aufgedeckt und eine neue Woche beginnt.</li>',
     type_grid: 'DIE SCHLIESSFACHWAND', type_grid_d: 'Ein 5×5-Raster aus Ziffern. Nach jedem Versuch meldet der Tresor die Treffer pro Zeile und Spalte.', type_heist: 'DER COUP', type_heist_d: 'Fünf Tresore hintereinander, Codes mit {len} Zeichen. Jeder geöffnete Tresor verrät einen Hinweis auf den nächsten.',
     heistLink: '{b} Zeichen {n} = {a} Zeichen {m}', safeOpened: 'Tresor {s} ist offen! Weiter zum nächsten.', heistLinks: 'HINWEISE',
     type_cipher: 'DIE CHIFFRE', type_cipher_d: 'Genau ein Code passt zu den Hinweisen unten.', cluesTitle: 'HINWEISE',
@@ -90,7 +90,7 @@ export const WEEK_I18N = {
   },
   pl: {
     weekHowTitle: 'SEJF TYGODNIA', weekStatsTitle: 'STATYSTYKI TYGODNIOWE', sWeeks: 'Tygodnie',
-    weekSteps: '<li>Co poniedziałek losowany jest <b>jeden typ sejfu</b> i do dwóch <b>modyfikatorów</b>. Dla wszystkich te same.</li><li>Kod obowiązuje cały tydzień. Serwer pilnuje prób, więc grasz skądkolwiek.</li><li>Zasady tego tygodnia są na karcie u góry.</li><li>W niedzielę o północy kod zostaje ujawniony i zaczyna się nowy tydzień.</li>',
+    weekSteps: '<li>Co poniedziałek losowany jest <b>jeden typ sejfu</b> i do dwóch <b>modyfikatorów</b>. Dla wszystkich te same.</li><li>Kod obowiązuje cały tydzień. Serwer pilnuje prób, więc grasz skądkolwiek.</li><li>Zasady tego tygodnia są na karcie u góry.</li><li>Każdego dnia dostajesz <b>nową pulę prób</b>. Nic się nie blokuje: łam kod aż do niedzieli.</li><li>Pod sejfem są <b>notatki</b>: ręczne albo automatyczne. Automat widać w rankingu znajomych.</li><li>W niedzielę o północy kod zostaje ujawniony i zaczyna się nowy tydzień.</li>',
     type_grid: 'ŚCIANA SKRYTEK', type_grid_d: 'Siatka 5×5 cyfr. Po każdej próbie sejf podaje trafienia w każdym wierszu i kolumnie.', type_heist: 'SKOK', type_heist_d: 'Pięć sejfów po kolei, kody po {len} znaki. Otwarty sejf zdradza wskazówkę do następnego.',
     heistLink: '{b} znak {n} = {a} znak {m}', safeOpened: 'Sejf {s} otwarty! Czas na następny.', heistLinks: 'WSKAZÓWKI',
     type_cipher: 'SZYFR', type_cipher_d: 'Do wskazówek poniżej pasuje dokładnie jeden kod.', cluesTitle: 'WSKAZÓWKI',
@@ -112,7 +112,7 @@ export const WEEK_I18N = {
   },
   es: {
     weekHowTitle: 'CAJA SEMANAL', weekStatsTitle: 'ESTADÍSTICAS SEMANALES', sWeeks: 'Semanas',
-    weekSteps: '<li>Cada lunes se sortea <b>un tipo de caja</b> y hasta dos <b>modificadores</b>. Iguales para todos.</li><li>El código vale toda la semana. El servidor guarda tus intentos, así que juegas desde cualquier sitio.</li><li>Las reglas de esta semana están en la tarjeta de arriba.</li><li>El domingo a medianoche se revela el código y empieza una nueva semana.</li>',
+    weekSteps: '<li>Cada lunes se sortea <b>un tipo de caja</b> y hasta dos <b>modificadores</b>. Iguales para todos.</li><li>El código vale toda la semana. El servidor guarda tus intentos, así que juegas desde cualquier sitio.</li><li>Las reglas de esta semana están en la tarjeta de arriba.</li><li>Cada día recibes <b>nuevos intentos</b>. Nada se bloquea: dale al código hasta el domingo.</li><li>Bajo la caja hay <b>notas</b>: a mano o automáticas. Tus amigos ven las automáticas en la clasificación.</li><li>El domingo a medianoche se revela el código y empieza una nueva semana.</li>',
     type_grid: 'EL MURO DE CAJAS', type_grid_d: 'Una cuadrícula de 5×5 dígitos. Tras cada intento la caja indica los aciertos en cada fila y columna.', type_heist: 'EL GOLPE', type_heist_d: 'Cinco cajas seguidas, códigos de {len} caracteres. Cada caja abierta da una pista para la siguiente.',
     heistLink: '{b} carácter {n} = {a} carácter {m}', safeOpened: '¡Caja {s} abierta! A por la siguiente.', heistLinks: 'PISTAS',
     type_cipher: 'LA CIFRA', type_cipher_d: 'Solo un código encaja con las pistas de abajo.', cluesTitle: 'PISTAS',
@@ -134,7 +134,7 @@ export const WEEK_I18N = {
   },
   fr: {
     weekHowTitle: 'COFFRE DE LA SEMAINE', weekStatsTitle: 'STATISTIQUES HEBDO', sWeeks: 'Semaines',
-    weekSteps: '<li>Chaque lundi, on tire <b>un type de coffre</b> et jusqu’à deux <b>modificateurs</b>. Les mêmes pour tous.</li><li>Le code vaut toute la semaine. Le serveur garde tes essais, tu peux donc jouer de partout.</li><li>Les règles de la semaine sont sur la carte en haut.</li><li>Dimanche à minuit, le code est révélé et une nouvelle semaine commence.</li>',
+    weekSteps: '<li>Chaque lundi, on tire <b>un type de coffre</b> et jusqu’à deux <b>modificateurs</b>. Les mêmes pour tous.</li><li>Le code vaut toute la semaine. Le serveur garde tes essais, tu peux donc jouer de partout.</li><li>Les règles de la semaine sont sur la carte en haut.</li><li>Chaque jour apporte <b>de nouveaux essais</b>. Rien ne se verrouille : insiste jusqu’à dimanche.</li><li>Sous le coffre, des <b>notes</b> : à la main ou automatiques. Tes amis voient les automatiques au classement.</li><li>Dimanche à minuit, le code est révélé et une nouvelle semaine commence.</li>',
     type_grid: 'LE MUR DE CASIERS', type_grid_d: 'Une grille de 5×5 chiffres. Après chaque essai, le coffre indique les bons chiffres par ligne et par colonne.', type_heist: 'LE CASSE', type_heist_d: 'Cinq coffres à la suite, codes de {len} caractères. Chaque coffre ouvert donne un indice pour le suivant.',
     heistLink: '{b} caractère {n} = {a} caractère {m}', safeOpened: 'Coffre {s} ouvert ! Au suivant.', heistLinks: 'INDICES',
     type_cipher: 'LE CHIFFRE', type_cipher_d: 'Un seul code correspond aux indices ci-dessous.', cluesTitle: 'INDICES',
@@ -156,7 +156,7 @@ export const WEEK_I18N = {
   },
   it: {
     weekHowTitle: 'CASSAFORTE SETTIMANALE', weekStatsTitle: 'STATISTICHE SETTIMANALI', sWeeks: 'Settimane',
-    weekSteps: '<li>Ogni lunedì si estrae <b>un tipo di cassaforte</b> e fino a due <b>modificatori</b>. Uguali per tutti.</li><li>Il codice vale tutta la settimana. Il server conserva i tuoi tentativi, quindi giochi da dove vuoi.</li><li>Le regole della settimana sono sulla scheda in alto.</li><li>Domenica a mezzanotte il codice viene svelato e inizia una nuova settimana.</li>',
+    weekSteps: '<li>Ogni lunedì si estrae <b>un tipo di cassaforte</b> e fino a due <b>modificatori</b>. Uguali per tutti.</li><li>Il codice vale tutta la settimana. Il server conserva i tuoi tentativi, quindi giochi da dove vuoi.</li><li>Le regole della settimana sono sulla scheda in alto.</li><li>Ogni giorno arrivano <b>nuovi tentativi</b>. Niente si blocca: insisti fino a domenica.</li><li>Sotto la cassaforte ci sono gli <b>appunti</b>: a mano o automatici. Gli amici vedono quelli automatici in classifica.</li><li>Domenica a mezzanotte il codice viene svelato e inizia una nuova settimana.</li>',
     type_grid: 'IL MURO DELLE CASSETTE', type_grid_d: 'Una griglia di 5×5 cifre. Dopo ogni tentativo la cassaforte indica i centri in ogni riga e colonna.', type_heist: 'IL COLPO', type_heist_d: 'Cinque casseforti in fila, codici di {len} caratteri. Ogni cassaforte aperta dà un indizio per la successiva.',
     heistLink: '{b} carattere {n} = {a} carattere {m}', safeOpened: 'Cassaforte {s} aperta! Avanti la prossima.', heistLinks: 'INDIZI',
     type_cipher: 'IL CIFRARIO', type_cipher_d: 'Un solo codice è compatibile con gli indizi qui sotto.', cluesTitle: 'INDIZI',
@@ -178,7 +178,7 @@ export const WEEK_I18N = {
   },
   pt: {
     weekHowTitle: 'COFRE SEMANAL', weekStatsTitle: 'ESTATÍSTICAS SEMANAIS', sWeeks: 'Semanas',
-    weekSteps: '<li>Toda segunda-feira é sorteado <b>um tipo de cofre</b> e até dois <b>modificadores</b>. Iguais para todos.</li><li>O código vale a semana toda. O servidor guarda suas tentativas, então você joga de qualquer lugar.</li><li>As regras da semana estão no cartão no topo.</li><li>No domingo à meia-noite o código é revelado e começa uma nova semana.</li>',
+    weekSteps: '<li>Toda segunda-feira é sorteado <b>um tipo de cofre</b> e até dois <b>modificadores</b>. Iguais para todos.</li><li>O código vale a semana toda. O servidor guarda suas tentativas, então você joga de qualquer lugar.</li><li>As regras da semana estão no cartão no topo.</li><li>Todo dia chega <b>uma nova leva de tentativas</b>. Nada trava: insista no código até domingo.</li><li>Abaixo do cofre há <b>notas</b>: à mão ou automáticas. Os amigos veem as automáticas na classificação.</li><li>No domingo à meia-noite o código é revelado e começa uma nova semana.</li>',
     type_grid: 'O MURO DE COFRES', type_grid_d: 'Uma grade de 5×5 dígitos. Após cada tentativa o cofre indica os acertos em cada linha e coluna.', type_heist: 'O ASSALTO', type_heist_d: 'Cinco cofres em sequência, códigos de {len} caracteres. Cada cofre aberto dá uma pista para o próximo.',
     heistLink: '{b} caractere {n} = {a} caractere {m}', safeOpened: 'Cofre {s} aberto! Vamos ao próximo.', heistLinks: 'PISTAS',
     type_cipher: 'A CIFRA', type_cipher_d: 'Apenas um código combina com as pistas abaixo.', cluesTitle: 'PISTAS',
