@@ -14,3 +14,7 @@
 {:else}
   <Daily />
 {/if}
+
+<footer class="credits">
+  <a href="https://buymeacoffee.com/wraithyy" target="_blank" rel="noopener noreferrer">{ui.t('coffee')}</a>
+</footer>
