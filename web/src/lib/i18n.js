@@ -3,6 +3,7 @@ import { WEEK_I18N } from './i18n-week.js';
 // UI strings. {x} placeholders are filled by t(key, vars); `codes` is keyed by Intl.PluralRules categories.
 export const I18N = {
   cs: {
+    tiers: 'Čím méně pokusů, tím bohatší trezor a jiná barva záře: do 10 růžová, do 14 zlatá, do 20 fialová, potom modrá. S poznámkovým blokem je odměna stříbrná.',
     langName: 'Čeština', help: 'Jak hrát', streakTitle: 'Série dní v řadě', stats: 'Statistiky', sound: 'Zvuk', language: 'Jazyk',
     opened: 'OTEVŘENO', next: 'Další trezor za', share: 'Sdílet výsledek', copied: 'Zkopírováno', copyFail: 'Kopírování nejde, výsledek je v konzoli.',
     leds: 'Kontrolky západek', turn: 'OTOČ', wheel: 'Otočit kolem (odeslat tip)',
@@ -58,6 +59,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódů' },
   },
   en: {
+    tiers: 'The fewer tries, the richer the safe and the colour of its glow: up to 10 pink, up to 14 gold, up to 20 purple, then blue. With the notepad the reward is silver.',
     langName: 'English', help: 'How to play', streakTitle: 'Daily streak', stats: 'Statistics', sound: 'Sound', language: 'Language',
     opened: 'OPENED', next: 'Next safe in', share: 'Share result', copied: 'Copied', copyFail: 'Copy failed, the result is in the console.',
     leds: 'Tumbler lights', turn: 'TURN', wheel: 'Turn the wheel (submit guess)',
@@ -113,6 +115,7 @@ export const I18N = {
     codes: { one: 'possible code', other: 'possible codes' },
   },
   sk: {
+    tiers: 'Čím menej pokusov, tým bohatší trezor a iná farba žiary: do 10 ružová, do 14 zlatá, do 20 fialová, potom modrá. S poznámkovým blokom je odmena strieborná.',
     langName: 'Slovenčina', help: 'Ako hrať', streakTitle: 'Séria dní za sebou', stats: 'Štatistiky', sound: 'Zvuk', language: 'Jazyk',
     opened: 'OTVORENÉ', next: 'Ďalší trezor o', share: 'Zdieľať výsledok', copied: 'Skopírované', copyFail: 'Kopírovanie nejde, výsledok je v konzole.',
     leds: 'Kontrolky západiek', turn: 'OTOČ', wheel: 'Otočiť kolesom (odoslať tip)',
@@ -168,6 +171,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódov' },
   },
   de: {
+    tiers: 'Je weniger Versuche, desto reicher der Tresor und die Farbe seines Leuchtens: bis 10 pink, bis 14 gold, bis 20 lila, danach blau. Mit dem Notizblock ist die Belohnung silbern.',
     langName: 'Deutsch', help: 'Spielanleitung', streakTitle: 'Tage in Folge', stats: 'Statistik', sound: 'Ton', language: 'Sprache',
     opened: 'GEÖFFNET', next: 'Nächster Tresor in', share: 'Ergebnis teilen', copied: 'Kopiert', copyFail: 'Kopieren fehlgeschlagen, das Ergebnis steht in der Konsole.',
     leds: 'Riegel-Lampen', turn: 'DREHEN', wheel: 'Rad drehen (Tipp abgeben)',
@@ -223,6 +227,7 @@ export const I18N = {
     codes: { one: 'möglicher Code', other: 'mögliche Codes' },
   },
   pl: {
+    tiers: 'Im mniej prób, tym bogatszy sejf i inny kolor poświaty: do 10 różowy, do 14 złoty, do 20 fioletowy, potem niebieski. Z notatnikiem nagroda jest srebrna.',
     langName: 'Polski', help: 'Jak grać', streakTitle: 'Seria dni z rzędu', stats: 'Statystyki', sound: 'Dźwięk', language: 'Język',
     opened: 'OTWARTE', next: 'Następny sejf za', share: 'Udostępnij wynik', copied: 'Skopiowano', copyFail: 'Nie udało się skopiować, wynik jest w konsoli.',
     leds: 'Lampki zapadek', turn: 'KRĘĆ', wheel: 'Obróć koło (wyślij typ)',
@@ -278,6 +283,7 @@ export const I18N = {
     codes: { one: 'możliwy kod', few: 'możliwe kody', many: 'możliwych kodów', other: 'możliwego kodu' },
   },
   es: {
+    tiers: 'Cuantos menos intentos, más rica la caja fuerte y otro color de brillo: hasta 10 rosa, hasta 14 dorado, hasta 20 morado, después azul. Con el bloc de notas la recompensa es plateada.',
     langName: 'Español', help: 'Cómo jugar', streakTitle: 'Racha de días', stats: 'Estadísticas', sound: 'Sonido', language: 'Idioma',
     opened: 'ABIERTA', next: 'Próxima caja fuerte en', share: 'Compartir resultado', copied: 'Copiado', copyFail: 'No se pudo copiar, el resultado está en la consola.',
     leds: 'Luces de los pestillos', turn: 'GIRA', wheel: 'Girar la rueda (enviar intento)',
@@ -333,6 +339,7 @@ export const I18N = {
     codes: { one: 'código posible', other: 'códigos posibles' },
   },
   fr: {
+    tiers: 'Moins d’essais, coffre plus riche et lueur d’une autre couleur : jusqu’à 10 rose, jusqu’à 14 or, jusqu’à 20 violet, puis bleu. Avec le bloc-notes, la récompense est argentée.',
     langName: 'Français', help: 'Comment jouer', streakTitle: 'Série de jours', stats: 'Statistiques', sound: 'Son', language: 'Langue',
     opened: 'OUVERT', next: 'Prochain coffre dans', share: 'Partager le résultat', copied: 'Copié', copyFail: 'Copie impossible, le résultat est dans la console.',
     leds: 'Voyants des goupilles', turn: 'TOURNE', wheel: 'Tourner la roue (valider)',
@@ -388,6 +395,7 @@ export const I18N = {
     codes: { one: 'code possible', other: 'codes possibles' },
   },
   it: {
+    tiers: 'Meno tentativi, cassaforte più ricca e bagliore di un altro colore: fino a 10 rosa, fino a 14 oro, fino a 20 viola, poi blu. Con il blocco note la ricompensa è d’argento.',
     langName: 'Italiano', help: 'Come si gioca', streakTitle: 'Serie di giorni', stats: 'Statistiche', sound: 'Suono', language: 'Lingua',
     opened: 'APERTA', next: 'Prossima cassaforte tra', share: 'Condividi risultato', copied: 'Copiato', copyFail: 'Copia non riuscita, il risultato è nella console.',
     leds: 'Spie dei perni', turn: 'GIRA', wheel: 'Gira la ruota (invia tentativo)',
@@ -443,6 +451,7 @@ export const I18N = {
     codes: { one: 'codice possibile', other: 'codici possibili' },
   },
   pt: {
+    tiers: 'Quanto menos tentativas, mais rico o cofre e outra cor de brilho: até 10 rosa, até 14 dourado, até 20 roxo, depois azul. Com o bloco de notas a recompensa é prateada.',
     langName: 'Português', help: 'Como jogar', streakTitle: 'Sequência de dias', stats: 'Estatísticas', sound: 'Som', language: 'Idioma',
     opened: 'ABERTO', next: 'Próximo cofre em', share: 'Compartilhar resultado', copied: 'Copiado', copyFail: 'Não foi possível copiar, o resultado está no console.',
     leds: 'Luzes dos pinos', turn: 'GIRE', wheel: 'Girar a roda (enviar palpite)',

@@ -86,12 +86,12 @@
   }
 </script>
 
-<div class="vault" bind:this={refs.vault}>
+<div class="vault" data-tier={game.tier} class:fresh={!game.instant} bind:this={refs.vault}>
   <div class="inside" aria-live="polite">
     {#if won()}
       <div>
         <p class="eyebrow">{t('opened')}</p>
-        <p class="loot">{game.guesses.at(-1)}</p>
+        <p class="loot">{#each game.guesses.at(-1) as c, i (i)}<span style:--i={i}>{c}</span>{/each}</p>
         <p>{shareFailed ? t('copyFail') : `${t('tries', { n: game.guesses.length })} · ${t('safeNo', { d: dayNo })}`}</p>
         {#if game.rank?.beaten}<p class="rank-line">{t('rankBeaten', { p: game.rank.beaten, n: game.rank.peers })}</p>{/if}
         {#if game.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
@@ -103,6 +103,7 @@
       </div>
     {/if}
   </div>
+  <div class="leak"></div>
   <form class="door" id="door" class:open={game.open} class:instant={game.instant} bind:this={refs.door} onsubmit={e => { e.preventDefault(); submit(); }}>
     <div class="top">
       <span class="label">{t('label', { d: dayNo })}</span>
@@ -139,6 +140,7 @@
       <Wheel angle={game.wheel} misses={game.misses} disabled={game.open} label={t('wheel')} />
       <span class="hint">{t('turn')} · ENTER</span>
     </div>
+    <i class="bolt"></i><i class="bolt"></i><i class="bolt"></i>
   </form>
   <div class="stamp" bind:this={refs.stamp}>{game.stamp}</div>
 </div>

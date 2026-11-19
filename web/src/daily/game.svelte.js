@@ -1,9 +1,9 @@
 // Daily game state and actions. Components render this state; the timing of the reveal
 // (tumbler clicks, LEDs, the door) is driven from here.
-import { LEN, archiveDays, consistentCodes, dayNumber, digitCounts, gameDay, nextStats } from '../../../shared/logic.js';
+import { LEN, archiveDays, consistentCodes, dayNumber, digitCounts, gameDay, nextStats, tierOf } from '../../../shared/logic.js';
 import { load, store } from '../lib/storage.js';
 import { restartAnimation, vibrate } from '../lib/dom.js';
-import { burst } from '../lib/fx.js';
+import { payoff, winSequence } from '../lib/reveal.js';
 import { sfx, ui } from '../lib/app.svelte.js';
 
 export const today = gameDay(); // the server checks this against its own clock
@@ -35,6 +35,7 @@ export const game = $state({
   stamp: '',
   open: false,
   instant: false,
+  tier: null, // the reward shown inside once open: see tierOf
   newest: false, // highlight the newest history row (not on page load)
   busy: false,
 });
@@ -181,6 +182,10 @@ export async function submit() {
     }, 400);
     return;
   }
+  if (hits === LEN) {
+    reveal();
+    return win(guess);
+  }
   // Light the tumblers one by one, each with its own click.
   for (let k = 0; k < hits; k++) {
     setTimeout(() => {
@@ -197,7 +202,6 @@ export async function submit() {
 
 function revealResult(hits, previousBest) {
   const t = ui.t;
-  if (hits === LEN) return win();
   const isRecord = hits > previousBest && game.guesses.length > 1;
   if (isRecord) {
     setTimeout(() => {
@@ -218,27 +222,31 @@ function endTurn(message) {
   refs.cells[0]?.focus();
 }
 
-function win() {
+async function win(code) {
   if (!archived) {
     game.stats = nextStats(game.stats, today, game.guesses.length);
     store('numly-stats', game.stats);
   }
   game.newest = true;
-  game.ledsWin = true;
   game.msg = '';
-  sfx.open();
-  vibrate([40, 80, 40, 80, 200]);
+  game.tier = tierOf(game.guesses.length, game.padUsed);
+  await winSequence({
+    vault: refs.vault, door: refs.door, cells: refs.cells, code, sfx,
+    onLock: i => (game.leds = i + 1),
+    onLocked: () => (game.ledsWin = true),
+  });
+  game.open = true;
+  sfx.door();
   setTimeout(() => {
-    game.open = true;
-    const r = refs.vault.getBoundingClientRect();
-    burst(refs.fx, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    payoff({ vault: refs.vault, fx: refs.fx, tier: game.tier, sfx });
     game.busy = false;
-  }, 650);
+  }, 900);
 }
 
 // ---------------------------------------------------------------- boot
 
 if (won()) {
+  game.tier = tierOf(game.guesses.length, game.padUsed);
   game.leds = LEN;
   game.open = true;
   game.instant = true;

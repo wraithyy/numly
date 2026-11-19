@@ -1,6 +1,7 @@
 // Weekly game and archive strings, merged into I18N by i18n.js.
 export const WEEK_I18N = {
   cs: {
+    weekTiers: 'Čím dřív trezor otevřeš, tím je uvnitř bohatší: do jednoho denního přídělu pokusů růžová záře, do dvou zlatá, do čtyř fialová, potom modrá. S poznámkovým blokem stříbrná.',
     weekHowTitle: 'TÝDENNÍ TREZOR', weekStatsTitle: 'TÝDENNÍ STATISTIKY', sWeeks: 'Týdny',
     weekSteps: '<li>Každé pondělí se vylosuje <b>jeden typ trezoru</b> a k němu až dva <b>modifikátory</b>. Pro všechny stejné.</li><li>Kód platí celý týden. Pokusy hlídá server, takže hraješ odkudkoli.</li><li>Pravidla tohoto týdne jsou na kartě nahoře.</li><li>Každý den dostaneš <b>novou dávku pokusů</b>. Nic se nezamyká, na kód můžeš bušit až do neděle.</li><li>Pod trezorem jsou <b>poznámky</b>: ruční, nebo automatické. Automatiku uvidí přátelé v žebříčku.</li><li>V neděli o půlnoci se kód odhalí a začne nový týden.</li>',
     type_grid: 'STĚNA SCHRÁNEK', type_grid_d: 'Mřížka 5×5 číslic. Po každém pokusu trezor hlásí zásahy v každém řádku a sloupci.', type_heist: 'LOUPEŽ', type_heist_d: 'Pět trezorů za sebou, kódy po {len} znacích. Otevřený trezor prozradí stopu k dalšímu.',
@@ -27,6 +28,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} z {total} vodítek, další přibudou zítra.', diff_easy: 'LEHKÝ', diff_medium: 'STŘEDNÍ', diff_hard: 'TĚŽKÝ', newbie: 'Poprvé tady? Začni denním trezorem.',
   },
   en: {
+    weekTiers: 'The sooner you open it, the richer it is inside: within one day’s ration of tries a pink glow, within two gold, within four purple, then blue. With the notepad, silver.',
     weekHowTitle: 'WEEKLY SAFE', weekStatsTitle: 'WEEKLY STATISTICS', sWeeks: 'Weeks',
     weekSteps: '<li>Every Monday draws <b>one type of safe</b> and up to two <b>modifiers</b>. The same for everyone.</li><li>The code holds all week. The server keeps your tries, so you can play from anywhere.</li><li>This week’s rules are on the card at the top.</li><li>Every day brings a <b>fresh ration of tries</b>. Nothing locks: keep at the code until Sunday.</li><li>Below the safe are <b>notes</b>: by hand, or automatic. Friends see the automatic ones on the board.</li><li>At midnight on Sunday the code is revealed and a new week starts.</li>',
     type_grid: 'THE WALL OF BOXES', type_grid_d: 'A 5×5 grid of digits. After each try the safe reports hits in every row and column.', type_heist: 'THE HEIST', type_heist_d: 'Five safes in a row, {len}-character codes. Each opened safe gives a clue to the next.',
@@ -53,6 +55,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} of {total} clues, more tomorrow.', diff_easy: 'EASY', diff_medium: 'MEDIUM', diff_hard: 'HARD', newbie: 'New here? Start with the daily safe.',
   },
   sk: {
+    weekTiers: 'Čím skôr trezor otvoríš, tým je vnútri bohatší: do jedného denného prídelu pokusov ružová žiara, do dvoch zlatá, do štyroch fialová, potom modrá. S poznámkovým blokom strieborná.',
     weekHowTitle: 'TÝŽDENNÝ TREZOR', weekStatsTitle: 'TÝŽDENNÉ ŠTATISTIKY', sWeeks: 'Týždne',
     weekSteps: '<li>Každý pondelok sa vylosuje <b>jeden typ trezoru</b> a k nemu až dva <b>modifikátory</b>. Pre všetkých rovnaké.</li><li>Kód platí celý týždeň. Pokusy stráži server, takže hráš odkiaľkoľvek.</li><li>Pravidlá tohto týždňa sú na karte hore.</li><li>Každý deň dostaneš <b>novú dávku pokusov</b>. Nič sa nezamyká, na kód môžeš búchať až do nedele.</li><li>Pod trezorom sú <b>poznámky</b>: ručné alebo automatické. Automatiku uvidia priatelia v rebríčku.</li><li>V nedeľu o polnoci sa kód odhalí a začne nový týždeň.</li>',
     type_grid: 'STENA SCHRÁNOK', type_grid_d: 'Mriežka 5×5 číslic. Po každom pokuse trezor hlási zásahy v každom riadku a stĺpci.', type_heist: 'LÚPEŽ', type_heist_d: 'Päť trezorov za sebou, kódy po {len} znakoch. Otvorený trezor prezradí stopu k ďalšiemu.',
@@ -79,6 +82,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} z {total} indícií, ďalšie pribudnú zajtra.', diff_easy: 'ĽAHKÝ', diff_medium: 'STREDNÝ', diff_hard: 'ŤAŽKÝ', newbie: 'Prvýkrát tu? Začni denným trezorom.',
   },
   de: {
+    weekTiers: 'Je früher du ihn öffnest, desto reicher ist er innen: innerhalb einer Tagesration an Versuchen pinkes Leuchten, innerhalb von zwei gold, von vier lila, danach blau. Mit dem Notizblock silbern.',
     weekHowTitle: 'WOCHENTRESOR', weekStatsTitle: 'WOCHENSTATISTIK', sWeeks: 'Wochen',
     weekSteps: '<li>Jeden Montag werden <b>ein Tresortyp</b> und bis zu zwei <b>Modifikatoren</b> ausgelost. Für alle gleich.</li><li>Der Code gilt die ganze Woche. Der Server speichert deine Versuche, du kannst also überall spielen.</li><li>Die Regeln dieser Woche stehen auf der Karte oben.</li><li>Jeden Tag gibt es <b>neue Versuche</b>. Nichts sperrt: bleib bis Sonntag dran.</li><li>Unter dem Tresor liegen <b>Notizen</b>: von Hand oder automatisch. Die Automatik sehen Freunde in der Wertung.</li><li>Sonntag um Mitternacht wird der Code aufgedeckt und eine neue Woche beginnt.</li>',
     type_grid: 'DIE SCHLIESSFACHWAND', type_grid_d: 'Ein 5×5-Raster aus Ziffern. Nach jedem Versuch meldet der Tresor die Treffer pro Zeile und Spalte.', type_heist: 'DER COUP', type_heist_d: 'Fünf Tresore hintereinander, Codes mit {len} Zeichen. Jeder geöffnete Tresor verrät einen Hinweis auf den nächsten.',
@@ -105,6 +109,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} von {total} Hinweisen, morgen kommen weitere.', diff_easy: 'LEICHT', diff_medium: 'MITTEL', diff_hard: 'SCHWER', newbie: 'Neu hier? Fang mit dem Tagestresor an.',
   },
   pl: {
+    weekTiers: 'Im wcześniej otworzysz sejf, tym bogatszy w środku: w ramach jednego dziennego przydziału prób różowa poświata, dwóch złota, czterech fioletowa, potem niebieska. Z notatnikiem srebrna.',
     weekHowTitle: 'SEJF TYGODNIA', weekStatsTitle: 'STATYSTYKI TYGODNIOWE', sWeeks: 'Tygodnie',
     weekSteps: '<li>Co poniedziałek losowany jest <b>jeden typ sejfu</b> i do dwóch <b>modyfikatorów</b>. Dla wszystkich te same.</li><li>Kod obowiązuje cały tydzień. Serwer pilnuje prób, więc grasz skądkolwiek.</li><li>Zasady tego tygodnia są na karcie u góry.</li><li>Każdego dnia dostajesz <b>nową pulę prób</b>. Nic się nie blokuje: łam kod aż do niedzieli.</li><li>Pod sejfem są <b>notatki</b>: ręczne albo automatyczne. Automat widać w rankingu znajomych.</li><li>W niedzielę o północy kod zostaje ujawniony i zaczyna się nowy tydzień.</li>',
     type_grid: 'ŚCIANA SKRYTEK', type_grid_d: 'Siatka 5×5 cyfr. Po każdej próbie sejf podaje trafienia w każdym wierszu i kolumnie.', type_heist: 'SKOK', type_heist_d: 'Pięć sejfów po kolei, kody po {len} znaki. Otwarty sejf zdradza wskazówkę do następnego.',
@@ -131,6 +136,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} z {total} wskazówek, kolejne jutro.', diff_easy: 'ŁATWY', diff_medium: 'ŚREDNI', diff_hard: 'TRUDNY', newbie: 'Pierwszy raz? Zacznij od dziennego sejfu.',
   },
   es: {
+    weekTiers: 'Cuanto antes la abras, más rica por dentro: con la ración de intentos de un día brillo rosa, de dos dorado, de cuatro morado, después azul. Con el bloc de notas, plateado.',
     weekHowTitle: 'CAJA SEMANAL', weekStatsTitle: 'ESTADÍSTICAS SEMANALES', sWeeks: 'Semanas',
     weekSteps: '<li>Cada lunes se sortea <b>un tipo de caja</b> y hasta dos <b>modificadores</b>. Iguales para todos.</li><li>El código vale toda la semana. El servidor guarda tus intentos, así que juegas desde cualquier sitio.</li><li>Las reglas de esta semana están en la tarjeta de arriba.</li><li>Cada día recibes <b>nuevos intentos</b>. Nada se bloquea: dale al código hasta el domingo.</li><li>Bajo la caja hay <b>notas</b>: a mano o automáticas. Tus amigos ven las automáticas en la clasificación.</li><li>El domingo a medianoche se revela el código y empieza una nueva semana.</li>',
     type_grid: 'EL MURO DE CAJAS', type_grid_d: 'Una cuadrícula de 5×5 dígitos. Tras cada intento la caja indica los aciertos en cada fila y columna.', type_heist: 'EL GOLPE', type_heist_d: 'Cinco cajas seguidas, códigos de {len} caracteres. Cada caja abierta da una pista para la siguiente.',
@@ -157,6 +163,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} de {total} pistas, mañana habrá más.', diff_easy: 'FÁCIL', diff_medium: 'MEDIA', diff_hard: 'DIFÍCIL', newbie: '¿Primera vez? Empieza por la caja diaria.',
   },
   fr: {
+    weekTiers: 'Plus tôt tu l’ouvres, plus il est riche à l’intérieur : dans la ration d’essais d’un jour lueur rose, de deux jours or, de quatre violet, puis bleu. Avec le bloc-notes, argent.',
     weekHowTitle: 'COFFRE DE LA SEMAINE', weekStatsTitle: 'STATISTIQUES HEBDO', sWeeks: 'Semaines',
     weekSteps: '<li>Chaque lundi, on tire <b>un type de coffre</b> et jusqu’à deux <b>modificateurs</b>. Les mêmes pour tous.</li><li>Le code vaut toute la semaine. Le serveur garde tes essais, tu peux donc jouer de partout.</li><li>Les règles de la semaine sont sur la carte en haut.</li><li>Chaque jour apporte <b>de nouveaux essais</b>. Rien ne se verrouille : insiste jusqu’à dimanche.</li><li>Sous le coffre, des <b>notes</b> : à la main ou automatiques. Tes amis voient les automatiques au classement.</li><li>Dimanche à minuit, le code est révélé et une nouvelle semaine commence.</li>',
     type_grid: 'LE MUR DE CASIERS', type_grid_d: 'Une grille de 5×5 chiffres. Après chaque essai, le coffre indique les bons chiffres par ligne et par colonne.', type_heist: 'LE CASSE', type_heist_d: 'Cinq coffres à la suite, codes de {len} caractères. Chaque coffre ouvert donne un indice pour le suivant.',
@@ -183,6 +190,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} indices sur {total}, d’autres demain.', diff_easy: 'FACILE', diff_medium: 'MOYEN', diff_hard: 'DIFFICILE', newbie: 'Première fois ? Commence par le coffre du jour.',
   },
   it: {
+    weekTiers: 'Prima la apri, più è ricca dentro: entro la razione di tentativi di un giorno bagliore rosa, di due oro, di quattro viola, poi blu. Con il blocco note, argento.',
     weekHowTitle: 'CASSAFORTE SETTIMANALE', weekStatsTitle: 'STATISTICHE SETTIMANALI', sWeeks: 'Settimane',
     weekSteps: '<li>Ogni lunedì si estrae <b>un tipo di cassaforte</b> e fino a due <b>modificatori</b>. Uguali per tutti.</li><li>Il codice vale tutta la settimana. Il server conserva i tuoi tentativi, quindi giochi da dove vuoi.</li><li>Le regole della settimana sono sulla scheda in alto.</li><li>Ogni giorno arrivano <b>nuovi tentativi</b>. Niente si blocca: insisti fino a domenica.</li><li>Sotto la cassaforte ci sono gli <b>appunti</b>: a mano o automatici. Gli amici vedono quelli automatici in classifica.</li><li>Domenica a mezzanotte il codice viene svelato e inizia una nuova settimana.</li>',
     type_grid: 'IL MURO DELLE CASSETTE', type_grid_d: 'Una griglia di 5×5 cifre. Dopo ogni tentativo la cassaforte indica i centri in ogni riga e colonna.', type_heist: 'IL COLPO', type_heist_d: 'Cinque casseforti in fila, codici di {len} caratteri. Ogni cassaforte aperta dà un indizio per la successiva.',
@@ -209,6 +217,7 @@ export const WEEK_I18N = {
     cluesMore: '{n} indizi su {total}, altri domani.', diff_easy: 'FACILE', diff_medium: 'MEDIA', diff_hard: 'DIFFICILE', newbie: 'Prima volta? Inizia dalla cassaforte del giorno.',
   },
   pt: {
+    weekTiers: 'Quanto antes abrir, mais rico por dentro: dentro da cota de tentativas de um dia brilho rosa, de dois dourado, de quatro roxo, depois azul. Com o bloco de notas, prateado.',
     weekHowTitle: 'COFRE SEMANAL', weekStatsTitle: 'ESTATÍSTICAS SEMANAIS', sWeeks: 'Semanas',
     weekSteps: '<li>Toda segunda-feira é sorteado <b>um tipo de cofre</b> e até dois <b>modificadores</b>. Iguais para todos.</li><li>O código vale a semana toda. O servidor guarda suas tentativas, então você joga de qualquer lugar.</li><li>As regras da semana estão no cartão no topo.</li><li>Todo dia chega <b>uma nova leva de tentativas</b>. Nada trava: insista no código até domingo.</li><li>Abaixo do cofre há <b>notas</b>: à mão ou automáticas. Os amigos veem as automáticas na classificação.</li><li>No domingo à meia-noite o código é revelado e começa uma nova semana.</li>',
     type_grid: 'O MURO DE COFRES', type_grid_d: 'Uma grade de 5×5 dígitos. Após cada tentativa o cofre indica os acertos em cada linha e coluna.', type_heist: 'O ASSALTO', type_heist_d: 'Cinco cofres em sequência, códigos de {len} caracteres. Cada cofre aberto dá uma pista para o próximo.',

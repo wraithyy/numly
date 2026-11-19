@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { scoreOf, nextStats, streakNow, consistentCodes, digitCounts } from '../shared/logic.js';
+import { scoreOf, nextStats, streakNow, consistentCodes, digitCounts, tierOf } from '../shared/logic.js';
 import { I18N, LANGS, detectLang, translator } from '../web/src/lib/i18n.js';
 
 test('scoreOf counts exact positional matches only', () => {
@@ -64,4 +64,9 @@ test('the archive offers up to 30 past days, never before launch', async () => {
   assert.ok(!late.includes('2027-03-01'));
   assert.equal(dayNumber(FIRST_DAY), 1);
   assert.equal(dayNumber('2026-11-20'), 3);
+});
+
+test('tierOf: fewer tries, richer safe; the automatic notepad always gets silver', () => {
+  assert.deepEqual([1, 10, 11, 14, 15, 20, 21, 60].map(n => tierOf(n, false)), ['pink', 'pink', 'gold', 'gold', 'purple', 'purple', 'blue', 'blue']);
+  assert.equal(tierOf(3, true), 'silver');
 });

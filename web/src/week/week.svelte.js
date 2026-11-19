@@ -2,11 +2,11 @@
 // and runs the reveal. Tries are stored server-side, so the week continues on any device.
 import { gameDay, msUntilNextDay } from '../../../shared/logic.js';
 import { restartAnimation, vibrate } from '../lib/dom.js';
-import { burst } from '../lib/fx.js';
+import { payoff, winSequence } from '../lib/reveal.js';
 import { load, store } from '../lib/storage.js';
 import { player, sfx, ui } from '../lib/app.svelte.js';
 import { friends } from '../lib/friends.svelte.js';
-import { nextWeekStats, padAllowed } from '../../../shared/week.js';
+import { nextWeekStats, padAllowed, weekTier } from '../../../shared/week.js';
 
 const DIGITS = '0123456789ABCDEF';
 
@@ -21,6 +21,8 @@ export const wk = $state({
   msg: '',
   open: false,
   instant: false,
+  tier: null, // the reward shown inside once open: see weekTier
+  ledsWin: false,
   newest: false,
   busy: false,
   stats: load('numly-week-stats', { won: 0, streak: 0, best: 0, last: null, hist: {} }),
@@ -55,6 +57,7 @@ function apply(view, instant) {
   wk.leds = lastTry?.hits ?? 0;
   wk.near = lastTry?.near ?? null;
   if (view.solved) {
+    wk.tier = weekTier(view.spec, view.tries.length, wk.padUsed);
     wk.open = true;
     wk.instant = instant;
     store(weekDoneKey(view.week), true);
@@ -176,7 +179,7 @@ export async function submit() {
   const reveal = () => {
     wk.view = view;
     wk.near = result.near ?? null;
-    if (result.solved) return win(view);
+    if (result.solved) return win(view, guess);
     wk.newest = true;
     if (result.opened) {
       // Heist: one safe down, the chain moves on to the next.
@@ -193,6 +196,7 @@ export async function submit() {
     wk.busy = false;
     refs.cells[0]?.focus();
   };
+  if (result.solved) return reveal(); // the win sequence lights the LEDs itself
   if (result.hits === 0) return setTimeout(() => { sfx.thud(); reveal(); }, 400);
   for (let k = 0; k < result.hits; k++) {
     setTimeout(() => {
@@ -204,18 +208,24 @@ export async function submit() {
   }
 }
 
-function win(view) {
+async function win(view, code) {
   wk.newest = true;
   wk.msg = '';
   store(weekDoneKey(view.week), true);
-  sfx.open();
-  vibrate([40, 80, 40, 80, 200]);
+  wk.tier = weekTier(view.spec, view.tries.length, wk.padUsed);
+  // The cells of the safe just opened: for the heist that is the last one in the chain.
+  const cells = refs.cells.slice(0, code.length);
+  await winSequence({
+    vault: refs.vault, door: refs.door, cells, code, base: view.spec.base, sfx, stuck: true,
+    onLock: i => (wk.leds = i + 1),
+    onLocked: () => (wk.ledsWin = true),
+  });
+  apply(view, false);
+  sfx.door();
   setTimeout(() => {
-    apply(view, false);
-    const r = refs.vault.getBoundingClientRect();
-    burst(refs.fx, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    payoff({ vault: refs.vault, fx: refs.fx, tier: wk.tier, sfx });
     wk.busy = false;
-  }, 650);
+  }, 900);
 }
 
 /** Milliseconds until Monday 00:00 in the game timezone. Off by an hour across a DST switch; fine for a countdown. */

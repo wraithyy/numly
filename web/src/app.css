@@ -440,3 +440,62 @@ a.icon { color: inherit; text-decoration: none; }
   .wheel .seat { fill: rgba(0,0,0,.18); stroke: rgba(0,0,0,.25); }
   .wheel svg { filter: drop-shadow(0 2px 2px rgba(0,0,0,.3)); }
 }
+
+/* ---- the win sequence (lib/reveal.js) ---- */
+/* reels spinning over the (emptied) code cells */
+.slot, .wall { position: relative; }
+.reel { position: absolute; overflow: hidden; pointer-events: none; border-radius: 10px; text-align: center; color: var(--digit); text-shadow: 0 0 12px var(--glow); }
+.reel > span { display: flex; flex-direction: column; }
+.reel.spin > span { filter: blur(.5px); }
+.reel.lock { animation: reel-lock .4s; box-shadow: 0 0 0 2px var(--brass-hi), 0 0 18px var(--glow); }
+@keyframes reel-lock { 0% { transform: scale(1.2); } }
+/* bolts on the door's edge, and light leaking round it while the safe rumbles */
+.bolt { position: absolute; right: -9px; width: 20px; height: 9px; border-radius: 3px; background: linear-gradient(#e2dfd6, #6c6a64); box-shadow: 0 2px 3px rgba(0,0,0,.6); }
+.bolt:nth-last-child(3) { top: 22%; }
+.bolt:nth-last-child(2) { top: 50%; }
+.bolt:nth-last-child(1) { top: 78%; }
+.leak { position: absolute; inset: 0; z-index: 1; border-radius: 22px; opacity: 0; pointer-events: none;
+  box-shadow: 0 0 16px 3px var(--tier, #ffcf5a), 0 0 50px 14px color-mix(in srgb, var(--tier, #ffcf5a) 55%, transparent); }
+/* the open door shows plain steel from behind, not the cells mirrored */
+.door { transform-style: preserve-3d; }
+.door > * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+/* the reward inside: fewer tries, richer safe and a different glow (tierOf in shared/logic.js) */
+.vault[data-tier="pink"] { --tier: #ff5a8a; --interior: url(./assets/interior/pink.webp); }
+.vault[data-tier="gold"] { --tier: #ffcf5a; --interior: url(./assets/interior/gold.webp); }
+.vault[data-tier="purple"] { --tier: #c58cff; --interior: url(./assets/interior/purple.webp); }
+.vault[data-tier="blue"] { --tier: #5cb8ff; --interior: url(./assets/interior/blue.webp); }
+.vault[data-tier="silver"] { --tier: #cfd6de; --interior: url(./assets/interior/silver.webp); }
+.vault[data-tier] .inside {
+  overflow: hidden;
+  background: radial-gradient(ellipse 80% 55% at 50% 42%, rgba(6,5,3,.8), rgba(6,5,3,.3) 75%), var(--interior) center bottom / cover no-repeat, #15171a;
+}
+.vault[data-tier] .inside::before { /* rays in the tier's colour */
+  content: ""; position: absolute; left: 50%; top: 42%; width: 640px; height: 640px; margin: -320px 0 0 -320px; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--tier) 26%, transparent) 0 7deg, transparent 7deg 20deg);
+  -webkit-mask: radial-gradient(circle, #000 6%, transparent 60%); mask: radial-gradient(circle, #000 6%, transparent 60%);
+  animation: rays 40s linear infinite;
+}
+.vault.fresh[data-tier] .inside::before { animation: rays-in 1.1s .5s cubic-bezier(.2,1.3,.4,1) backwards, rays 40s linear infinite; }
+@keyframes rays { to { rotate: 360deg; } }
+@keyframes rays-in { from { opacity: 0; transform: scale(.2); } }
+.inside > div { position: relative; }
+.loot { background: none; }
+.loot > span {
+  display: inline-block;
+  background: linear-gradient(180deg, #fff6cf 0%, #f0c35a 45%, #a8711a 55%, #ffe39a 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.vault[data-tier] .loot { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--tier) 75%, transparent)); }
+.vault.fresh .loot > span { animation: digit .5s cubic-bezier(.2,1.8,.4,1) backwards; animation-delay: calc(.9s + var(--i) * .11s); }
+@keyframes digit { 0% { opacity: 0; transform: translateY(14px) scale(.3); filter: brightness(3); } 60% { transform: translateY(-4px) scale(1.25); filter: brightness(2); } }
+/* the reward colours, in help and stats */
+.tierdots { display: inline-flex; gap: 3px; vertical-align: middle; margin-right: 4px; }
+.tierdots i, .tierlegend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.tierlegend { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; margin: 10px 0 0; font-size: 11px; color: var(--muted); }
+.tierlegend span { display: inline-flex; align-items: center; gap: 5px; }
+:is(.tierdots, .tierlegend) .pink { background: #ff5a8a; }
+:is(.tierdots, .tierlegend) .gold { background: #ffcf5a; }
+:is(.tierdots, .tierlegend) .purple { background: #c58cff; }
+:is(.tierdots, .tierlegend) .blue { background: #5cb8ff; }
+:is(.tierdots, .tierlegend) .silver { background: #cfd6de; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }

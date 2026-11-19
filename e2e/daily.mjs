@@ -49,8 +49,9 @@ export async function daily({ base, env }) {
         await fetch(base + '/api/guess', { method: 'POST', body: JSON.stringify({ day, guess: g, player }) });
       }
     }
-    await p.type(code, 3500);
-    check('door opens with the code', (await p.text('.loot')) === code);
+    await p.type(code, 7500); // reels, rumble, bolts, then the door
+    check('door opens with the code', (await p.text('.loot')) === code && (await p.ev(`document.getElementById('door').classList.contains('open')`)));
+    check('used the notepad: the reward is silver', (await p.ev(`document.querySelector('.vault').dataset.tier`)) === 'silver');
     check('rank among today\'s solvers', (await p.text('.rank-line'))?.includes('100 % z 3 hráčů'), await p.text('.rank-line'));
     check('notepad badge', await p.ev(`!!document.querySelector('.padbadge')`));
     check('countdown', /\d\d:\d\d:\d\d/.test(await p.text('.next b')));

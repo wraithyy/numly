@@ -36,6 +36,9 @@
       <div class="bar" class:today={k === todays}><span>{k}</span><i style:width="{(v / max) * 100}%">{v}</i></div>
     {/each}
   </div>
+  <p class="tierlegend" title={t('tiers')}>
+    <span><i class="pink"></i>≤10</span><span><i class="gold"></i>11–14</span><span><i class="purple"></i>15–20</span><span><i class="blue"></i>21+</span><span><i class="silver"></i>{t('pad').toLowerCase()}</span>
+  </p>
 
   <h3 class="subtitle">{t('archiveTitle')}</h3>
   <p class="note">{days.length ? t('archiveNote') : t('archiveEmpty')}</p>

@@ -23,5 +23,6 @@
     <p>{@html t('exText')}</p>
   </div>
   <p class="note">{@html t('note')}</p>
+  <p class="note"><span class="tierdots" aria-hidden="true"><i class="pink"></i><i class="gold"></i><i class="purple"></i><i class="blue"></i><i class="silver"></i></span> {t('tiers')}</p>
   <form method="dialog"><button class="btn gold wide">{t('go')}</button></form>
 </dialog>

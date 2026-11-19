@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { nextWeekStats, weekBucket, weekStreakNow } from '../shared/week.js';
+import { weekTier } from '../shared/week.js';
 import { ALLOWED, MODS, TYPES, cluesOut, compareWeek, difficulty, weekDayIndex, drawRules, readyTypes, isoWeek, isGuess, judge, makeWeek, publicSpec, rngFrom, weekStartDay } from '../shared/week.js';
 import { consistentCodes } from '../shared/logic.js';
 
@@ -220,4 +221,11 @@ test('the automatic notepad keeps only codes that fit every try', async () => {
   assert.ok(!padAllowed({ type: 'big', mods: [], len: 8, base: 10 }));
   assert.ok(!padAllowed({ type: 'cipher', mods: [], len: 5, base: 10 }));
   assert.ok(!padAllowed({ type: 'grid', mods: [], len: 25, base: 10 }));
+});
+
+test('weekTier counts in days of the daily ration', () => {
+  const spec = { perDay: 10 };
+  assert.deepEqual([10, 11, 20, 21, 40, 41].map(n => weekTier(spec, n, false)), ['pink', 'gold', 'gold', 'purple', 'purple', 'blue']);
+  assert.equal(weekTier({ perDay: 1 }, 1, false), 'pink'); // a cipher solved on the first day
+  assert.equal(weekTier(spec, 3, true), 'silver');
 });

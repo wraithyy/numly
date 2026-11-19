@@ -85,12 +85,12 @@
   });
 </script>
 
-<div class="vault" bind:this={refs.vault}>
+<div class="vault" data-tier={wk.tier} class:fresh={!wk.instant} bind:this={refs.vault}>
   <div class="inside" aria-live="polite">
     {#if wk.view.solved}
       <div>
         <p class="eyebrow">{t('opened')}</p>
-        <p class="loot long" class:wall={grid}>{#each loot as line, i (i)}<span>{line}</span>{/each}</p>
+        <p class="loot long" class:wall={grid}>{#each loot as line, i (i)}<span style:--i={i}>{line}</span>{/each}</p>
         <p>{shareFailed ? t('copyFail') : t('weekSolved', { n: wk.view.tries.length })}</p>
         {#if wk.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
         <p class="next"><span>{t('weekEnds')}</span> <b>{countdown}</b></p>
@@ -98,13 +98,14 @@
       </div>
     {/if}
   </div>
+  <div class="leak"></div>
   <form class="door" id="door" class:open={wk.open} class:instant={wk.instant} bind:this={refs.door} onsubmit={e => { e.preventDefault(); submit(); }}>
     <div class="top">
       <span class="label">{label}</span>
       {#if grid}
         <span class="gridscore" class:on={wk.leds > 0}>{wk.leds}/{spec.len}</span>
       {:else}
-        <div class="leds" role="img" aria-label={t('leds')}>
+        <div class="leds" class:win={wk.ledsWin} role="img" aria-label={t('leds')}>
           {#each { length: spec.len } as _, i (i)}<span class="led small" class:on={i < wk.leds}></span>{/each}
         </div>
       {/if}
@@ -134,6 +135,7 @@
       <Wheel angle={wk.wheel} misses={wk.misses} disabled={wk.view.solved} label={t('wheel')} />
       <span class="hint">{t('turn')} · ENTER</span>
     </div>
+    <i class="bolt"></i><i class="bolt"></i><i class="bolt"></i>
   </form>
 </div>
 

@@ -1,10 +1,17 @@
 // Gold coin and spark burst for the win. Skipped entirely under prefers-reduced-motion.
 
-const COLORS = ['#fff6cf', '#f2d58a', '#e0ac3e', '#b07a1e', '#ffcf7a'];
+// One palette per reward tier (see tierOf in shared/logic.js).
+export const TIER_COLORS = {
+  pink: ['#fff0f4', '#ff9ab8', '#ff5a8a', '#d62f63', '#ffcf7a'],
+  gold: ['#fff6cf', '#f2d58a', '#e0ac3e', '#b07a1e', '#ffcf7a'],
+  purple: ['#f3e3ff', '#d6a8ff', '#a65cf0', '#7a2fd0', '#ffcf7a'],
+  blue: ['#e3f4ff', '#9ad4ff', '#4a9de6', '#2a6cb3', '#ffffff'],
+  silver: ['#ffffff', '#e4e9ee', '#b9c2cc', '#8a949f', '#d8dde3'],
+};
 const COUNT = 160;
 const GRAVITY = 0.32;
 
-export function burst(canvas, origin) {
+export function burst(canvas, origin, colors = TIER_COLORS.gold, count = COUNT) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const ctx = canvas.getContext('2d');
@@ -15,7 +22,7 @@ export function burst(canvas, origin) {
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  const particles = Array.from({ length: COUNT }, (_, i) => {
+  const particles = Array.from({ length: count }, (_, i) => {
     const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.5;
     const speed = 5 + Math.random() * 12;
     return {
@@ -23,7 +30,7 @@ export function burst(canvas, origin) {
       vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
       size: 4 + Math.random() * 5,
       rot: Math.random() * 6, spin: (Math.random() - 0.5) * 0.35,
-      color: COLORS[i % COLORS.length],
+      color: colors[i % colors.length],
       spark: i % 3 === 0,
     };
   });

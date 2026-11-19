@@ -38,8 +38,9 @@ export async function big({ base, env }) {
       check('no automatic notepad for a code this long', !(await ann.ev(`!!document.querySelector('.wnotes .padbar')`)));
     }
 
-    await ann.type(secret.code, 3500);
-    check('door opens with the code', (await ann.text('.loot')) === secret.code);
+    await ann.type(secret.code, 9500); // reels, a stuck rumble, bolts, then the door
+    check('door opens with the code', (await ann.text('.loot')) === secret.code && (await ann.ev(`document.getElementById('door').classList.contains('open')`)));
+    check('two tries, no notepad: the richest reward', (await ann.ev(`document.querySelector('.vault').dataset.tier`)) === (padAllowed(spec) ? 'silver' : 'pink'));
     check('share button', await ann.ev(`!!document.querySelector('.vault .actions button')`));
     await bob.go('/week');
     const board = await bob.ev(`[...document.querySelectorAll('.weekboard .rank')].map(r => r.textContent.replace(/\\s+/g, ' ').trim())`);
@@ -88,7 +89,7 @@ export async function grid({ base, env }) {
     await p.type(guess);
     check('row and column hits', (await p.ev(`[...document.querySelectorAll('.wall .hit')].map(e => e.textContent).join(',')`)) === '5,0,0,0,0,1,1,1,1,1');
     check('score counter', (await p.text('.gridscore')) === '5/25');
-    await p.type(secret.code, 4500);
+    await p.type(secret.code, 10000);
     check('wall opens', (await p.text('.loot')) === secret.code);
     check('no page errors', !p.errors.length, p.errors.join(' | '));
   } finally {
@@ -129,7 +130,7 @@ export async function heist({ base, env }) {
     check('no overflow at 390px', (await p.ev('document.documentElement.scrollWidth')) === 390);
 
     for (const code of secret.codes.slice(1)) await p.type(code, 2400);
-    await sleep(1500);
+    await sleep(8000); // the last safe plays the full win sequence
     check('all five safes open', (await p.ev(`document.querySelectorAll('.chain li.done').length`)) === 5 && (await p.ev(`document.getElementById('door').classList.contains('open')`)));
     await p.ev(`document.getElementById('statsBtn').click()`);
     await sleep(200);

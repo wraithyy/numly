@@ -12,8 +12,9 @@ Built with Svelte 5 and Vite on Cloudflare Workers with a Durable Object; game r
 
 - **Safe-door interface:** a one-time-code style input, tumbler lights and a spinning wheel.
 - **Mobile controls:** roll each digit with the arrows above and below it, a vertical swipe, or ArrowUp/ArrowDown.
-- **Sound and haptics:** sounds are synthesised with WebAudio, so the game ships no audio files.
-- **Win sequence:** the door swings open and a coin burst follows. It respects `prefers-reduced-motion`.
+- **Sound and haptics:** short UI sounds are synthesised with WebAudio; the win sequence uses a few small CC0 samples. The mute switch is remembered.
+- **Win sequence:** the code spins in its cells like slot reels and locks digit by digit, the safe rumbles while light leaks round the door, the bolts give and the door swings open onto the reward. The weekly safe sticks once before it gives. It respects `prefers-reduced-motion`.
+- **Reward by tries:** the glow, the coins and what lies inside the safe get richer the fewer tries it took: daily up to 10 pink, 14 gold, 20 purple, then blue; weekly within 1, 2 or 4 days of the daily ration. With the notepad it is always silver.
 - **Optional notepad:** it derives from your results which digits can still go where, and how many codes remain. Turning it on is recorded in that day's result.
 - **Streaks, statistics and a shareable result.**
 - **Archive:** replay any safe from the last 30 days. Archive games never count toward the streak or stats, and friends only see today.
@@ -90,4 +91,4 @@ A key can be made with `node -e "crypto.subtle.generateKey({name:'ECDSA',namedCu
 
 ## License
 
-MIT
+MIT. The win sequence sounds are from [Kenney](https://kenney.nl) audio packs, released under CC0.

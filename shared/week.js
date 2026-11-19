@@ -1,7 +1,7 @@
 // Weekly game rules, shared by the Worker, the browser and the tests.
 // A week = one game type + 0-2 modifiers, all drawn from secret bytes (HMAC of the week), so the
 // draw is random but identical for everyone. The spec is public; the secret stays on the server.
-import { LEN, gameDay, shiftDay } from './logic.js';
+import { LEN, gameDay, shiftDay, tierOf } from './logic.js';
 import { makeCipher } from './cipher.js';
 
 export const TYPES = ['big', 'cipher', 'grid', 'heist'];
@@ -290,3 +290,6 @@ export function candidates(spec, tries, { sum = null, fixed = null } = {}) {
   }
   return { left, counts };
 }
+
+/** The weekly reward tier, counted in days of the daily ration: within 1, 2, 4 days, or later. */
+export const weekTier = (spec, tries, pad) => tierOf(tries, pad, [1, 2, 4].map(d => d * spec.perDay));

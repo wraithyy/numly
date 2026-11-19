@@ -73,3 +73,15 @@ export function archiveDays(today) {
   }
   return days;
 }
+
+/**
+ * The reward a solved safe shows (glow colour and what lies inside): fewer tries, richer safe.
+ * `limits` are the inclusive try counts for pink, gold and purple; above them it is blue.
+ * The automatic notepad always earns silver.
+ */
+export const TIERS = ['pink', 'gold', 'purple', 'blue'];
+export function tierOf(tries, pad, limits = [10, 14, 20]) {
+  if (pad) return 'silver';
+  const i = limits.findIndex(l => tries <= l);
+  return TIERS[i < 0 ? TIERS.length - 1 : i];
+}
