@@ -24,7 +24,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Opravdu zapnout?', padAskNo: 'Zpět', padAskYes: 'Zapnout',
     coffee: 'Líbí se ti hra? Kup mi kávu',
     rankBeaten: 'Méně pokusů než {p} % z {n} hráčů, kteří dnes trezor otevřeli.',
-    cluesMore: '{n} z {total} vodítek, další přibudou zítra.', diff_easy: 'LEHKÝ', diff_medium: 'STŘEDNÍ', diff_hard: 'TĚŽKÝ', newbie: 'Poprvé tady? Začni denním trezorem, je jednodušší.',
+    cluesMore: '{n} z {total} vodítek, další přibudou zítra.', diff_easy: 'LEHKÝ', diff_medium: 'STŘEDNÍ', diff_hard: 'TĚŽKÝ', newbie: 'Poprvé tady? Začni denním trezorem.',
   },
   en: {
     weekHowTitle: 'WEEKLY SAFE', weekStatsTitle: 'WEEKLY STATISTICS', sWeeks: 'Weeks',
@@ -50,7 +50,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Turn it on?', padAskNo: 'Back', padAskYes: 'Turn on',
     coffee: 'Enjoying the game? Buy me a coffee',
     rankBeaten: 'Fewer tries than {p}% of the {n} players who opened it today.',
-    cluesMore: '{n} of {total} clues, more tomorrow.', diff_easy: 'EASY', diff_medium: 'MEDIUM', diff_hard: 'HARD', newbie: 'New here? Start with the daily safe, it is gentler.',
+    cluesMore: '{n} of {total} clues, more tomorrow.', diff_easy: 'EASY', diff_medium: 'MEDIUM', diff_hard: 'HARD', newbie: 'New here? Start with the daily safe.',
   },
   sk: {
     weekHowTitle: 'TÝŽDENNÝ TREZOR', weekStatsTitle: 'TÝŽDENNÉ ŠTATISTIKY', sWeeks: 'Týždne',
@@ -76,7 +76,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Naozaj zapnúť?', padAskNo: 'Späť', padAskYes: 'Zapnúť',
     coffee: 'Páči sa ti hra? Kúp mi kávu',
     rankBeaten: 'Menej pokusov než {p} % z {n} hráčov, ktorí dnes trezor otvorili.',
-    cluesMore: '{n} z {total} indícií, ďalšie pribudnú zajtra.', diff_easy: 'ĽAHKÝ', diff_medium: 'STREDNÝ', diff_hard: 'ŤAŽKÝ', newbie: 'Prvýkrát tu? Začni denným trezorom, je jednoduchší.',
+    cluesMore: '{n} z {total} indícií, ďalšie pribudnú zajtra.', diff_easy: 'ĽAHKÝ', diff_medium: 'STREDNÝ', diff_hard: 'ŤAŽKÝ', newbie: 'Prvýkrát tu? Začni denným trezorom.',
   },
   de: {
     weekHowTitle: 'WOCHENTRESOR', weekStatsTitle: 'WOCHENSTATISTIK', sWeeks: 'Wochen',
@@ -102,7 +102,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Wirklich einschalten?', padAskNo: 'Zurück', padAskYes: 'Einschalten',
     coffee: 'Gefällt dir das Spiel? Spendier mir einen Kaffee',
     rankBeaten: 'Weniger Versuche als {p} % der {n} Spieler, die ihn heute geöffnet haben.',
-    cluesMore: '{n} von {total} Hinweisen, morgen kommen weitere.', diff_easy: 'LEICHT', diff_medium: 'MITTEL', diff_hard: 'SCHWER', newbie: 'Neu hier? Fang mit dem Tagestresor an, er ist leichter.',
+    cluesMore: '{n} von {total} Hinweisen, morgen kommen weitere.', diff_easy: 'LEICHT', diff_medium: 'MITTEL', diff_hard: 'SCHWER', newbie: 'Neu hier? Fang mit dem Tagestresor an.',
   },
   pl: {
     weekHowTitle: 'SEJF TYGODNIA', weekStatsTitle: 'STATYSTYKI TYGODNIOWE', sWeeks: 'Tygodnie',
@@ -128,7 +128,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Na pewno włączyć?', padAskNo: 'Wróć', padAskYes: 'Włącz',
     coffee: 'Podoba ci się gra? Postaw mi kawę',
     rankBeaten: 'Mniej prób niż {p}% z {n} graczy, którzy otworzyli go dziś.',
-    cluesMore: '{n} z {total} wskazówek, kolejne jutro.', diff_easy: 'ŁATWY', diff_medium: 'ŚREDNI', diff_hard: 'TRUDNY', newbie: 'Pierwszy raz? Zacznij od dziennego sejfu, jest łatwiejszy.',
+    cluesMore: '{n} z {total} wskazówek, kolejne jutro.', diff_easy: 'ŁATWY', diff_medium: 'ŚREDNI', diff_hard: 'TRUDNY', newbie: 'Pierwszy raz? Zacznij od dziennego sejfu.',
   },
   es: {
     weekHowTitle: 'CAJA SEMANAL', weekStatsTitle: 'ESTADÍSTICAS SEMANALES', sWeeks: 'Semanas',
@@ -154,7 +154,7 @@ export const WEEK_I18N = {
     padAskTitle: '¿Seguro que lo activas?', padAskNo: 'Volver', padAskYes: 'Activar',
     coffee: '¿Te gusta el juego? Invítame a un café',
     rankBeaten: 'Menos intentos que el {p} % de los {n} jugadores que la abrieron hoy.',
-    cluesMore: '{n} de {total} pistas, mañana habrá más.', diff_easy: 'FÁCIL', diff_medium: 'MEDIA', diff_hard: 'DIFÍCIL', newbie: '¿Primera vez? Empieza por la caja diaria, es más sencilla.',
+    cluesMore: '{n} de {total} pistas, mañana habrá más.', diff_easy: 'FÁCIL', diff_medium: 'MEDIA', diff_hard: 'DIFÍCIL', newbie: '¿Primera vez? Empieza por la caja diaria.',
   },
   fr: {
     weekHowTitle: 'COFFRE DE LA SEMAINE', weekStatsTitle: 'STATISTIQUES HEBDO', sWeeks: 'Semaines',
@@ -180,7 +180,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Vraiment l’activer ?', padAskNo: 'Retour', padAskYes: 'Activer',
     coffee: 'Le jeu te plaît ? Offre-moi un café',
     rankBeaten: 'Moins d’essais que {p} % des {n} joueurs qui l’ont ouvert aujourd’hui.',
-    cluesMore: '{n} indices sur {total}, d’autres demain.', diff_easy: 'FACILE', diff_medium: 'MOYEN', diff_hard: 'DIFFICILE', newbie: 'Première fois ? Commence par le coffre du jour, il est plus simple.',
+    cluesMore: '{n} indices sur {total}, d’autres demain.', diff_easy: 'FACILE', diff_medium: 'MOYEN', diff_hard: 'DIFFICILE', newbie: 'Première fois ? Commence par le coffre du jour.',
   },
   it: {
     weekHowTitle: 'CASSAFORTE SETTIMANALE', weekStatsTitle: 'STATISTICHE SETTIMANALI', sWeeks: 'Settimane',
@@ -206,7 +206,7 @@ export const WEEK_I18N = {
     padAskTitle: 'Attivarlo davvero?', padAskNo: 'Indietro', padAskYes: 'Attiva',
     coffee: 'Ti piace il gioco? Offrimi un caffè',
     rankBeaten: 'Meno tentativi del {p}% dei {n} giocatori che l’hanno aperta oggi.',
-    cluesMore: '{n} indizi su {total}, altri domani.', diff_easy: 'FACILE', diff_medium: 'MEDIA', diff_hard: 'DIFFICILE', newbie: 'Prima volta? Inizia dalla cassaforte del giorno, è più semplice.',
+    cluesMore: '{n} indizi su {total}, altri domani.', diff_easy: 'FACILE', diff_medium: 'MEDIA', diff_hard: 'DIFFICILE', newbie: 'Prima volta? Inizia dalla cassaforte del giorno.',
   },
   pt: {
     weekHowTitle: 'COFRE SEMANAL', weekStatsTitle: 'ESTATÍSTICAS SEMANAIS', sWeeks: 'Semanas',
@@ -232,6 +232,6 @@ export const WEEK_I18N = {
     padAskTitle: 'Ligar mesmo?', padAskNo: 'Voltar', padAskYes: 'Ligar',
     coffee: 'Gostou do jogo? Me pague um café',
     rankBeaten: 'Menos tentativas que {p}% dos {n} jogadores que abriram hoje.',
-    cluesMore: '{n} de {total} pistas, mais amanhã.', diff_easy: 'FÁCIL', diff_medium: 'MÉDIO', diff_hard: 'DIFÍCIL', newbie: 'Primeira vez? Comece pelo cofre diário, é mais simples.',
+    cluesMore: '{n} de {total} pistas, mais amanhã.', diff_easy: 'FÁCIL', diff_medium: 'MÉDIO', diff_hard: 'DIFÍCIL', newbie: 'Primeira vez? Comece pelo cofre diário.',
   },
 };

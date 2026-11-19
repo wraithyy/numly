@@ -33,17 +33,19 @@
 
 <p class="offline" role="status" hidden={ui.online}>{t('offlineBanner')}</p>
 <header>
-  <div>
+  <div class="brand">
     <h1>NUMLY</h1>
     <p class="meta">{meta}</p>
   </div>
-  <div class="tools">
+  <div class="badges">
     {#if installPrompt}
       <button class="plate hot" onclick={install}>{t('install')}</button>
     {/if}
     {#if streak !== null}
       <span class="plate" class:hot={streak > 0} title={t('streakTitle')}>{t('streak', { n: streak })}</span>
     {/if}
+  </div>
+  <div class="tools">
     <button class="icon" id="friendsBtn" aria-label={t('friendsTitle')} title={t('friendsTitle')} onclick={onFriends}>
       <svg viewBox="0 0 24 24"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7M22 21v-1a7 7 0 0 0-4-6.3" /></svg>
       {#if friends.incoming.length}<span class="badge" id="friendsBadge">{friends.incoming.length}</span>{/if}
