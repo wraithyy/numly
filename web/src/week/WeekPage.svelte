@@ -15,6 +15,7 @@
   import { ui } from '../lib/app.svelte.js';
   import { startFriends } from '../lib/friends.svelte.js';
   import { wk, refs, loadWeek, fillFrom, submit, isChar } from './week.svelte.js';
+  import { difficulty } from '../../../shared/week.js';
 
   let friendsDlg, help, stats;
   startFriends({ padUsed: () => false });
@@ -24,6 +25,7 @@
   });
 
   const t = $derived(ui.t);
+  const newbie = !load('numly-stats', { won: 0 }).won; // never opened a daily safe
   const spec = $derived(wk.view?.spec);
   const weekNo = $derived(wk.view ? String(Number(wk.view.week.split('-W')[1])) : '');
   const modText = m => t(`mod_${m}_d`, { sum: spec.sum ?? spec.sums?.join(' · '), per: spec.perDay }) + (m === 'sum' && spec.base === 16 ? ' (A=10 … F=15)' : '');
@@ -57,7 +59,7 @@
     <p id="msg" role="status">{wk.error ? t('offline') : t('loading')}</p>
   {:else}
     <section class="weekcard">
-      <h2>{t(`type_${spec.type}`)}</h2>
+      <div class="cardhead"><h2>{t(`type_${spec.type}`)}</h2><span class="diff {difficulty(spec)}">{t(`diff_${difficulty(spec)}`)}</span></div>
       <p>{t(`type_${spec.type}_d`, { len: spec.len })} {t('perDay', { per: spec.perDay })}</p>
       {#if spec.mods.length}
         <ul class="mods">
@@ -66,7 +68,8 @@
       {/if}
     </section>
 
-    {#if spec.clues}<Clues clues={spec.clues} len={spec.len} />{/if}
+    {#if newbie}<p class="newbie"><a href="/">{t('newbie')}</a></p>{/if}
+    {#if spec.clues}<Clues clues={spec.clues} len={spec.len} total={spec.cluesTotal} />{/if}
     {#if wk.view.heist}<Heist />{/if}
     <WeekVault {weekNo} />
     <p id="msg" role="status">{wk.msg}</p>

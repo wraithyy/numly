@@ -152,7 +152,7 @@ test('golden draws: shipped weeks never change (update only for weeks that have 
     '2026-W48': ['grid', ['alarm', 'timer'], 'c73cfcc2e9181d06'],
     '2026-W49': ['heist', ['sum', 'timer'], '8b935fb410e4d2e4'],
     '2026-W50': ['grid', ['timer'], 'cab40bdc69b83afc'],
-    '2026-W51': ['cipher', ['timer'], '60f522f57fd1ca73'],
+    '2026-W51': ['cipher', [], '60f522f57fd1ca73'], // timer retired from ciphers before the week began
     '2026-W52': ['grid', [], '61b320bd112d8384'],
   };
   for (const [week, [type, mods, hash]] of Object.entries(golden)) {
@@ -178,13 +178,13 @@ test('the first-release week_tries table is migrated and keeps working', async (
   assert.equal(s.weekly.board(A, WEEK).rows[0].progress >= 3, true); // old rows fall back to hits
 });
 
-test('liar and mastermind are never drawn together', async () => {
-  const { drawRules, rngFrom, TYPES } = await import('../shared/week.js');
-  for (let n = 0; n < 5000; n++) {
-    const bytes = Uint8Array.from({ length: 32 }, (_, i) => (n * 7919 + i * 104729) & 255);
-    const { mods } = drawRules(rngFrom(bytes), TYPES);
-    assert.ok(!(mods.includes('liar') && mods.includes('mastermind')));
-  }
+test('the timer runs from the first look at the week, not the first try', async () => {
+  const s = new Social(fakeCtx(), { SECRET: 'test-secret', WEEK_SPEC: JSON.stringify({ type: 'big', mods: ['timer'] }) });
+  s.touch(A, 'Ann');
+  s.weekly.seen(A, MON);
+  s.weekly.seen(A, MON + 5000); // only the first look counts
+  await s.weekly.guess(A, WEEK, '111111', MON + 9000);
+  assert.equal(s.weekly.board(A, WEEK).rows[0].firstAt, MON);
 });
 
 test('a malformed WEEK_SPEC is ignored', async () => {

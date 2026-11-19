@@ -413,3 +413,12 @@ a.icon { color: inherit; text-decoration: none; }
 .credits a:hover svg, .credits a:focus-visible svg { stroke: currentColor; }
 .credits svg { width: 20px; height: 20px; fill: none; stroke: var(--brass); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .rank-line { margin: 4px 0 0; font-size: 12.5px; color: var(--amber); }
+
+/* weekly difficulty badge and the pointer for first-time players */
+.weekcard .cardhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.weekcard .diff { flex: none; padding: 4px 9px; border-radius: 999px; border: 1px solid currentColor; font-size: 11px; font-weight: 800; letter-spacing: .1em; }
+.weekcard .diff.easy { color: #3f9a4a; }
+.weekcard .diff.medium { color: var(--brass); }
+.weekcard .diff.hard { color: #d0563e; }
+.newbie { text-align: center; margin: 8px 0; }
+.newbie a { color: var(--brass); }

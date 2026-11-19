@@ -1,6 +1,6 @@
 // Weekly game on the server: the draw, try limits, judging and the friends board.
 // Runs inside the Social Durable Object, so checking a limit and recording a try is one atomic step.
-import { compareWeek, gameWeek, isGuess, isoWeek, judge, makeWeek, previousWeek, publicSpec, readyTypes } from '../shared/week.js';
+import { compareWeek, gameWeek, isGuess, isoWeek, judge, makeWeek, previousWeek, publicSpec, readyTypes, weekDayIndex } from '../shared/week.js';
 import { gameDay, shiftDay } from '../shared/logic.js';
 
 const KEEP_WEEKS = 3;
@@ -13,6 +13,8 @@ export const WEEK_SCHEMA = [
      PRIMARY KEY (week, pub, n))`,
   // The public spec of each week, so the live board can be built synchronously.
   `CREATE TABLE IF NOT EXISTS week_meta (week TEXT PRIMARY KEY, spec TEXT NOT NULL)`,
+  // When a player first opened the week: the timer runs from here, not from the first try.
+  `CREATE TABLE IF NOT EXISTS week_views (week TEXT NOT NULL, pub TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (week, pub))`,
 ];
 
 // Added after the first release; each fails harmlessly once the column exists.
@@ -73,6 +75,11 @@ export class Weekly {
     return this.tries(week, pub).filter(t => t.detail?.opened).length;
   }
 
+  /** Remembers the first time a player opened the current week. */
+  seen(pub, now = Date.now()) {
+    this.db.q(`INSERT OR IGNORE INTO week_views (week, pub, at) VALUES (?, ?, ?)`, gameWeek(now), pub, now);
+  }
+
   /** What a player sees: the spec, their own tries, what they may still do, and last week's answer. */
   async view(pub, week = gameWeek(), today = gameDay()) {
     const { spec, secret } = await this.game(week);
@@ -84,7 +91,7 @@ export class Weekly {
     const lastGame = await this.game(last);
     return {
       week,
-      spec: publicSpec(spec),
+      spec: publicSpec(spec, weekDayIndex(week, today)),
       tries,
       ...(opened !== null && { heist }),
       ...this.limits(spec, week, pub, today),
@@ -110,7 +117,7 @@ export class Weekly {
     if (limits.todayLeft === 0) return { status: 429, body: { error: 'no tries left', ...limits } };
 
     const n = this.tries(week, pub).length + 1;
-    const { result, detail, solved, progress } = this.score(spec, secret, week, pub, guess, n);
+    const { result, detail, solved, progress } = this.score(spec, secret, week, pub, guess);
     this.db.q(
       `INSERT INTO week_tries (week, pub, n, guess, hits, near, solved, day, at, detail, progress, pad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       week, pub, n, guess, result.hits, result.near ?? null, solved ? 1 : 0, today, now, detail && JSON.stringify(detail), progress, pad ? 1 : 0,
@@ -119,15 +126,15 @@ export class Weekly {
   }
 
   /** Judges one try. A heist try opens at most the current safe; the week is solved with the last one. */
-  score(spec, secret, week, pub, guess, n) {
+  score(spec, secret, week, pub, guess) {
     if (spec.type === 'heist') {
       const safe = this.opened(week, pub);
-      const result = judge(spec, secret, guess, n, secret.codes[safe]);
+      const result = judge(spec, secret, guess, secret.codes[safe]);
       const opened = safe + (result.solved ? 1 : 0);
       const solved = opened === spec.safes;
       return { result: { ...result, safe, opened: result.solved, solved }, detail: { safe, opened: result.solved }, solved, progress: opened };
     }
-    const result = judge(spec, secret, guess, n);
+    const result = judge(spec, secret, guess);
     const detail = spec.type === 'grid' ? { rows: result.rows, cols: result.cols } : null;
     return { result, detail, solved: result.solved, progress: result.hits };
   }
@@ -140,11 +147,12 @@ export class Weekly {
     const rows = this.db
       .q(
         `SELECT p.pub, p.name, COUNT(t.n) AS tries, COALESCE(MAX(t.solved), 0) AS solved,
-                MIN(t.at) AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress, COALESCE(MAX(t.pad), 0) AS pad
+                CASE WHEN v.at < MIN(t.at) THEN v.at ELSE MIN(t.at) END AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress, COALESCE(MAX(t.pad), 0) AS pad
          FROM players p LEFT JOIN week_tries t ON t.pub = p.pub AND t.week = ?
+         LEFT JOIN week_views v ON v.pub = p.pub AND v.week = ?
          WHERE p.pub = ? OR p.pub IN (SELECT b FROM friends WHERE a = ?)
          GROUP BY p.pub`,
-        week, pub, pub,
+        week, week, pub, pub,
       )
       .map(r => ({ ...r, solved: Boolean(r.solved), pad: Boolean(r.pad) }))
       .sort(compareWeek(spec));
@@ -155,5 +163,6 @@ export class Weekly {
     const oldest = isoWeek(shiftDay(today, -7 * KEEP_WEEKS));
     this.db.q(`DELETE FROM week_tries WHERE week < ?`, oldest);
     this.db.q(`DELETE FROM week_meta WHERE week < ?`, oldest);
+    this.db.q(`DELETE FROM week_views WHERE week < ?`, oldest);
   }
 }

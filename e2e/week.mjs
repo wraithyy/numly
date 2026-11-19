@@ -1,5 +1,6 @@
 import { weekGame } from '../src/weekly.js';
-import { gameWeek, padAllowed } from '../shared/week.js';
+import { cluesOut, gameWeek, padAllowed, weekDayIndex } from '../shared/week.js';
+import { gameDay } from '../shared/logic.js';
 import { befriend, browser, check, sleep } from './lib.mjs';
 
 const game = env => weekGame(env, gameWeek());
@@ -59,7 +60,9 @@ export async function cipher({ base, env }) {
     await p.reset('Sol');
     await p.go('/week');
     check('cipher card', (await p.text('.weekcard h2')) === 'ŠIFRA');
-    check('all clues listed', (await p.ev(`document.querySelectorAll('.clues li').length`)) === spec.clues.length);
+    const out = cluesOut(spec.clues.length, weekDayIndex(gameWeek(), gameDay()));
+    check(`today's clues listed (${out}/${spec.clues.length})`, (await p.ev(`document.querySelectorAll('.clues li').length`)) === out);
+    check('the card shows the difficulty', (await p.text('.weekcard .diff')) === 'STŘEDNÍ');
     check('one try a day, no automatic notepad', (await p.text('.limits')).includes('dnes zbývá 1') && !(await p.ev(`!!document.querySelector('.wnotes .padbar')`)));
     await p.ev(`document.querySelector('.clues .row').click()`);
     await sleep(100);

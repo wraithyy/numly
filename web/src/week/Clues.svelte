@@ -2,7 +2,7 @@
   import { ui } from '../lib/app.svelte.js';
   import { setGuess } from './week.svelte.js';
 
-  let { clues, len } = $props();
+  let { clues, len, total } = $props();
 </script>
 
 <section class="clues">
@@ -18,4 +18,5 @@
       </li>
     {/each}
   </ol>
+  {#if clues.length < total}<p class="legend">{ui.t('cluesMore', { n: clues.length, total })}</p>{/if}
 </section>

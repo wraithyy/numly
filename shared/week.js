@@ -5,13 +5,14 @@ import { LEN, gameDay, shiftDay } from './logic.js';
 import { makeCipher } from './cipher.js';
 
 export const TYPES = ['big', 'cipher', 'grid', 'heist'];
-export const MODS = ['hex', 'liar', 'sum', 'mastermind', 'alarm', 'timer'];
-export const ALLOWED = {
-  big: MODS,
-  cipher: ['sum', 'timer'], // clues must stay truthful and the try limit is built in
-  grid: ['alarm', 'timer'],
-  heist: MODS,
-};
+// The draw still picks from the original pools and drops retired modifiers afterwards, so every
+// other week keeps exactly the draw it always had. Liar: players could not tell a lie from their
+// own mistake. Cipher timer: the clues can be solved on paper before the clock ever starts.
+const POOL_MODS = ['hex', 'liar', 'sum', 'mastermind', 'alarm', 'timer'];
+const POOL = { big: POOL_MODS, cipher: ['sum', 'timer'], grid: ['alarm', 'timer'], heist: POOL_MODS };
+const RETIRED = { big: ['liar'], cipher: ['timer'], grid: [], heist: ['liar'] };
+export const MODS = POOL_MODS.filter(m => m !== 'liar');
+export const ALLOWED = Object.fromEntries(TYPES.map(type => [type, POOL[type].filter(m => !RETIRED[type].includes(m))]));
 /**
  * The week each type joins the draw. A running week must never change its draw, so a new type
  * only enters from a future week; ISO week strings compare correctly as plain strings.
@@ -24,10 +25,13 @@ export const readyTypes = week => {
 
 const MAX_MODS = 2;
 // The weekly game never locks: it is rationed per day so it is worth coming back to.
-// A methodical player needs ~24 tries for 8 digits, a casual one two or three times that,
-// so the ration lets the first finish in a few days and the second by Sunday. Alarm tightens it.
-const PER_DAY = { big: 10, grid: 8, heist: 15, cipher: 1 }; // cipher: the clues decide it
-const ALARM_PER_DAY = { big: 7, grid: 6, heist: 10 };
+// Simulated: a methodical player needs ~12 tries for 6 digits and ~45 for a whole heist, a casual
+// one about 2.5 times that, so the ration lets the first finish in a few days and the second by
+// Sunday. Alarm tightens it; a hex heist gets half as many again.
+const PER_DAY = { big: 10, grid: 8, heist: 24, cipher: 1 }; // cipher: the clues decide it
+const ALARM_PER_DAY = { big: 7, grid: 6, heist: 16 };
+// Cipher clues come out from Monday to Thursday, so a strong solver cannot finish on day one.
+const CLUE_DAYS = 4;
 const GRID_SIZE = 5;
 const HEIST_SAFES = 5;
 const HEIST_LEN = 4;
@@ -98,14 +102,11 @@ export function rngFrom(bytes) {
 const pick = (rng, list) => list[rng() % list.length];
 
 function drawMods(rng, type) {
-  const pool = [...ALLOWED[type]];
+  const pool = [...POOL[type]];
   const count = rng() % (MAX_MODS + 1);
   const mods = [];
   for (let i = 0; i < count; i++) mods.push(...pool.splice(rng() % pool.length, 1));
-  // Mastermind's "elsewhere" count would expose which try the liar shifted; the liar wins.
-  // Dropped without another rng call, so every other draw stays exactly as it was.
-  const kept = mods.includes('liar') ? mods.filter(m => m !== 'mastermind') : mods;
-  return kept.sort((x, y) => MODS.indexOf(x) - MODS.indexOf(y));
+  return mods.filter(m => ALLOWED[type].includes(m)).sort((x, y) => MODS.indexOf(x) - MODS.indexOf(y));
 }
 
 const randomCode = (rng, len, base) => Array.from({ length: len }, () => DIGITS[rng() % base]).join('');
@@ -152,13 +153,13 @@ export function makeWeek(bytes, ready = ['big'], force = null) {
     ...limits(type, has('alarm')),
     ...(has('sum') && { sum: digitSum(code) }),
   };
-  const secret = { code, ...(has('liar') && drawLie(rng)) };
-  return { spec, secret };
+  return { spec, secret: { code } };
 }
 
-const limits = (type, alarm) => ({ perDay: (alarm ? ALARM_PER_DAY : PER_DAY)[type] });
-
-const drawLie = rng => ({ lieAt: 2 + (rng() % 5), lieDir: rng() % 2 ? 1 : -1 });
+const limits = (type, alarm, hex = false) => {
+  const perDay = (alarm ? ALARM_PER_DAY : PER_DAY)[type];
+  return { perDay: hex ? perDay * 1.5 : perDay };
+};
 
 /**
  * A chain of safes. Each safe shares one character with the previous one; that link is part of the
@@ -183,14 +184,28 @@ function makeHeist(rng, type, mods) {
     len: HEIST_LEN,
     base,
     safes: HEIST_SAFES,
-    ...limits(type, has('alarm')),
+    ...limits(type, has('alarm'), has('hex')),
     ...(has('sum') && { sums: codes.map(digitSum) }),
   };
-  return { spec, secret: { codes, links, ...(has('liar') && drawLie(rng)) } };
+  return { spec, secret: { codes, links } };
 }
 
-/** The spec as players see it. Today identical to spec; kept as the one place that decides. */
-export const publicSpec = spec => ({ ...spec });
+/** How many of `total` cipher clues are out on day `dayIndex` of the week (0 = Monday). */
+export const cluesOut = (total, dayIndex) => Math.min(total, Math.ceil((total * (dayIndex + 1)) / CLUE_DAYS));
+
+/** The spec as players see it on day `dayIndex` of its week: a cipher shows only the clues out so far. */
+export const publicSpec = (spec, dayIndex = 6) =>
+  spec.clues ? { ...spec, clues: spec.clues.slice(0, cluesOut(spec.clues.length, dayIndex)), cluesTotal: spec.clues.length } : { ...spec };
+
+/** Day of the week (0 = Monday) of a game day. */
+export const weekDayIndex = (week, day) => Math.round((Date.parse(day) - Date.parse(weekStartDay(week))) / 864e5);
+
+/** A rough label for the week's card, from the simulated try counts: easy, medium or hard. */
+export function difficulty(spec) {
+  const has = m => spec.mods.includes(m);
+  const score = { big: 1, cipher: 1, grid: 2, heist: 1 }[spec.type] + has('hex') + has('alarm') - (has('sum') || has('mastermind'));
+  return score <= 0 ? 'easy' : score === 1 ? 'medium' : 'hard';
+}
 
 // ---------------------------------------------------------------- a guess
 
@@ -210,19 +225,13 @@ function common(a, b) {
 }
 
 /**
- * Feedback for try number `tryNo` (1-based) against `code` (for a heist: the safe being cracked).
- * The liar shifts the hit count of try `lieAt` by one; it never lies on the solving guess,
- * and flips direction rather than leave the valid range. A grid also reports hits per row and column.
+ * Feedback for a guess against `code` (for a heist: the safe being cracked).
+ * A grid also reports hits per row and column.
  */
-export function judge(spec, secret, guess, tryNo, code = secret.code) {
+export function judge(spec, secret, guess, code = secret.code) {
   const solved = guess === code;
   const exact = [...guess].map((c, i) => c === code[i]);
-  const trueHits = exact.filter(Boolean).length;
-  let hits = trueHits;
-  if (!solved && spec.mods.includes('liar') && tryNo === secret.lieAt) {
-    const shifted = hits + secret.lieDir;
-    hits = shifted < 0 || shifted >= spec.len ? hits - secret.lieDir : shifted;
-  }
+  const hits = exact.filter(Boolean).length;
   if (spec.type === 'grid') {
     const rows = Array(spec.size).fill(0);
     const cols = Array(spec.size).fill(0);
@@ -233,7 +242,7 @@ export function judge(spec, secret, guess, tryNo, code = secret.code) {
     });
     return { hits, rows, cols, solved };
   }
-  if (spec.mods.includes('mastermind')) return { hits, near: common(guess, code) - trueHits, solved };
+  if (spec.mods.includes('mastermind')) return { hits, near: common(guess, code) - hits, solved };
   return { hits, solved };
 }
 
@@ -254,9 +263,8 @@ export const compareWeek = spec => (a, b) => {
 
 const PAD_MAX_CODES = 2 ** 21; // a 6-digit or 5-hex safe; 8 digits would freeze the phone
 
-/** The automatic notepad needs an exact answer per try: no grid (too big), no cipher (it would solve the clues), no liar. */
-export const padAllowed = spec =>
-  (spec.type === 'big' || spec.type === 'heist') && !spec.mods.includes('liar') && spec.base ** spec.len <= PAD_MAX_CODES;
+/** The automatic notepad: not for a grid (too big) or a cipher (it would solve the clues). */
+export const padAllowed = spec => (spec.type === 'big' || spec.type === 'heist') && spec.base ** spec.len <= PAD_MAX_CODES;
 
 /**
  * Codes still consistent with the tries: { left, counts[slot][char index] }.

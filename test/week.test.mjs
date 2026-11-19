@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { nextWeekStats, weekBucket, weekStreakNow } from '../shared/week.js';
-import { ALLOWED, MODS, TYPES, compareWeek, drawRules, readyTypes, isoWeek, isGuess, judge, makeWeek, publicSpec, rngFrom, weekStartDay } from '../shared/week.js';
+import { ALLOWED, MODS, TYPES, cluesOut, compareWeek, difficulty, weekDayIndex, drawRules, readyTypes, isoWeek, isGuess, judge, makeWeek, publicSpec, rngFrom, weekStartDay } from '../shared/week.js';
 import { consistentCodes } from '../shared/logic.js';
 
 const bytesOf = n => Uint8Array.from({ length: 32 }, (_, i) => (n * 2654435761 + i * 40503) >>> (i % 24));
@@ -51,8 +51,8 @@ test('a cipher week publishes clues with exactly one solution, one try a day', (
 
 test('only ready types are drawn; a forced spec wins', () => {
   for (let n = 0; n < 200; n++) assert.equal(makeWeek(bytesOf(n), ['big']).spec.type, 'big');
-  const { spec } = makeWeek(bytesOf(1), ['big'], { type: 'big', mods: ['hex', 'liar'] });
-  assert.deepEqual(spec.mods, ['hex', 'liar']);
+  const { spec } = makeWeek(bytesOf(1), ['big'], { type: 'big', mods: ['hex', 'sum'] });
+  assert.deepEqual(spec.mods, ['hex', 'sum']);
 });
 
 test('the public spec never carries the secret', () => {
@@ -82,19 +82,41 @@ test('guesses are validated against length and alphabet', () => {
 
 test('judge counts hits, and near only with mastermind', () => {
   const secret = { code: '12345678' };
-  assert.deepEqual(judge({ type: 'big', mods: [], len: 8 }, secret, '12000000', 1), { hits: 2, solved: false });
-  assert.deepEqual(judge({ type: 'big', mods: ['mastermind'], len: 8 }, secret, '21000008', 1), { hits: 1, near: 2, solved: false });
-  assert.deepEqual(judge({ type: 'big', mods: [], len: 8 }, secret, '12345678', 1), { hits: 8, solved: true });
+  assert.deepEqual(judge({ type: 'big', mods: [], len: 8 }, secret, '12000000'), { hits: 2, solved: false });
+  assert.deepEqual(judge({ type: 'big', mods: ['mastermind'], len: 8 }, secret, '21000008'), { hits: 1, near: 2, solved: false });
+  assert.deepEqual(judge({ type: 'big', mods: [], len: 8 }, secret, '12345678'), { hits: 8, solved: true });
 });
 
-test('the liar shifts exactly one try by one, never the solving one', () => {
-  const spec = { type: 'big', mods: ['liar'], len: 8 };
-  const secret = { code: '12345678', lieAt: 3, lieDir: -1 };
-  assert.equal(judge(spec, secret, '12000000', 2).hits, 2);
-  assert.equal(judge(spec, secret, '12000000', 3).hits, 1);
-  assert.equal(judge(spec, secret, '00000000', 3).hits, 1); // cannot go below zero, flips instead
-  assert.equal(judge(spec, secret, '12345670', 3).hits, 6);
-  assert.deepEqual(judge(spec, secret, '12345678', 3), { hits: 8, solved: true });
+test('retired modifiers are never drawn: no liar anywhere, no timer on a cipher', () => {
+  for (let n = 0; n < 5000; n++) {
+    const { type, mods } = drawRules(rngFrom(bytesOf(n)), TYPES);
+    assert.ok(!mods.includes('liar'));
+    if (type === 'cipher') assert.ok(!mods.includes('timer'));
+  }
+});
+
+test('cipher clues come out Monday to Thursday', () => {
+  const spec = { type: 'cipher', mods: [], clues: Array.from({ length: 10 }, (_, i) => [String(i).repeat(5), 0]) };
+  assert.deepEqual([0, 1, 2, 3, 6].map(d => publicSpec(spec, d).clues.length), [3, 5, 8, 10, 10]);
+  assert.equal(publicSpec(spec, 0).cluesTotal, 10);
+  assert.equal(publicSpec(spec).clues.length, 10); // a finished week shows them all
+  assert.equal(cluesOut(1, 0), 1);
+  assert.equal(weekDayIndex('2026-W47', '2026-11-16'), 0);
+  assert.equal(weekDayIndex('2026-W47', '2026-11-22'), 6);
+});
+
+test('heist rations: more for hex, fewer with alarm', () => {
+  const per = mods => makeWeek(bytesOf(2), TYPES, { type: 'heist', mods }).spec.perDay;
+  assert.deepEqual([per([]), per(['hex']), per(['alarm']), per(['hex', 'alarm'])], [24, 36, 16, 24]);
+});
+
+test('difficulty label', () => {
+  const d = (type, mods) => difficulty({ type, mods });
+  assert.equal(d('big', ['sum']), 'easy');
+  assert.equal(d('big', []), 'medium');
+  assert.equal(d('heist', ['timer']), 'medium');
+  assert.equal(d('big', ['hex']), 'hard');
+  assert.equal(d('grid', []), 'hard');
 });
 
 test('ranking: solved by tries then time; timer by duration; unsolved by progress', () => {
@@ -124,11 +146,11 @@ test('a grid reports hits per row and column', () => {
   assert.match(secret.code, /^\d{25}$/);
   const code = '1234567890123456789012345';
   const guess = '1200067000123006789900000'; // rows: 2, 3, 3, 4, 0
-  const r = judge(spec, { code }, guess, 1);
+  const r = judge(spec, { code }, guess);
   assert.deepEqual(r.rows, [2, 3, 3, 4, 0]);
   assert.equal(r.cols.reduce((a, b) => a + b), r.hits);
   assert.equal(r.hits, 12);
-  assert.equal(judge(spec, { code }, code, 1).solved, true);
+  assert.equal(judge(spec, { code }, code).solved, true);
 });
 
 test('a heist chains five safes; each link is a real shared character', () => {
@@ -145,8 +167,8 @@ test('a heist chains five safes; each link is a real shared character', () => {
 test('heist judging uses the safe being cracked', () => {
   const spec = { type: 'heist', mods: [], len: 4 };
   const secret = { codes: ['1234', '5678'] };
-  assert.deepEqual(judge(spec, secret, '5600', 1, secret.codes[1]), { hits: 2, solved: false });
-  assert.deepEqual(judge(spec, secret, '1234', 1, secret.codes[0]), { hits: 4, solved: true });
+  assert.deepEqual(judge(spec, secret, '5600', secret.codes[1]), { hits: 2, solved: false });
+  assert.deepEqual(judge(spec, secret, '1234', secret.codes[0]), { hits: 4, solved: true });
 });
 
 test('weekly stats: streak across consecutive weeks and the year boundary, buckets', () => {
@@ -181,7 +203,7 @@ test('the automatic notepad keeps only codes that fit every try', async () => {
   const { candidates, padAllowed } = await import('../shared/week.js');
   const spec = { type: 'heist', mods: [], len: 4, base: 10 };
   const secret = { code: '1234' };
-  const tries = ['1200', '5634', '1000'].map(guess => ({ guess, ...judge(spec, secret, guess, 1) }));
+  const tries = ['1200', '5634', '1000'].map(guess => ({ guess, ...judge(spec, secret, guess) }));
   const all = candidates(spec, tries);
   assert.ok(all.left > 1);
   [...secret.code].forEach((c, i) => assert.ok(all.counts[i][+c] > 0)); // the real code always survives
@@ -190,13 +212,12 @@ test('the automatic notepad keeps only codes that fit every try', async () => {
   assert.equal(exact.left, 1);
 
   const mm = { ...spec, mods: ['mastermind'] };
-  const near = candidates(mm, [{ guess: '4321', ...judge(mm, secret, '4321', 1) }]);
+  const near = candidates(mm, [{ guess: '4321', ...judge(mm, secret, '4321') }]);
   assert.ok(near.left < candidates(spec, [{ guess: '4321', hits: 0 }]).left);
 
   assert.ok(padAllowed({ type: 'big', mods: [], len: 6, base: 10 }));
   assert.ok(padAllowed({ type: 'big', mods: ['hex'], len: 5, base: 16 }));
   assert.ok(!padAllowed({ type: 'big', mods: [], len: 8, base: 10 }));
-  assert.ok(!padAllowed({ type: 'big', mods: ['liar'], len: 6, base: 10 }));
   assert.ok(!padAllowed({ type: 'cipher', mods: [], len: 5, base: 10 }));
   assert.ok(!padAllowed({ type: 'grid', mods: [], len: 25, base: 10 }));
 });

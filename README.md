@@ -30,13 +30,13 @@ A harder safe that runs Monday to Sunday. The draw comes from `HMAC(SECRET, 'wee
 | Type | What you crack |
 |---|---|
 | Big safe | one 6-digit code (5 hex digits) |
-| Cipher | a 5-digit code with published clues that have exactly one solution |
+| Cipher | a 5-digit code; clues come out Monday to Thursday and together have exactly one solution |
 | Wall of boxes | a 5x5 grid; hits are reported per row and column |
 | Heist | five 4-character safes; opening one reveals a link to the next |
 
-Modifiers: hex digits, a liar (one result off by one), the digit sum up front, mastermind (right digit, wrong place), alarm (fewer tries a day) and a timer (ranked by time).
+Modifiers: hex digits, the digit sum up front, mastermind (right digit, wrong place), alarm (fewer tries a day) and a timer (ranked by time from first opening the week). Each week's card carries a rough difficulty label.
 
-The week never locks: tries are **rationed per day**, so it pays to come back. Below the safe are notes, by hand or automatic where the code space is small enough to search; switching the automatic notes on tags you on the friends board. Friends are ranked by tries, then time; unsolved players by progress. The code is revealed when the week ends.
+The week never locks: tries are **rationed per day** (big safe 10, wall 8, heist 24, cipher 1; fewer with alarm, more for a hex heist), so it pays to come back. Below the safe are notes, by hand or automatic where the code space is small enough to search; switching the automatic notes on tags you on the friends board. Friends are ranked by tries, then time; unsolved players by progress. The code is revealed when the week ends.
 
 ## How the code stays secret
 
