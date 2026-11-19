@@ -17,6 +17,7 @@ export const wk = $state({
   leds: 0,
   near: null,
   wheel: 0,
+  misses: 0, // guesses with no hit: the wheel catches on them
   msg: '',
   open: false,
   instant: false,
@@ -168,6 +169,7 @@ export async function submit() {
 
   const { result, ...view } = res.data;
   wk.wheel += 360 + result.hits * 45;
+  if (result.hits === 0 && !result.solved) wk.misses++;
   wk.digits = Array(spec.len).fill('');
   wk.leds = 0;
   wk.near = null;

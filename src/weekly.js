@@ -13,8 +13,6 @@ export const WEEK_SCHEMA = [
      PRIMARY KEY (week, pub, n))`,
   // The public spec of each week, so the live board can be built synchronously.
   `CREATE TABLE IF NOT EXISTS week_meta (week TEXT PRIMARY KEY, spec TEXT NOT NULL)`,
-  // When a player first opened the week: the timer runs from here, not from the first try.
-  `CREATE TABLE IF NOT EXISTS week_views (week TEXT NOT NULL, pub TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (week, pub))`,
 ];
 
 // Added after the first release; each fails harmlessly once the column exists.
@@ -73,11 +71,6 @@ export class Weekly {
   /** Heist: safes opened so far, i.e. the index of the safe being cracked. */
   opened(week, pub) {
     return this.tries(week, pub).filter(t => t.detail?.opened).length;
-  }
-
-  /** Remembers the first time a player opened the current week. */
-  seen(pub, now = Date.now()) {
-    this.db.q(`INSERT OR IGNORE INTO week_views (week, pub, at) VALUES (?, ?, ?)`, gameWeek(now), pub, now);
   }
 
   /** What a player sees: the spec, their own tries, what they may still do, and last week's answer. */
@@ -147,12 +140,11 @@ export class Weekly {
     const rows = this.db
       .q(
         `SELECT p.pub, p.name, COUNT(t.n) AS tries, COALESCE(MAX(t.solved), 0) AS solved,
-                CASE WHEN v.at < MIN(t.at) THEN v.at ELSE MIN(t.at) END AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress, COALESCE(MAX(t.pad), 0) AS pad
+                MIN(t.at) AS firstAt, MAX(CASE WHEN t.solved = 1 THEN t.at END) AS solvedAt, COALESCE(MAX(COALESCE(t.progress, t.hits)), 0) AS progress, COALESCE(MAX(t.pad), 0) AS pad
          FROM players p LEFT JOIN week_tries t ON t.pub = p.pub AND t.week = ?
-         LEFT JOIN week_views v ON v.pub = p.pub AND v.week = ?
          WHERE p.pub = ? OR p.pub IN (SELECT b FROM friends WHERE a = ?)
          GROUP BY p.pub`,
-        week, week, pub, pub,
+        week, pub, pub,
       )
       .map(r => ({ ...r, solved: Boolean(r.solved), pad: Boolean(r.pad) }))
       .sort(compareWeek(spec));
@@ -163,6 +155,5 @@ export class Weekly {
     const oldest = isoWeek(shiftDay(today, -7 * KEEP_WEEKS));
     this.db.q(`DELETE FROM week_tries WHERE week < ?`, oldest);
     this.db.q(`DELETE FROM week_meta WHERE week < ?`, oldest);
-    this.db.q(`DELETE FROM week_views WHERE week < ?`, oldest);
   }
 }

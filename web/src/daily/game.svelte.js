@@ -30,6 +30,7 @@ export const game = $state({
   leds: 0,
   ledsWin: false,
   wheel: 0,
+  misses: 0, // guesses with no hit: the wheel catches on them
   msg: '',
   stamp: '',
   open: false,
@@ -172,6 +173,7 @@ export async function submit() {
   game.leds = 0;
 
   if (hits === 0) {
+    game.misses++;
     setTimeout(() => {
       sfx.thud();
       reveal();

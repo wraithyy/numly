@@ -1,5 +1,6 @@
 <script>
   import { ui } from '../lib/app.svelte.js';
+  import Wheel from '../Wheel.svelte';
   import { wk, refs, stepChar, fillFrom, submit, isChar, msUntilNextWeek, safeLetter } from './week.svelte.js';
 
   let { weekNo } = $props();
@@ -130,9 +131,8 @@
       </div>
     {/if}
     <div class="base">
-      <span class="hint">{t('turn')}</span>
-      <button class="wheel" aria-label={t('wheel')} disabled={wk.view.solved} style:transform="rotate({wk.wheel}deg)"></button>
-      <span class="hint">ENTER</span>
+      <Wheel angle={wk.wheel} misses={wk.misses} disabled={wk.view.solved} label={t('wheel')} />
+      <span class="hint">{t('turn')} · ENTER</span>
     </div>
   </form>
 </div>

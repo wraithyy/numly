@@ -178,15 +178,6 @@ test('the first-release week_tries table is migrated and keeps working', async (
   assert.equal(s.weekly.board(A, WEEK).rows[0].progress >= 3, true); // old rows fall back to hits
 });
 
-test('the timer runs from the first look at the week, not the first try', async () => {
-  const s = new Social(fakeCtx(), { SECRET: 'test-secret', WEEK_SPEC: JSON.stringify({ type: 'big', mods: ['timer'] }) });
-  s.touch(A, 'Ann');
-  s.weekly.seen(A, MON);
-  s.weekly.seen(A, MON + 5000); // only the first look counts
-  await s.weekly.guess(A, WEEK, '111111', MON + 9000);
-  assert.equal(s.weekly.board(A, WEEK).rows[0].firstAt, MON);
-});
-
 test('a malformed WEEK_SPEC is ignored', async () => {
   const { spec } = await weekGame({ SECRET: 'x', WEEK_SPEC: '{oops' }, WEEK);
   assert.equal(spec.type, 'big');

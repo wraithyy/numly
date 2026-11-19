@@ -1,6 +1,7 @@
 <script>
   import { LEN, msUntilNextDay } from '../../../shared/logic.js';
   import { ui } from '../lib/app.svelte.js';
+  import Wheel from '../Wheel.svelte';
   import { game, refs, dayNo, archived, pad, won, stepDigit, fillFrom, submit } from './game.svelte.js';
 
   let { onStats } = $props();
@@ -135,9 +136,8 @@
       {/each}
     </div>
     <div class="base">
-      <span class="hint">{t('turn')}</span>
-      <button class="wheel" aria-label={t('wheel')} disabled={game.open} style:transform="rotate({game.wheel}deg)"></button>
-      <span class="hint">ENTER</span>
+      <Wheel angle={game.wheel} misses={game.misses} disabled={game.open} label={t('wheel')} />
+      <span class="hint">{t('turn')} · ENTER</span>
     </div>
   </form>
   <div class="stamp" bind:this={refs.stamp}>{game.stamp}</div>

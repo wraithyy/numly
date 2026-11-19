@@ -238,10 +238,7 @@ export class Social {
     const { action, pub, name, week, guess, pad } = await req.json();
     await this.ensureCleanup();
     // Just looking creates no player row; the first try does.
-    if (action === 'view') {
-      this.weekly.seen(pub);
-      return Response.json(await this.weekly.view(pub));
-    }
+    if (action === 'view') return Response.json(await this.weekly.view(pub));
     this.touch(pub, name);
     const { status, body } = await this.weekly.guess(pub, week, guess, Date.now(), pad);
     if (status === 200) this.notify(this.related(pub));
