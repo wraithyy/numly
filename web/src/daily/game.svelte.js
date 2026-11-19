@@ -69,7 +69,7 @@ export function togglePad() {
   game.padOn = !game.padOn;
   store(PAD_ON_KEY, game.padOn);
   markPadUsed();
-  sfx.key();
+  sfx.toggle();
 }
 
 async function askSafe(guess) {
@@ -96,7 +96,7 @@ export function stepDigit(index, delta) {
   const current = value === '' ? (delta > 0 ? -1 : 10) : Number(value);
   game.digits[index] = String((current + delta + 10) % 10);
   restartAnimation(refs.cells[index], delta > 0 ? 'roll-up' : 'roll-down');
-  sfx.key();
+  sfx.roll();
   vibrate(5);
 }
 
@@ -108,7 +108,7 @@ export function fillFrom(index, digits) {
     restartAnimation(refs.cells[index + k], 'tap');
   }
   refs.cells[Math.min(index + k, LEN - 1)]?.focus();
-  sfx.key();
+  sfx.type();
 }
 
 /** Put a whole earlier guess back into the safe (history row). */
@@ -119,7 +119,7 @@ export function setGuess(guess) {
     restartAnimation(refs.cells[i], 'tap');
   });
   refs.cells[LEN - 1]?.focus({ preventScroll: true });
-  sfx.key();
+  sfx.type();
 }
 
 /** One digit from the notepad. No focus: it would scroll back up and pop up the phone keyboard. */
@@ -127,7 +127,7 @@ export function setDigit(index, digit) {
   if (!canEdit()) return;
   game.digits[index] = digit;
   restartAnimation(refs.cells[index], 'tap');
-  sfx.key();
+  sfx.pad();
   vibrate(8);
 }
 
@@ -136,7 +136,7 @@ export function setDigit(index, digit) {
 function shake(message) {
   game.msg = message;
   restartAnimation(refs.door, 'shake');
-  sfx.thud();
+  sfx.error();
   vibrate([30, 40, 30]);
 }
 
@@ -170,13 +170,14 @@ export async function submit() {
   const reveal = () => game.guesses.push(guess);
 
   game.wheel += 360 + hits * 72;
+  if (hits < LEN) sfx.wheel(); // a win spins the code reels instead
   game.digits = Array(LEN).fill('');
   game.leds = 0;
 
   if (hits === 0) {
     game.misses++;
     setTimeout(() => {
-      sfx.thud();
+      sfx.miss();
       reveal();
       endTurn(t('zero'));
     }, 400);
@@ -207,7 +208,7 @@ function revealResult(hits, previousBest) {
     setTimeout(() => {
       game.stamp = t('record', { n: hits });
       restartAnimation(refs.stamp, 'show');
-      sfx.chime();
+      sfx.record();
       vibrate([20, 60, 20]);
     }, 250);
   }

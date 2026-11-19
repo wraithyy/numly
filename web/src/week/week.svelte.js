@@ -92,11 +92,11 @@ export function stepChar(index, delta) {
   const current = value === '' ? (delta > 0 ? -1 : b) : DIGITS.indexOf(value);
   wk.digits[index] = DIGITS[(current + delta + b) % b];
   restartAnimation(refs.cells[index], delta > 0 ? 'roll-up' : 'roll-down');
-  sfx.key();
+  sfx.roll();
   vibrate(5);
 }
 
-export function fillFrom(index, chars) {
+export function fillFrom(index, chars, sound = 'type') {
   if (!canEdit()) return;
   const len = wk.view.spec.len;
   let k = 0;
@@ -105,7 +105,7 @@ export function fillFrom(index, chars) {
     restartAnimation(refs.cells[index + k], 'tap');
   }
   refs.cells[Math.min(index + k, len - 1)]?.focus();
-  sfx.key();
+  sfx[sound]();
 }
 
 export function setGuess(guess) {
@@ -113,7 +113,7 @@ export function setGuess(guess) {
   wk.digits = [...guess];
   refs.cells.forEach(c => restartAnimation(c, 'tap'));
   refs.cells.at(-1)?.focus({ preventScroll: true });
-  sfx.key();
+  sfx.type();
 }
 
 /** Switching the notepad on before the week is solved marks it, even if it is switched off again. */
@@ -127,7 +127,7 @@ export function togglePad() {
   wk.padOn = !wk.padOn;
   store(padOnKey(wk.view.week), wk.padOn);
   markPadUsed();
-  sfx.key();
+  sfx.toggle();
 }
 
 // ---------------------------------------------------------------- a turn
@@ -135,7 +135,7 @@ export function togglePad() {
 function shake(message) {
   wk.msg = message;
   restartAnimation(refs.door, 'shake');
-  sfx.thud();
+  sfx.error();
   vibrate([30, 40, 30]);
 }
 
@@ -172,6 +172,7 @@ export async function submit() {
 
   const { result, ...view } = res.data;
   wk.wheel += 360 + result.hits * 45;
+  if (!result.solved) sfx.wheel(); // a win spins the code reels instead
   if (result.hits === 0 && !result.solved) wk.misses++;
   wk.digits = Array(spec.len).fill('');
   wk.leds = 0;
@@ -185,7 +186,7 @@ export async function submit() {
       // Heist: one safe down, the chain moves on to the next.
       wk.msg = t('safeOpened', { s: safeLetter(result.safe) });
       wk.leds = 0;
-      sfx.chime();
+      sfx.record();
       vibrate([20, 60, 20]);
       wk.busy = false;
       refs.cells[0]?.focus();
@@ -197,7 +198,7 @@ export async function submit() {
     refs.cells[0]?.focus();
   };
   if (result.solved) return reveal(); // the win sequence lights the LEDs itself
-  if (result.hits === 0) return setTimeout(() => { sfx.thud(); reveal(); }, 400);
+  if (result.hits === 0) return setTimeout(() => { sfx.miss(); reveal(); }, 400);
   for (let k = 0; k < result.hits; k++) {
     setTimeout(() => {
       wk.leds = k + 1;

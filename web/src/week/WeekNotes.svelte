@@ -2,7 +2,7 @@
   // Notes for the weekly code. By hand: tap cycles a cell (ruled out, certain, blank).
   // Optionally automatic, like the daily notepad, where the code space is small enough to search;
   // switching it on marks the week on the friends board.
-  import { ui } from '../lib/app.svelte.js';
+  import { sfx, ui } from '../lib/app.svelte.js';
   import { load, store } from '../lib/storage.js';
   import { candidates, padAllowed } from '../../../shared/week.js';
   import { wk, fillFrom, togglePad } from './week.svelte.js';
@@ -39,7 +39,8 @@
     return n === 0 ? 'no' : n === auto.left ? 'sure' : '';
   };
   function tap(i, d) {
-    if (auto) return fillFrom(i, DIGITS[d]);
+    if (auto) return fillFrom(i, DIGITS[d], 'pad');
+    sfx.pad();
     const id = `${i}:${d}`;
     const { [id]: current = '', ...rest } = marks;
     marks = NEXT[current] ? { ...rest, [id]: NEXT[current] } : rest;

@@ -136,6 +136,8 @@
       <span class="hint">{t('turn')} · ENTER</span>
     </div>
     <i class="bolt"></i><i class="bolt"></i><i class="bolt"></i>
+    <!-- the safe's serial number: a quiet nod to Sabi -->
+    <span class="serial" aria-hidden="true">Nº SA81</span>
   </form>
 </div>
 

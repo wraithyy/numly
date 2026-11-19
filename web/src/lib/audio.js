@@ -1,5 +1,5 @@
-// Sound effects through WebAudio: short synthesised ones, plus CC0 samples from Kenney.nl (kenney.nl, public
-// domain) for the safe opening. The AudioContext is created lazily because browsers block audio until a user gesture.
+// Sound effects through WebAudio: CC0 samples from Kenney.nl (kenney.nl, public domain) for play and the safe
+// opening, with short synthesised stand-ins until a sample has decoded (and for plain UI buttons). The AudioContext is created lazily because browsers block audio until a user gesture.
 import tickUrl from '../assets/sfx/tick.mp3';
 import lockUrl from '../assets/sfx/lock.mp3';
 import ledUrl from '../assets/sfx/led.mp3';
@@ -9,8 +9,16 @@ import doorUrl from '../assets/sfx/door.mp3';
 import slamUrl from '../assets/sfx/slam.mp3';
 import coinsUrl from '../assets/sfx/coins.mp3';
 import fanfareUrl from '../assets/sfx/fanfare.mp3';
+import typeUrl from '../assets/sfx/type.mp3';
+import rollUrl from '../assets/sfx/roll.mp3';
+import padUrl from '../assets/sfx/pad.mp3';
+import toggleUrl from '../assets/sfx/toggle.mp3';
+import missUrl from '../assets/sfx/miss.mp3';
+import errorUrl from '../assets/sfx/error.mp3';
+import recordUrl from '../assets/sfx/record.mp3';
 
-const SAMPLES = { tick: tickUrl, lock: lockUrl, led: ledUrl, rumble: rumbleUrl, bolt: boltUrl, door: doorUrl, slam: slamUrl, coins: coinsUrl, fanfare: fanfareUrl };
+const SAMPLES = { tick: tickUrl, lock: lockUrl, led: ledUrl, rumble: rumbleUrl, bolt: boltUrl, door: doorUrl, slam: slamUrl, coins: coinsUrl, fanfare: fanfareUrl,
+  type: typeUrl, roll: rollUrl, pad: padUrl, toggle: toggleUrl, miss: missUrl, error: errorUrl, record: recordUrl };
 const semitones = n => 2 ** (n / 12);
 
 export function createSfx(isMuted) {
@@ -105,14 +113,16 @@ export function createSfx(isMuted) {
   return {
     key: play(t => noise(t, 0.03, 5000, 2, 0.07)),
     click: play(t => { if (!sample('led', { gain: 0.7 })) { noise(t, 0.05, 3200, 7, 0.6); tone(t, 2600, 1700, 0.07, 0.1, 'triangle'); } }),
-    thud: play(t => { noise(t, 0.2, 260, 1, 0.5, 'lowpass'); tone(t, 110, 55, 0.22, 0.35); }),
-    chime: play(t => { tone(t, 880, 880, 0.3, 0.12, 'triangle'); tone(t + 0.11, 1320, 1320, 0.45, 0.12, 'triangle'); }),
-    open: play(t => {
-      tone(t, 95, 38, 0.55, 0.7);
-      noise(t, 0.45, 420, 1, 0.7, 'lowpass');
-      noise(t + 0.45, 1.1, 900, 18, 0.25); // hinge creak
-      [523, 659, 784, 1047, 1319].forEach((f, i) => tone(t + 1 + i * 0.08, f, f, 0.6, 0.09, 'triangle'));
-    }),
+    // play: the sample once decoded, the synthesised sound until then
+    type: play(t => { if (!sample('type', { gain: 0.6 })) noise(t, 0.03, 5000, 2, 0.07); }),
+    roll: play(t => { if (!sample('roll', { gain: 0.6 })) noise(t, 0.03, 5000, 2, 0.07); }),
+    pad: play(t => { if (!sample('pad', { gain: 0.7 })) noise(t, 0.03, 5000, 2, 0.07); }),
+    toggle: play(t => { if (!sample('toggle', { gain: 0.7 })) noise(t, 0.03, 5000, 2, 0.07); }),
+    miss: play(t => { if (!sample('miss')) { noise(t, 0.2, 260, 1, 0.5, 'lowpass'); tone(t, 110, 55, 0.22, 0.35); } }),
+    error: play(t => { if (!sample('error', { gain: 0.8 })) { noise(t, 0.2, 260, 1, 0.5, 'lowpass'); tone(t, 110, 55, 0.22, 0.35); } }),
+    record: play(t => { if (!sample('record', { gain: 0.8 })) { tone(t, 880, 880, 0.3, 0.12, 'triangle'); tone(t + 0.11, 1320, 1320, 0.45, 0.12, 'triangle'); } }),
+    // the wheel's 1.1 s turn: a ratchet that slows as it settles
+    wheel: play(() => { for (let x = 0; x < 1.1; x += 0.04 + x * 0.06) sample('tick', { delay: x, gain: 0.45 }); }),
     // the safe opening
     tick: play(() => sample('tick', { gain: 0.5 })),
     lock: play((_, i) => sample('lock', { rate: semitones(i * 2), gain: 0.8 })), // each reel a whole tone higher
