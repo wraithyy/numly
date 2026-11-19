@@ -3,6 +3,7 @@
 import { LEN, archiveDays, scoreOf, gameDay } from '../shared/logic.js';
 import { cleanName, isPlayer, publicId } from '../shared/friends.js';
 import { publicKeyOf } from './push.js';
+import { normalizeCode } from '../shared/transfer.js';
 
 export { Social } from './social.js';
 
@@ -85,6 +86,31 @@ async function handleWeek(req, env) {
   return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 }
 
+// Moving a profile to another device: { action: 'create', player, data } or { action: 'claim', code }.
+async function handleTransfer(req, env) {
+  if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return json({ error: 'invalid json' }, 400);
+  }
+  const { action, player, data } = body ?? {};
+  let forward;
+  if (action === 'create') {
+    if (!isPlayer(player) || typeof data !== 'string') return json({ error: 'invalid profile' }, 400);
+    forward = { action, player, data, ip: req.headers.get('CF-Connecting-IP') ?? '' };
+  } else if (action === 'claim') {
+    const code = normalizeCode(body.code);
+    if (!code) return json({ error: 'invalid code' }, 400);
+    forward = { action, code, ip: req.headers.get('CF-Connecting-IP') ?? '' };
+  } else {
+    return json({ error: 'invalid action' }, 400);
+  }
+  const res = await social(env).fetch('https://social/transfer', { method: 'POST', body: JSON.stringify(forward) });
+  return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+}
+
 // Weekly reminders. GET: the key a browser subscribes with; POST: { action, endpoint }.
 async function handlePush(req, env) {
   if (!env.VAPID_KEY) return json({ error: 'push not configured' }, 503);
@@ -113,6 +139,7 @@ export default {
     if (pathname === '/api/friends') return handleFriends(req, env);
     if (pathname === '/api/week') return handleWeek(req, env);
     if (pathname === '/api/push') return handlePush(req, env);
+    if (pathname === '/api/transfer') return handleTransfer(req, env);
     return env.ASSETS.fetch(req);
   },
   // Cron, late on Sunday UTC: the Durable Object sends Monday's reminder once the game timezone is there.

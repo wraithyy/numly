@@ -2,6 +2,7 @@
   import { ui } from '../lib/app.svelte.js';
   import { WEEK_BUCKETS, gameWeek, weekBucket, weekStreakNow } from '../../../shared/week.js';
   import { wk } from './week.svelte.js';
+  import { transfer } from '../lib/transfer.svelte.js';
 
   let dialog;
   export const show = () => dialog.showModal();
@@ -23,5 +24,6 @@
       <div class="bar" class:today={k === current}><span>{k}</span><i style:width="{(v / max) * 100}%">{v}</i></div>
     {/each}
   </div>
+  <button type="button" class="linkbtn transferlink" onclick={() => (transfer.open = true)}>{t('trOpen')}</button>
   <form method="dialog"><button class="btn gold wide">{t('close')}</button></form>
 </dialog>

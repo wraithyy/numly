@@ -102,3 +102,15 @@ test('week API validates before reaching the Durable Object', async () => {
   assert.equal(sent.body.pub, await publicId('player-123456789'));
   assert.ok(!JSON.stringify(sent.body).includes('player-123456789')); // the raw id never reaches storage
 });
+
+test('transfer: bad input never reaches the Durable Object, a typed code is normalised', async () => {
+  const transfer = body => worker.fetch(new Request('http://x/api/transfer', { method: 'POST', body: JSON.stringify(body) }), env);
+  const before = events.length;
+  assert.equal((await transfer({ action: 'create', player: 'x', data: '{}' })).status, 400);
+  assert.equal((await transfer({ action: 'create', player: 'player-0001-aaaa', data: 5 })).status, 400);
+  assert.equal((await transfer({ action: 'claim', code: 'nope' })).status, 400);
+  assert.equal((await transfer({ action: 'steal' })).status, 400);
+  assert.equal(events.length, before);
+  await transfer({ action: 'claim', code: ' k7qa-mz4p ' });
+  assert.deepEqual(events.at(-1).body, { action: 'claim', code: 'K7QAMZ4P', ip: '' });
+});

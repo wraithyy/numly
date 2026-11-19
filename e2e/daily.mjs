@@ -129,3 +129,52 @@ export async function friends({ base }) {
     bob.close();
   }
 }
+
+/** Moving a profile: Ann's old phone makes a code, her new phone (which has a game of its own) takes it over. */
+export async function transfer({ base }) {
+  const old = await browser(base, 9305);
+  const neu = await browser(base, 9306, { width: 390, height: 844, mobile: true });
+  try {
+    for (const p of [old, neu]) {
+      await p.go('/', 800);
+      await p.ev(`localStorage.clear(); localStorage.setItem('numly-lang','"cs"'); localStorage.setItem('numly-seen','true')`);
+    }
+    await old.ev(`localStorage.setItem('numly-stats', JSON.stringify({ won: 7, streak: 3, best: 5, last: null, hist: { 4: 7 } })); localStorage.setItem('numly-name', '"Ann"')`);
+    await neu.ev(`localStorage.setItem('numly-stats', JSON.stringify({ won: 1, streak: 1, best: 1, last: null, hist: { 9: 1 } }))`);
+    await old.go('/');
+    await neu.go('/');
+    const oldPlayer = await old.ev(`JSON.parse(localStorage.getItem('numly-player'))`);
+
+    await old.ev(`document.getElementById('statsBtn').click()`);
+    await old.ev(`document.querySelector('.transferlink').click()`);
+    await sleep(200);
+    check('transfer dialog opens from the stats', await old.ev(`document.querySelector('.transferdlg').open`));
+    await old.ev(`document.querySelector('.transferdlg .btn.gold').click()`);
+    await sleep(800);
+    const code = await old.text('.trcode');
+    check('a code to type on the other device', /^[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(code ?? ''), code);
+
+    await neu.go(`/?from=link#transfer=${code.toLowerCase()}`); // a query too, so this is a real load, not a hash change
+    await sleep(300);
+    check('a transfer link opens the dialog with the code', await neu.ev(`document.querySelector('.transferdlg').open && document.getElementById('trInput').value.length > 0 && location.hash === ''`));
+    await neu.ev(`document.querySelector('.transferdlg .nameform button').click()`);
+    await sleep(800);
+    check('shows whose profile it is before taking it', (await neu.text('.trwho'))?.includes('Ann') && (await neu.text('.trwho')).includes('7'));
+    check('warns that this device\'s progress gets replaced', (await neu.text('.transferdlg .note'))?.includes('(1)'));
+    await neu.ev(`document.querySelector('.transferdlg .ask .btn.gold').click()`);
+    await sleep(1500);
+    check('the new device is now the same player', (await neu.ev(`JSON.parse(localStorage.getItem('numly-player'))`)) === oldPlayer);
+    check('stats came along', (await neu.ev(`JSON.parse(localStorage.getItem('numly-stats')).won`)) === 7 && (await neu.ev(`JSON.parse(localStorage.getItem('numly-name'))`)) === 'Ann');
+    check('the replaced profile is kept as a backup', (await neu.ev(`JSON.parse(JSON.parse(localStorage.getItem(Object.keys(localStorage).find(k => k.startsWith('numly-backup-'))))['numly-stats']).won`)) === 1);
+
+    await neu.ev(`document.getElementById('statsBtn').click(); document.querySelector('.transferlink').click()`);
+    await sleep(200);
+    await neu.ev(`(() => { const i = document.getElementById('trInput'); i.value = '${code}'; i.dispatchEvent(new Event('input', { bubbles: true })); document.querySelector('.transferdlg .nameform button').click(); })()`);
+    await sleep(800);
+    check('a code works only once', (await neu.text('.transferdlg .note.bad'))?.includes('neplatí'));
+    check('no page errors', !old.errors.length && !neu.errors.length, [...old.errors, ...neu.errors].join(' | '));
+  } finally {
+    old.close();
+    neu.close();
+  }
+}

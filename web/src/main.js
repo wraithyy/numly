@@ -1,5 +1,14 @@
 import { mount } from 'svelte';
 import App from './App.svelte';
+// Self-hosted fonts (OFL), Latin and Central European only: no request leaves for Google.
+import '@fontsource/big-shoulders-display/latin-700';
+import '@fontsource/big-shoulders-display/latin-ext-700';
+import '@fontsource/big-shoulders-display/latin-900';
+import '@fontsource/big-shoulders-display/latin-ext-900';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-ext-500.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '@fontsource/jetbrains-mono/latin-ext-700.css';
 import './app.css';
 
 mount(App, { target: document.body });

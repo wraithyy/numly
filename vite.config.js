@@ -8,7 +8,7 @@ function serviceWorker() {
     name: 'numly-sw',
     apply: 'build',
     generateBundle(_, bundle) {
-      const shell = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-192.png', '/icons/apple-touch-icon.png', ...Object.keys(bundle).map(f => `/${f}`)];
+      const shell = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-192.png', '/icons/apple-touch-icon.png', ...Object.keys(bundle).filter(f => !f.endsWith('.woff')).map(f => `/${f}`)] // woff2 is enough for every browser that runs the app;
       const source = readFileSync(new URL('./web/sw.js', import.meta.url), 'utf8');
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: source.replace('self.__SHELL', JSON.stringify(shell)) });
     },

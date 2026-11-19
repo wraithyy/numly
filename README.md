@@ -21,6 +21,7 @@ Built with Svelte 5 and Vite on Cloudflare Workers with a Durable Object; game r
 - **Weekly game** on `/week`: every ISO week draws one safe type and up to two modifiers, the same for everyone. See below.
 - **Monday reminders:** an optional Web Push notification when a new weekly safe starts (on iOS, from the installed app).
 - **Mutual friends, live:** share your personal link; whoever opens it sends a friend request you accept or decline. Friends see each other's tries live, counted by the server from real guesses rather than self-reported. No accounts needed.
+- **Move to another device:** from the stats, a one-time code (valid 10 minutes, rate-limited per address) carries the whole profile, including the player id, so friends and the weekly game come along. The new device always confirms first and keeps a backup of what it replaces.
 - **Installable PWA that works offline:** history, stats and the notepad work without a connection; guesses need the server.
 - **9 languages:** cs, en, sk, de, pl, es, fr, it, pt, picked from the browser and switchable.
 

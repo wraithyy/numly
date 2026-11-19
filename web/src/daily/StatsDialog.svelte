@@ -2,6 +2,7 @@
   import { LEN, archiveDays, dayNumber, streakNow } from '../../../shared/logic.js';
   import { ui } from '../lib/app.svelte.js';
   import { load } from '../lib/storage.js';
+  import { transfer } from '../lib/transfer.svelte.js';
   import { game, today, day, archived, won } from './game.svelte.js';
 
   let dialog, days = $state([]);
@@ -52,5 +53,6 @@
       {/each}
     </ul>
   {/if}
+  <button type="button" class="linkbtn transferlink" onclick={() => (transfer.open = true)}>{t('trOpen')}</button>
   <form method="dialog"><button class="btn gold wide">{t('close')}</button></form>
 </dialog>

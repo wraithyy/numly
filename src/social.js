@@ -6,6 +6,7 @@ import { gameDay, shiftDay } from '../shared/logic.js';
 import { WEEK_MIGRATIONS, WEEK_SCHEMA, Weekly } from './weekly.js';
 import { gameWeek } from '../shared/week.js';
 import { isPushEndpoint, sendPush } from './push.js';
+import { LIMITS, MAX_LIVE_TRANSFERS, MAX_TRANSFER, TRANSFER_MS, newCode } from '../shared/transfer.js';
 
 const MAX_PENDING = 50;
 const MIN_RANK_PEERS = 3; // below this, a percentage of a handful of players says nothing
@@ -24,6 +25,8 @@ const SCHEMA = [
   // Weekly reminders. Not tied to a player: the push endpoint is all a reminder needs.
   `CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
+  // Profile snapshots waiting for another device to claim them (shared/transfer.js). Gone once claimed or expired.
+  `CREATE TABLE IF NOT EXISTS transfers (code TEXT PRIMARY KEY, player TEXT NOT NULL, data TEXT NOT NULL, expires INTEGER NOT NULL)`,
 ];
 
 const MAX_PUSH_SUBS = 10000; // a cap, so a flood of fake subscriptions cannot grow storage without bound
@@ -190,6 +193,7 @@ export class Social {
   async alarm() {
     this.q(`DELETE FROM results WHERE day < ?`, shiftDay(gameDay(), -KEEP_DAYS));
     this.weekly.cleanup();
+    this.purgeTransfers(Date.now());
     await this.ctx.storage.setAlarm(Date.now() + DAY_MS);
   }
 
@@ -245,8 +249,75 @@ export class Social {
     return Response.json(body, { status });
   }
 
+  // ------------------------------------------------------------ profile transfer
+
+  /** Counts one event for `key` this minute; true once the count is past `max`. Kept in memory: a restart only forgives. */
+  over(key, max, now) {
+    const minute = Math.floor(now / 60_000);
+    this.counts ??= new Map();
+    if (this.counts.size > 10_000) this.counts.clear();
+    const c = this.counts.get(key);
+    const n = c?.minute === minute ? c.n : 0;
+    return n >= max;
+  }
+
+  count(key, now) {
+    const minute = Math.floor(now / 60_000);
+    this.counts ??= new Map();
+    const c = this.counts.get(key);
+    this.counts.set(key, { minute, n: (c?.minute === minute ? c.n : 0) + 1 });
+  }
+
+  purgeTransfers(now) {
+    this.q(`DELETE FROM transfers WHERE expires < ?`, now);
+  }
+
+  createTransfer(player, data, now = Date.now(), ip = '') {
+    this.purgeTransfers(now);
+    if (this.over(`create:${ip}`, LIMITS.create, now)) return { limited: true };
+    this.count(`create:${ip}`, now);
+    if (data.length > MAX_TRANSFER) return { error: 'too large' };
+    let parsed;
+    try {
+      parsed = JSON.parse(data);
+    } catch {
+      parsed = null;
+    }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return { error: 'invalid' };
+    this.q(`DELETE FROM transfers WHERE player = ?`, player); // one live code per player
+    if (this.q(`SELECT COUNT(*) AS n FROM transfers`)[0].n >= MAX_LIVE_TRANSFERS) return { error: 'busy' };
+    let code;
+    do code = newCode();
+    while (this.q(`SELECT 1 FROM transfers WHERE code = ?`, code).length);
+    const expires = now + TRANSFER_MS;
+    this.q(`INSERT INTO transfers (code, player, data, expires) VALUES (?, ?, ?, ?)`, code, player, data, expires);
+    return { code, expires };
+  }
+
+  /** One claim per code. Wrong codes are counted per address, so a guesser only locks themselves out. */
+  claimTransfer(code, now = Date.now(), ip = '') {
+    this.purgeTransfers(now);
+    if (this.over(`fail:${ip}`, LIMITS.fail, now) || this.over('fail:*', LIMITS.failAll, now)) return { limited: true };
+    const row = this.q(`SELECT player, data FROM transfers WHERE code = ?`, code)[0];
+    if (!row) {
+      this.count(`fail:${ip}`, now);
+      this.count('fail:*', now);
+      return { error: 'not found' };
+    }
+    this.q(`DELETE FROM transfers WHERE code = ?`, code);
+    return { player: row.player, data: row.data };
+  }
+
+  async transferRequest(req) {
+    const { action, player, data, code, ip } = await req.json();
+    const res = action === 'create' ? this.createTransfer(player, data, Date.now(), ip) : this.claimTransfer(code, Date.now(), ip);
+    const status = res.limited ? 429 : { 'too large': 413, invalid: 400, busy: 503, 'not found': 404 }[res.error] ?? 200;
+    return Response.json(res, { status });
+  }
+
   async fetch(req) {
     const { pathname } = new URL(req.url);
+    if (pathname === '/transfer' && req.method === 'POST') return this.transferRequest(req);
     if (pathname === '/week' && req.method === 'POST') return this.weekRequest(req);
     if (pathname === '/push' && req.method === 'POST') return this.pushRequest(req);
     if (pathname === '/push-week' && req.method === 'POST') return Response.json({ sent: await this.pushWeek() });

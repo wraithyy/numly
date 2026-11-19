@@ -20,11 +20,8 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <!-- Before first render, or pagereveal is missed: tells the CSS which way to slide. -->
-  <script>addEventListener('pagereveal', e => e.viewTransition?.types.add(location.pathname === '/week' ? 'forward' : 'back'));</script>
+  <script>addEventListener('pagereveal', e => e.viewTransition?.types.add(location.pathname === '/' && !/[?&]day=/.test(location.search) ? 'back' : 'forward'));</script>
 </head>
 <body>
 <script type="module" src="/src/main.js"></script>

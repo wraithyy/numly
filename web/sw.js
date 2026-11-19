@@ -1,11 +1,10 @@
-// Offline shell: app files are fetched network-first (so a deploy shows up immediately) and
-// cached as the offline fallback; fonts are cache-first. The API is never cached: the code
+// Offline shell: app files (fonts included, they are self-hosted) are fetched network-first, so a
+// deploy shows up immediately, and cached as the offline fallback. The API is never cached: the code
 // lives on the server, so guesses and the live board need the network.
 
-const CACHE = 'numly-v4';
+const CACHE = 'numly-v5'; // v5: fonts moved from Google to our own files
 // Filled in by the build (vite.config.js) with the hashed app files.
 const SHELL = self.__SHELL;
-const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 // The page keeps the player's language here, so a payload-free push can still speak it.
 const PREFS = 'numly-prefs';
 const PUSH_TEXT = {
@@ -39,9 +38,9 @@ self.addEventListener('fetch', event => {
   const sameOrigin = url.origin === self.location.origin;
   if (request.method !== 'GET') return;
   if (sameOrigin && url.pathname.startsWith('/api/')) return;
-  if (!sameOrigin && !FONT_HOSTS.includes(url.hostname)) return;
+  if (!sameOrigin) return;
 
-  event.respondWith(sameOrigin ? networkFirst(request, url) : cacheFirst(request));
+  event.respondWith(networkFirst(request, url));
 });
 
 async function networkFirst(request, url) {
@@ -61,15 +60,6 @@ async function networkFirst(request, url) {
     }
     throw err;
   }
-}
-
-async function cacheFirst(request) {
-  const cache = await caches.open(CACHE);
-  const cached = await cache.match(request);
-  if (cached) return cached;
-  const response = await fetch(request);
-  if (response.ok || response.type === 'opaque') cache.put(request, response.clone());
-  return response;
 }
 
 self.addEventListener('push', event => {
