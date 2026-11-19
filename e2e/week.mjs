@@ -30,7 +30,7 @@ export async function big({ base, env }) {
 
     await ann.ev(`document.querySelector('.wnotes summary').click()`);
     if (padAllowed(spec)) {
-      await ann.ev(`document.querySelector('.wnotes .padbar .toggle').click()`);
+      await ann.ev(`document.querySelector('.wnotes .padbar .toggle').click(); document.querySelector('.wnotes dialog .btn.gold').click()`);
       await sleep(1500);
       check('automatic notepad counts codes', /\d/.test(await ann.text('.wnotes .left')), await ann.text('.wnotes .left'));
     } else {
@@ -118,7 +118,7 @@ export async function heist({ base, env }) {
     check('link to B revealed', (await p.text('.links li')) === `${at + 1}. znak B = ${from + 1}. znak A`);
     check('fresh notes for safe B', (await p.ev(`document.querySelectorAll('.wnotes .pc.no, .wnotes .pc.sure').length`)) === 0);
 
-    await p.ev(`document.querySelector('.wnotes .padbar .toggle').click()`);
+    await p.ev(`document.querySelector('.wnotes .padbar .toggle').click(); document.querySelector('.wnotes dialog .btn.gold').click()`);
     await sleep(500);
     const left = Number((await p.text('.wnotes .left')).replace(/\D/g, ''));
     check('automatic notepad uses the link and the sum', left > 0 && left < 1000, String(left));

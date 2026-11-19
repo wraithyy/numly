@@ -30,6 +30,11 @@ export async function daily({ base, env }) {
     check('log row', (await p.text('.log .row .g')) === wrong);
 
     await p.ev(`document.getElementById('padBtn').click()`);
+    check('switching the notepad on asks first', await p.ev(`document.querySelector('.pad dialog').open`));
+    await p.ev(`document.querySelector('.pad dialog .btn:not(.gold)').click()`);
+    await sleep(200);
+    check('declining leaves it off', await p.ev(`document.getElementById('padBtn').getAttribute('aria-pressed') === 'false' && localStorage.getItem('numly-pad-used-${day}') !== 'true'`));
+    await p.ev(`document.getElementById('padBtn').click(); document.querySelector('.pad dialog .btn.gold').click()`);
     await sleep(300);
     check('notepad grid', (await p.ev(`document.querySelectorAll('#pad .pc').length`)) === 50);
     check('notepad marks the day', await p.ev(`localStorage.getItem('numly-pad-used-${day}') === 'true'`));
@@ -111,7 +116,7 @@ export async function friends({ base }) {
     await sleep(1200);
     check('friends on both sides', (await rows(ann)).some(r => r.includes('Bob')) && (await rows(bob)).some(r => r.includes('Ann')));
 
-    await bob.ev(`document.getElementById('friends').close(); document.getElementById('padBtn').click()`);
+    await bob.ev(`document.getElementById('friends').close(); document.getElementById('padBtn').click(); document.querySelector('.pad dialog .btn.gold').click()`);
     await bob.type('12345', 3000);
     check('Ann sees Bob play live, with the notepad tag', (await rows(ann)).some(r => r.includes('Bob') && r.includes('blok')), JSON.stringify(await rows(ann)));
     await ann.ev(`[...document.querySelectorAll('#friendRanks .x')].find(x => !x.hidden).click()`);

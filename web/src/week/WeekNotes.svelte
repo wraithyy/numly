@@ -6,6 +6,7 @@
   import { load, store } from '../lib/storage.js';
   import { candidates, padAllowed } from '../../../shared/week.js';
   import { wk, fillFrom, togglePad } from './week.svelte.js';
+  import PadSwitch from '../PadSwitch.svelte';
 
   const DIGITS = '0123456789ABCDEF';
   const NEXT = { '': 'no', no: 'sure', sure: '' };
@@ -54,7 +55,7 @@
   <summary class="toggle">{t('notesTitle')}</summary>
   {#if allowed && !wk.view.solved}
     <div class="padbar">
-      <button class="toggle" aria-pressed={wk.padOn} onclick={togglePad}><span class="sw"></span><span>{t('notesAuto')}</span></button>
+      <PadSwitch on={wk.padOn} ask={!wk.padUsed} label={t('notesAuto')} text={t('notesAutoOff')} toggle={togglePad} />
       <span class="left">{auto ? `${auto.left.toLocaleString(ui.lang)} ${t.codes(auto.left)}` : ''}</span>
     </div>
     <p class="warn">{wk.padUsed ? t('notesAutoOn') : t('notesAutoOff')}</p>

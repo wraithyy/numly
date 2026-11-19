@@ -211,6 +211,8 @@ h1 {
 /* stats */
 dialog { width: min(380px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--bg2); color: var(--fg); }
 dialog::backdrop { background: rgba(0,0,0,.55); backdrop-filter: blur(3px); }
+dialog .ask { display: flex; gap: 10px; margin-top: 18px; }
+dialog .ask .btn { flex: 1; }
 dialog h2 { margin: 0 0 14px; font: 900 26px/1 var(--display); letter-spacing: .12em; color: var(--brass); }
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
 .tiles div { background: var(--plate); border: 1px solid var(--line); border-radius: 10px; padding: 10px 4px; }

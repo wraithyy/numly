@@ -23,7 +23,7 @@ export const wk = $state({
   newest: false,
   busy: false,
   stats: load('numly-week-stats', { won: 0, streak: 0, best: 0, last: null, hist: {} }),
-  padOn: load('numly-week-pad', false), // the automatic notepad, a preference across weeks
+  padOn: false, // the automatic notepad, per week: a new week starts with it off
   padUsed: false, // sticky for the week once switched on: every later try carries it
 });
 
@@ -32,6 +32,7 @@ export const refs = { cells: [], door: null, vault: null, fx: null };
 /** Remembered per week so the daily page can show a dot until the week is solved. */
 export const weekDoneKey = week => `numly-week-done-${week}`;
 const padUsedKey = week => `numly-week-pad-used-${week}`;
+const padOnKey = week => `numly-week-pad-on-${week}`;
 
 async function api(body) {
   const res = await fetch('/api/week', {
@@ -46,6 +47,7 @@ async function api(body) {
 function apply(view, instant) {
   wk.view = view;
   wk.padUsed = load(padUsedKey(view.week), false);
+  wk.padOn = load(padOnKey(view.week), false);
   markPadUsed();
   wk.digits = Array(view.spec.len).fill('');
   const lastTry = view.tries.at(-1);
@@ -119,7 +121,7 @@ function markPadUsed() {
 
 export function togglePad() {
   wk.padOn = !wk.padOn;
-  store('numly-week-pad', wk.padOn);
+  store(padOnKey(wk.view.week), wk.padOn);
   markPadUsed();
   sfx.key();
 }

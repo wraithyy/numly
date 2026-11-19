@@ -16,6 +16,7 @@ export const dayNo = String(dayNumber(day)).padStart(3, '0');
 // The code itself lives only on the server; we keep each guess and the hit count it returned.
 const GAME_KEY = `numly2-${day}`;
 const PAD_USED_KEY = `numly-pad-used-${day}`;
+const PAD_ON_KEY = `numly-pad-on-${day}`; // per game: a new day starts with the notepad off
 const saved = load(GAME_KEY, { guesses: [], hits: {} });
 
 export const game = $state({
@@ -23,7 +24,7 @@ export const game = $state({
   hits: saved.hits,
   rank: saved.rank ?? null, // { beaten, peers } from the server when the safe opened
   stats: load('numly-stats', { won: 0, streak: 0, best: 0, last: null, hist: {} }),
-  padOn: load('numly-pad', false),
+  padOn: load(PAD_ON_KEY, false),
   padUsed: load(PAD_USED_KEY, false),
   digits: Array(LEN).fill(''),
   leds: 0,
@@ -64,7 +65,7 @@ export function markPadUsed() {
 
 export function togglePad() {
   game.padOn = !game.padOn;
-  store('numly-pad', game.padOn);
+  store(PAD_ON_KEY, game.padOn);
   markPadUsed();
   sfx.key();
 }
@@ -235,7 +236,6 @@ function win() {
 
 // ---------------------------------------------------------------- boot
 
-markPadUsed(); // a notepad left on from an earlier day counts as soon as today's game is open
 if (won()) {
   game.leds = LEN;
   game.open = true;

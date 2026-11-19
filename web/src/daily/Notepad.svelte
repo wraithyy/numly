@@ -1,6 +1,7 @@
 <script>
   import { ui } from '../lib/app.svelte.js';
   import { game, refs, pad, won, togglePad, setDigit } from './game.svelte.js';
+  import PadSwitch from '../PadSwitch.svelte';
 
   const t = $derived(ui.t);
   const p = $derived(pad());
@@ -9,7 +10,7 @@
 
 <section class="pad">
   <div class="padbar">
-    <button class="toggle" id="padBtn" aria-pressed={game.padOn} onclick={togglePad}><span class="sw"></span><span>{t('pad')}</span></button>
+    <PadSwitch id="padBtn" on={game.padOn} ask={!game.padUsed && !won()} label={t('pad')} text={t('padOff')} toggle={togglePad} />
     <span class="left" bind:this={refs.left}>{p ? `${p.left.toLocaleString(ui.lang)} ${t.codes(p.left)}` : ''}</span>
   </div>
   <p class="warn">{game.padUsed ? t('padOn') : won() ? '' : t('padOff')}</p>
