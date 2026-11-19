@@ -5,6 +5,7 @@
 
   const cs = $derived(ui.lang === 'cs' || ui.lang === 'sk');
   const CONTACT = 'numly@jkvapil.cz';
+  const GITHUB = 'https://github.com/wraithyy';
 </script>
 
 <main class="privacy">
@@ -14,7 +15,7 @@
     <p class="note">Platné od 19. 11. 2026</p>
 
     <h2>Kdo hru provozuje</h2>
-    <p>Josef Kvapil, <a href="mailto:{CONTACT}">{CONTACT}</a>. Na tuto adresu pište s jakoukoli otázkou nebo žádostí o smazání.</p>
+    <p>Josef Kvapil, <a href="mailto:{CONTACT}">{CONTACT}</a>, <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub</a>. Na e-mail pište s jakoukoli otázkou nebo žádostí o smazání.</p>
 
     <h2>Co zůstává jen ve vašem zařízení</h2>
     <p>Postup hry, statistiky, série, historie, poznámky, nastavení a náhodné ID hráče jsou uložené v prohlížeči (localStorage). Nikam se neposílají, dokud nehrajete s přáteli, nepřenášíte profil ani neposíláte tip. Smažete je vymazáním dat tohoto webu v prohlížeči.</p>
@@ -44,7 +45,7 @@
     <p class="note">Effective 19 November 2026</p>
 
     <h2>Who runs the game</h2>
-    <p>Josef Kvapil, <a href="mailto:{CONTACT}">{CONTACT}</a>. Write to this address with any question or request to delete data.</p>
+    <p>Josef Kvapil, <a href="mailto:{CONTACT}">{CONTACT}</a>, <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub</a>. Email with any question or request to delete data.</p>
 
     <h2>What stays on your device</h2>
     <p>Game progress, stats, streaks, history, notes, settings and a random player id are kept in your browser (localStorage). None of it is sent anywhere unless you play with friends, move your profile or submit a guess. Clearing this site's data in your browser deletes it.</p>

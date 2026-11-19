@@ -58,6 +58,27 @@ export async function claim(input) {
 /** Safes opened on this device, daily and weekly: what a transfer would replace. */
 export const localWins = () => (load('numly-stats', { won: 0 }).won || 0) + (load('numly-week-stats', { won: 0 }).won || 0);
 
+/** Profiles a transfer replaced on this device, newest first: [{ key, at }]. */
+export function backups() {
+  try {
+    return Object.keys(localStorage)
+      .map(key => ({ key, at: Number(/^numly-backup-(\d+)$/.exec(key)?.[1]) }))
+      .filter(b => b.at)
+      .sort((a, b) => b.at - a.at);
+  } catch {
+    return [];
+  }
+}
+
+/** Puts a replaced profile back. The current one becomes a backup in turn, so this can be undone too. */
+export function restoreBackup(key) {
+  const entries = Object.entries(JSON.parse(localStorage.getItem(key) ?? '{}')).filter(([k, v]) => OWN.test(k) && !BACKUP.test(k) && typeof v === 'string');
+  const player = JSON.parse(Object.fromEntries(entries)['numly-player'] ?? 'null');
+  if (!isPlayer(player)) throw new Error('trBad');
+  localStorage.removeItem(key);
+  applyProfile({ player, entries });
+}
+
 export function applyProfile({ player, entries }) {
   const before = profileKeys().map(k => [k, localStorage.getItem(k)]);
   try {

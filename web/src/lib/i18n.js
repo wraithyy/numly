@@ -3,6 +3,7 @@ import { WEEK_I18N } from './i18n-week.js';
 // UI strings. {x} placeholders are filled by t(key, vars); `codes` is keyed by Intl.PluralRules categories.
 export const I18N = {
   cs: {
+    trRestore: 'Vrátit předchozí profil ({t})',
     privacy: 'Ochrana soukromí',
     trWins: 'otevřené trezory: {n}',
     trTakeNote: 'Tohle zařízení pak bude hrát jako tento hráč.',
@@ -75,6 +76,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódů' },
   },
   en: {
+    trRestore: 'Restore the previous profile ({t})',
     privacy: 'Privacy',
     trWins: 'safes opened: {n}',
     trTakeNote: 'This device will then play as this player.',
@@ -147,6 +149,7 @@ export const I18N = {
     codes: { one: 'possible code', other: 'possible codes' },
   },
   sk: {
+    trRestore: 'Vrátiť predchádzajúci profil ({t})',
     privacy: 'Ochrana súkromia',
     trWins: 'otvorené trezory: {n}',
     trTakeNote: 'Toto zariadenie potom bude hrať ako tento hráč.',
@@ -219,6 +222,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódov' },
   },
   de: {
+    trRestore: 'Vorheriges Profil zurückholen ({t})',
     privacy: 'Datenschutz',
     trWins: 'geöffnete Tresore: {n}',
     trTakeNote: 'Dieses Gerät spielt danach als dieser Spieler.',
@@ -291,6 +295,7 @@ export const I18N = {
     codes: { one: 'möglicher Code', other: 'mögliche Codes' },
   },
   pl: {
+    trRestore: 'Przywróć poprzedni profil ({t})',
     privacy: 'Prywatność',
     trWins: 'otwarte sejfy: {n}',
     trTakeNote: 'To urządzenie będzie potem grać jako ten gracz.',
@@ -363,6 +368,7 @@ export const I18N = {
     codes: { one: 'możliwy kod', few: 'możliwe kody', many: 'możliwych kodów', other: 'możliwego kodu' },
   },
   es: {
+    trRestore: 'Recuperar el perfil anterior ({t})',
     privacy: 'Privacidad',
     trWins: 'cajas abiertas: {n}',
     trTakeNote: 'Este dispositivo jugará después como este jugador.',
@@ -435,6 +441,7 @@ export const I18N = {
     codes: { one: 'código posible', other: 'códigos posibles' },
   },
   fr: {
+    trRestore: 'Restaurer le profil précédent ({t})',
     privacy: 'Confidentialité',
     trWins: 'coffres ouverts : {n}',
     trTakeNote: 'Cet appareil jouera ensuite comme ce joueur.',
@@ -507,6 +514,7 @@ export const I18N = {
     codes: { one: 'code possible', other: 'codes possibles' },
   },
   it: {
+    trRestore: 'Ripristina il profilo precedente ({t})',
     privacy: 'Privacy',
     trWins: 'casseforti aperte: {n}',
     trTakeNote: 'Questo dispositivo giocherà poi come questo giocatore.',
@@ -579,6 +587,7 @@ export const I18N = {
     codes: { one: 'codice possibile', other: 'codici possibili' },
   },
   pt: {
+    trRestore: 'Restaurar o perfil anterior ({t})',
     privacy: 'Privacidade',
     trWins: 'cofres abertos: {n}',
     trTakeNote: 'Este dispositivo vai jogar depois como este jogador.',

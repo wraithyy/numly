@@ -144,6 +144,7 @@ export async function transfer({ base }) {
     await old.go('/');
     await neu.go('/');
     const oldPlayer = await old.ev(`JSON.parse(localStorage.getItem('numly-player'))`);
+    const newPlayer = await neu.ev(`JSON.parse(localStorage.getItem('numly-player'))`);
 
     await old.ev(`document.getElementById('statsBtn').click()`);
     await old.ev(`document.querySelector('.transferlink').click()`);
@@ -172,6 +173,9 @@ export async function transfer({ base }) {
     await neu.ev(`(() => { const i = document.getElementById('trInput'); i.value = '${code}'; i.dispatchEvent(new Event('input', { bubbles: true })); document.querySelector('.transferdlg .nameform button').click(); })()`);
     await sleep(800);
     check('a code works only once', (await neu.text('.transferdlg .note.bad'))?.includes('neplatí'));
+    await neu.ev(`document.querySelector('.trrestore').click()`);
+    await sleep(1500);
+    check('the replaced profile can be restored', (await neu.ev(`JSON.parse(localStorage.getItem('numly-player'))`)) === newPlayer && (await neu.ev(`JSON.parse(localStorage.getItem('numly-stats')).won`)) === 1);
     check('no page errors', !old.errors.length && !neu.errors.length, [...old.errors, ...neu.errors].join(' | '));
   } finally {
     old.close();

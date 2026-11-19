@@ -1,7 +1,7 @@
 <script>
   import { formatCode } from '../../shared/transfer.js';
   import { player, ui } from './lib/app.svelte.js';
-  import { transfer, createCode, claim, localWins, applyProfile } from './lib/transfer.svelte.js';
+  import { transfer, createCode, claim, localWins, applyProfile, backups, restoreBackup } from './lib/transfer.svelte.js';
 
   let dialog;
   const t = $derived(ui.t);
@@ -11,12 +11,14 @@
   let busy = $state(false);
   let pending = $state(null); // a claimed profile, shown for confirmation before it replaces this one
   let linkLabel = $state(null);
+  let saved = $state([]); // profiles earlier transfers replaced here
 
   $effect(() => {
     if (transfer.open && dialog && !dialog.open) {
       transfer.open = false;
       error = '';
       pending = null;
+      saved = backups();
       dialog.showModal();
     }
   });
@@ -85,6 +87,11 @@
       <input id="trInput" bind:value={transfer.code} maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" aria-label={t('trNewHead')} />
       <button class="btn gold" disabled={busy}>{t('trGo')}</button>
     </form>
+    {#if saved.length}
+      <button type="button" class="linkbtn trrestore" disabled={busy} onclick={() => run(async () => restoreBackup(saved[0].key))}>
+        {t('trRestore', { t: new Date(saved[0].at).toLocaleString(ui.lang, { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) })}
+      </button>
+    {/if}
   {/if}
   {#if error}<p class="note bad" role="alert">{error}</p>{/if}
   <form method="dialog"><button class="btn wide">{t('close')}</button></form>
