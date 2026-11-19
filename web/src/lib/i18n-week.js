@@ -23,6 +23,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATICKY', notesAutoOff: 'Zapnutí se ukáže přátelům v týdenním žebříčku.', notesAutoOn: 'Automatika použita. V žebříčku to bude vidět.', notesAutoHint: 'Trezor si z tvých tipů sám odvodí, co kam patří: <s>3</s> tady není · <span class="sure">3</span> tady je · klik vloží znak.',
     pushToggle: 'PŘIPOMENOUT V PONDĚLÍ', pushDenied: 'Upozornění jsou v prohlížeči zakázaná. Povol je v nastavení webu.',
     coffee: 'Líbí se ti hra? Kup mi kávu',
+    rankBeaten: 'Méně pokusů než {p} % z {n} hráčů, kteří dnes trezor otevřeli.',
   },
   en: {
     weekHowTitle: 'WEEKLY SAFE', weekStatsTitle: 'WEEKLY STATISTICS', sWeeks: 'Weeks',
@@ -47,6 +48,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATIC', notesAutoOff: 'Switching it on shows on the weekly board.', notesAutoOn: 'Automatic notes used. The board will show it.', notesAutoHint: 'The safe works out from your tries what goes where: <s>3</s> not here · <span class="sure">3</span> here · tap to enter it.',
     pushToggle: 'REMIND ME ON MONDAY', pushDenied: 'Notifications are blocked in this browser. Allow them in the site settings.',
     coffee: 'Enjoying the game? Buy me a coffee',
+    rankBeaten: 'Fewer tries than {p}% of the {n} players who opened it today.',
   },
   sk: {
     weekHowTitle: 'TÝŽDENNÝ TREZOR', weekStatsTitle: 'TÝŽDENNÉ ŠTATISTIKY', sWeeks: 'Týždne',
@@ -71,6 +73,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATICKY', notesAutoOff: 'Zapnutie uvidia priatelia v týždennom rebríčku.', notesAutoOn: 'Automatika použitá. V rebríčku to bude vidieť.', notesAutoHint: 'Trezor si z tvojich tipov sám odvodí, čo kam patrí: <s>3</s> tu nie je · <span class="sure">3</span> tu je · klik vloží znak.',
     pushToggle: 'PRIPOMENÚŤ V PONDELOK', pushDenied: 'Upozornenia sú v prehliadači zakázané. Povoľ ich v nastaveniach webu.',
     coffee: 'Páči sa ti hra? Kúp mi kávu',
+    rankBeaten: 'Menej pokusov než {p} % z {n} hráčov, ktorí dnes trezor otvorili.',
   },
   de: {
     weekHowTitle: 'WOCHENTRESOR', weekStatsTitle: 'WOCHENSTATISTIK', sWeeks: 'Wochen',
@@ -95,6 +98,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATISCH', notesAutoOff: 'Das Einschalten sieht man in der Wochenwertung.', notesAutoOn: 'Automatik benutzt. Die Wertung zeigt es.', notesAutoHint: 'Der Tresor leitet aus deinen Versuchen ab, was wohin gehört: <s>3</s> nicht hier · <span class="sure">3</span> hier · Tippen setzt es ein.',
     pushToggle: 'MONTAGS ERINNERN', pushDenied: 'Benachrichtigungen sind im Browser blockiert. Erlaube sie in den Website-Einstellungen.',
     coffee: 'Gefällt dir das Spiel? Spendier mir einen Kaffee',
+    rankBeaten: 'Weniger Versuche als {p} % der {n} Spieler, die ihn heute geöffnet haben.',
   },
   pl: {
     weekHowTitle: 'SEJF TYGODNIA', weekStatsTitle: 'STATYSTYKI TYGODNIOWE', sWeeks: 'Tygodnie',
@@ -119,6 +123,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATYCZNIE', notesAutoOff: 'Włączenie będzie widać w tygodniowym rankingu.', notesAutoOn: 'Automat użyty. Ranking to pokaże.', notesAutoHint: 'Sejf sam wylicza z twoich prób, co gdzie pasuje: <s>3</s> nie tu · <span class="sure">3</span> tutaj · stuknij, by wpisać.',
     pushToggle: 'PRZYPOMNIJ W PONIEDZIAŁEK', pushDenied: 'Powiadomienia są zablokowane w przeglądarce. Zezwól na nie w ustawieniach strony.',
     coffee: 'Podoba ci się gra? Postaw mi kawę',
+    rankBeaten: 'Mniej prób niż {p}% z {n} graczy, którzy otworzyli go dziś.',
   },
   es: {
     weekHowTitle: 'CAJA SEMANAL', weekStatsTitle: 'ESTADÍSTICAS SEMANALES', sWeeks: 'Semanas',
@@ -143,6 +148,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMÁTICO', notesAutoOff: 'Activarlo se verá en la clasificación semanal.', notesAutoOn: 'Notas automáticas usadas. La clasificación lo mostrará.', notesAutoHint: 'La caja deduce de tus intentos qué va dónde: <s>3</s> aquí no · <span class="sure">3</span> aquí sí · toca para ponerlo.',
     pushToggle: 'AVISARME EL LUNES', pushDenied: 'Las notificaciones están bloqueadas en el navegador. Permítelas en la configuración del sitio.',
     coffee: '¿Te gusta el juego? Invítame a un café',
+    rankBeaten: 'Menos intentos que el {p} % de los {n} jugadores que la abrieron hoy.',
   },
   fr: {
     weekHowTitle: 'COFFRE DE LA SEMAINE', weekStatsTitle: 'STATISTIQUES HEBDO', sWeeks: 'Semaines',
@@ -167,6 +173,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATIQUE', notesAutoOff: 'L’activer se verra dans le classement de la semaine.', notesAutoOn: 'Notes automatiques utilisées. Le classement l’indiquera.', notesAutoHint: 'Le coffre déduit de tes essais ce qui va où : <s>3</s> pas ici · <span class="sure">3</span> ici · touche pour le saisir.',
     pushToggle: 'ME RAPPELER LE LUNDI', pushDenied: 'Les notifications sont bloquées dans le navigateur. Autorise-les dans les réglages du site.',
     coffee: 'Le jeu te plaît ? Offre-moi un café',
+    rankBeaten: 'Moins d’essais que {p} % des {n} joueurs qui l’ont ouvert aujourd’hui.',
   },
   it: {
     weekHowTitle: 'CASSAFORTE SETTIMANALE', weekStatsTitle: 'STATISTICHE SETTIMANALI', sWeeks: 'Settimane',
@@ -191,6 +198,7 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMATICO', notesAutoOff: 'Attivarlo si vedrà nella classifica settimanale.', notesAutoOn: 'Appunti automatici usati. La classifica lo mostrerà.', notesAutoHint: 'La cassaforte ricava dai tuoi tentativi cosa va dove: <s>3</s> non qui · <span class="sure">3</span> qui · tocca per inserirlo.',
     pushToggle: 'RICORDAMELO LUNEDÌ', pushDenied: 'Le notifiche sono bloccate nel browser. Consentile nelle impostazioni del sito.',
     coffee: 'Ti piace il gioco? Offrimi un caffè',
+    rankBeaten: 'Meno tentativi del {p}% dei {n} giocatori che l’hanno aperta oggi.',
   },
   pt: {
     weekHowTitle: 'COFRE SEMANAL', weekStatsTitle: 'ESTATÍSTICAS SEMANAIS', sWeeks: 'Semanas',
@@ -215,5 +223,6 @@ export const WEEK_I18N = {
     notesAuto: 'AUTOMÁTICO', notesAutoOff: 'Ligar aparece na classificação semanal.', notesAutoOn: 'Notas automáticas usadas. A classificação vai mostrar.', notesAutoHint: 'O cofre deduz das suas tentativas o que vai onde: <s>3</s> não aqui · <span class="sure">3</span> aqui · toque para inserir.',
     pushToggle: 'LEMBRAR NA SEGUNDA', pushDenied: 'As notificações estão bloqueadas no navegador. Permita nas configurações do site.',
     coffee: 'Gostou do jogo? Me pague um café',
+    rankBeaten: 'Menos tentativas que {p}% dos {n} jogadores que abriram hoje.',
   },
 };

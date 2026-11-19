@@ -44,6 +44,7 @@ async function handleGuess(req, env) {
   if (day !== today && !archived) return json({ error: 'wrong day', day: today }, 409);
 
   const hits = scoreOf(guess, await codeFor(day, env.SECRET));
+  let rank = null; // on a solve: how this player compares with everyone who solved today
 
   // Count the try for friends' views. A board hiccup must never cost the player their answer.
   if (!archived && env.SOCIAL && isPlayer(player)) {
@@ -55,12 +56,13 @@ async function handleGuess(req, env) {
       at: Date.now(),
     };
     try {
-      await social(env).fetch('https://social/guess', { method: 'POST', body: JSON.stringify(event) });
+      const res = await social(env).fetch('https://social/guess', { method: 'POST', body: JSON.stringify(event) });
+      if (hits === LEN) rank = (await res.json()).rank ?? null;
     } catch (err) {
       console.error('Friends update failed:', err);
     }
   }
-  return json({ hits });
+  return json(rank ? { hits, rank } : { hits });
 }
 
 // Weekly game: the Durable Object draws the week, enforces try limits and judges guesses.

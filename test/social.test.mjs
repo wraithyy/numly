@@ -90,3 +90,21 @@ test('related covers friends and both sides of pending requests', () => {
   s.request(C, A);
   assert.deepEqual(s.related(A).sort(), [A, B, C].sort());
 });
+
+test('rank: share of other solvers who needed more tries, once enough have solved', () => {
+  const s = new Social(fakeCtx());
+  const day = '2026-11-20';
+  const solve = (pub, tries) => {
+    for (let i = 1; i < tries; i++) s.recordGuess({ pub, hits: 1, at: 0 }, day);
+    s.recordGuess({ pub, hits: 5, at: 0 }, day);
+  };
+  solve(A, 4);
+  solve(B, 6);
+  solve(C, 4); // a tie is not beaten
+  assert.equal(s.rankOf(A, day), null, 'too few others yet');
+  solve('dddddddddddddddd', 9);
+  s.recordGuess({ pub: 'eeeeeeeeeeeeeeee', hits: 2, at: 0 }, day); // still playing: not compared
+  assert.deepEqual(s.rankOf(A, day), { beaten: 67, peers: 3 });
+  assert.deepEqual(s.rankOf(B, day), { beaten: 33, peers: 3 });
+  assert.equal(s.rankOf('eeeeeeeeeeeeeeee', day), null, 'not solved');
+});

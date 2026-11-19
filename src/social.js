@@ -8,6 +8,7 @@ import { gameWeek } from '../shared/week.js';
 import { isPushEndpoint, sendPush } from './push.js';
 
 const MAX_PENDING = 50;
+const MIN_RANK_PEERS = 3; // below this, a percentage of a handful of players says nothing
 const KEEP_DAYS = 3;
 const DAY_MS = 864e5;
 
@@ -68,6 +69,20 @@ export class Social {
          solved = MAX(solved, excluded.solved)`,
       day, pub, solved, pad ? 1 : 0, solved ? at : null,
     );
+  }
+
+  /**
+   * How a solved day compares with everyone else who solved it: the share of them who needed more
+   * tries (ties do not count as beaten). Null until enough others have solved the day.
+   */
+  rankOf(pub, day = gameDay()) {
+    const me = this.q(`SELECT tries FROM results WHERE day = ? AND pub = ? AND solved = 1`, day, pub)[0];
+    if (!me) return null;
+    const { peers, beaten } = this.q(
+      `SELECT COUNT(*) AS peers, COALESCE(SUM(tries > ?), 0) AS beaten FROM results WHERE day = ? AND solved = 1 AND pub <> ?`,
+      me.tries, day, pub,
+    )[0];
+    return peers < MIN_RANK_PEERS ? null : { beaten: Math.round((100 * beaten) / peers), peers };
   }
 
   markPad(pub, day = gameDay()) {
@@ -241,7 +256,7 @@ export class Social {
       this.recordGuess(event);
       await this.ensureCleanup();
       this.notify(this.related(event.pub));
-      return new Response(null, { status: 204 });
+      return Response.json({ rank: event.hits === 5 ? this.rankOf(event.pub, gameDay(event.at)) : null });
     }
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
     const [client, server] = Object.values(new WebSocketPair());

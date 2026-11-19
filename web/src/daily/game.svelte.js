@@ -21,6 +21,7 @@ const saved = load(GAME_KEY, { guesses: [], hits: {} });
 export const game = $state({
   guesses: saved.guesses,
   hits: saved.hits,
+  rank: saved.rank ?? null, // { beaten, peers } from the server when the safe opened
   stats: load('numly-stats', { won: 0, streak: 0, best: 0, last: null, hist: {} }),
   padOn: load('numly-pad', false),
   padUsed: load(PAD_USED_KEY, false),
@@ -78,7 +79,7 @@ async function askSafe(guess) {
   if (!res.ok || !Number.isInteger(body.hits)) {
     throw Object.assign(new Error(body.error || `HTTP ${res.status}`), { wrongDay: res.status === 409 });
   }
-  return body.hits;
+  return body;
 }
 
 // ---------------------------------------------------------------- input
@@ -148,9 +149,9 @@ export async function submit() {
 
   game.busy = true;
   game.msg = t('listen');
-  let hits;
+  let hits, rank;
   try {
-    hits = await askSafe(guess);
+    ({ hits, rank = null } = await askSafe(guess));
   } catch (err) {
     console.error('Guess request failed:', err);
     game.busy = false;
@@ -161,7 +162,8 @@ export async function submit() {
   const previousBest = Math.max(0, ...game.guesses.map(score));
   // Saved right away, but shown (history, notepad, loot) only once the tumblers have clicked.
   game.hits[guess] = hits;
-  store(GAME_KEY, { guesses: [...game.guesses, guess], hits: game.hits });
+  if (hits === LEN) game.rank = rank;
+  store(GAME_KEY, { guesses: [...game.guesses, guess], hits: game.hits, rank: game.rank });
   const reveal = () => game.guesses.push(guess);
 
   game.wheel += 360 + hits * 72;

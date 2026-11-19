@@ -37,13 +37,21 @@ export async function daily({ base, env }) {
     check('history row refills the safe', (await p.ev(cells)) === wrong);
     await p.ev(`[...document.querySelectorAll('.otp input')].forEach(c => { c.value = ''; c.dispatchEvent(new InputEvent('input', { bubbles: true })); })`);
 
+    // Three other players open today's safe in six tries each, so two tries beat all of them.
+    for (const n of [1, 2, 3]) {
+      const player = String(n).repeat(43);
+      for (const g of [...Array(5).fill(wrong), code]) {
+        await fetch(base + '/api/guess', { method: 'POST', body: JSON.stringify({ day, guess: g, player }) });
+      }
+    }
     await p.type(code, 3500);
     check('door opens with the code', (await p.text('.loot')) === code);
+    check('rank among today\'s solvers', (await p.text('.rank-line'))?.includes('100 % z 3 hráčů'), await p.text('.rank-line'));
     check('notepad badge', await p.ev(`!!document.querySelector('.padbadge')`));
     check('countdown', /\d\d:\d\d:\d\d/.test(await p.text('.next b')));
 
     await p.go('/');
-    check('reload keeps the open door', await p.ev(`document.getElementById('door').classList.contains('instant')`));
+    check('reload keeps the open door and the rank', await p.ev(`document.getElementById('door').classList.contains('instant') && !!document.querySelector('.rank-line')`));
     check('streak', (await p.ev(`[...document.querySelectorAll('.plate')].map(x => x.textContent).join('|')`)).includes('SÉRIE 1'));
     await p.ev(`document.getElementById('statsBtn').click()`);
     await sleep(200);

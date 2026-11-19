@@ -410,3 +410,4 @@ a.icon { color: inherit; text-decoration: none; }
 .credits a:active { transform: scale(.97); }
 .credits a:hover svg, .credits a:focus-visible svg { stroke: currentColor; }
 .credits svg { width: 20px; height: 20px; fill: none; stroke: var(--brass); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.rank-line { margin: 4px 0 0; font-size: 12.5px; color: var(--amber); }

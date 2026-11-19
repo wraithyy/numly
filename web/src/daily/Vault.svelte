@@ -92,6 +92,7 @@
         <p class="eyebrow">{t('opened')}</p>
         <p class="loot">{game.guesses.at(-1)}</p>
         <p>{shareFailed ? t('copyFail') : `${t('tries', { n: game.guesses.length })} · ${t('safeNo', { d: dayNo })}`}</p>
+        {#if game.rank?.beaten}<p class="rank-line">{t('rankBeaten', { p: game.rank.beaten, n: game.rank.peers })}</p>{/if}
         {#if game.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
         {#if !archived}<p class="next"><span>{t('next')}</span> <b>{countdown}</b></p>{/if}
         <div class="actions">
