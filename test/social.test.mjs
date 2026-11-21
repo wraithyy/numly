@@ -108,3 +108,16 @@ test('rank: share of other solvers who needed more tries, once enough have solve
   assert.deepEqual(s.rankOf(B, day), { beaten: 33, peers: 3 });
   assert.equal(s.rankOf('eeeeeeeeeeeeeeee', day), null, 'not solved');
 });
+
+test('results played before becoming friends show up once the request is accepted', () => {
+  const s = new Social(fakeCtx());
+  // Neither has a nickname yet while guessing: the guess alone creates the player.
+  s.recordGuess({ pub: A, hits: 2, at: 1 }, DAY);
+  s.recordGuess({ pub: B, hits: 5, at: 2 }, DAY);
+  s.touch(A, 'Ann');
+  s.touch(B, 'Bob');
+  s.request(A, B);
+  s.accept(B, A);
+  const rows = s.state(A, DAY).rows;
+  assert.deepEqual(rows.map(r => [r.pub, r.tries, r.solved]), [[B, 1, true], [A, 1, false]]);
+});

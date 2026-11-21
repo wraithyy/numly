@@ -4,6 +4,7 @@
   import FriendsDialog from '../FriendsDialog.svelte';
   import WeekVault from './WeekVault.svelte';
   import WeekLog from './WeekLog.svelte';
+  import HideCode from '../HideCode.svelte';
   import WeekBoard from './WeekBoard.svelte';
   import Clues from './Clues.svelte';
   import Heist from './Heist.svelte';
@@ -79,6 +80,7 @@
       </p>
     {/if}
     {#if spec.type !== 'grid'}<WeekNotes />{/if}
+    {#if wk.view.tries.length && !wk.view.solved}<div class="logbar"><HideCode /></div>{/if}
     <WeekLog />
     <WeekBoard />
     <WeekPush />

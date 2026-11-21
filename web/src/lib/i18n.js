@@ -3,6 +3,7 @@ import { WEEK_I18N } from './i18n-week.js';
 // UI strings. {x} placeholders are filled by t(key, vars); `codes` is keyed by Intl.PluralRules categories.
 export const I18N = {
   cs: {
+    hideCode: 'Skrýt kód', showCode: 'Ukázat kód',
     trRestore: 'Vrátit předchozí profil ({t})',
     privacy: 'Ochrana soukromí',
     trWins: 'otevřené trezory: {n}',
@@ -76,6 +77,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódů' },
   },
   en: {
+    hideCode: 'Hide code', showCode: 'Show code',
     trRestore: 'Restore the previous profile ({t})',
     privacy: 'Privacy',
     trWins: 'safes opened: {n}',
@@ -149,6 +151,7 @@ export const I18N = {
     codes: { one: 'possible code', other: 'possible codes' },
   },
   sk: {
+    hideCode: 'Skryť kód', showCode: 'Ukázať kód',
     trRestore: 'Vrátiť predchádzajúci profil ({t})',
     privacy: 'Ochrana súkromia',
     trWins: 'otvorené trezory: {n}',
@@ -222,6 +225,7 @@ export const I18N = {
     codes: { one: 'možný kód', few: 'možné kódy', many: 'možného kódu', other: 'možných kódov' },
   },
   de: {
+    hideCode: 'Code verbergen', showCode: 'Code zeigen',
     trRestore: 'Vorheriges Profil zurückholen ({t})',
     privacy: 'Datenschutz',
     trWins: 'geöffnete Tresore: {n}',
@@ -295,6 +299,7 @@ export const I18N = {
     codes: { one: 'möglicher Code', other: 'mögliche Codes' },
   },
   pl: {
+    hideCode: 'Ukryj kod', showCode: 'Pokaż kod',
     trRestore: 'Przywróć poprzedni profil ({t})',
     privacy: 'Prywatność',
     trWins: 'otwarte sejfy: {n}',
@@ -368,6 +373,7 @@ export const I18N = {
     codes: { one: 'możliwy kod', few: 'możliwe kody', many: 'możliwych kodów', other: 'możliwego kodu' },
   },
   es: {
+    hideCode: 'Ocultar código', showCode: 'Mostrar código',
     trRestore: 'Recuperar el perfil anterior ({t})',
     privacy: 'Privacidad',
     trWins: 'cajas abiertas: {n}',
@@ -441,6 +447,7 @@ export const I18N = {
     codes: { one: 'código posible', other: 'códigos posibles' },
   },
   fr: {
+    hideCode: 'Masquer le code', showCode: 'Afficher le code',
     trRestore: 'Restaurer le profil précédent ({t})',
     privacy: 'Confidentialité',
     trWins: 'coffres ouverts : {n}',
@@ -514,6 +521,7 @@ export const I18N = {
     codes: { one: 'code possible', other: 'codes possibles' },
   },
   it: {
+    hideCode: 'Nascondi codice', showCode: 'Mostra codice',
     trRestore: 'Ripristina il profilo precedente ({t})',
     privacy: 'Privacy',
     trWins: 'casseforti aperte: {n}',
@@ -587,6 +595,7 @@ export const I18N = {
     codes: { one: 'codice possibile', other: 'codici possibili' },
   },
   pt: {
+    hideCode: 'Ocultar código', showCode: 'Mostrar código',
     trRestore: 'Restaurar o perfil anterior ({t})',
     privacy: 'Privacidade',
     trWins: 'cofres abertos: {n}',

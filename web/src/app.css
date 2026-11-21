@@ -540,3 +540,15 @@ a.icon { color: inherit; text-decoration: none; }
   /* shadow above, light below: cut into the steel, in either theme */
   text-shadow: 0 -1px 0 color-mix(in srgb, var(--steel-2) 75%, #000), 0 1px 0 color-mix(in srgb, var(--steel-1) 70%, transparent);
 }
+
+/* Hide the code on an open safe, for a spoiler-free screenshot. */
+.hidecode {
+  position: absolute; top: 10px; right: 10px; z-index: 1; width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid color-mix(in srgb, #b8995a 45%, transparent); background: rgba(0,0,0,.45); color: #e8d6a6;
+}
+.hidecode svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.hidecode[aria-pressed="true"] { color: #ffe39a; border-color: #ffe39a; }
+.logbar .hidecode[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); }
+.logbar { display: flex; justify-content: flex-end; margin: 10px 0 -6px; }
+.logbar .hidecode { position: static; width: 30px; height: 30px; background: var(--plate); border-color: var(--line); color: var(--muted); }
+.logbar .hidecode svg { width: 16px; height: 16px; }

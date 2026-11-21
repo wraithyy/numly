@@ -4,6 +4,7 @@
   import FriendsDialog from '../FriendsDialog.svelte';
   import Vault from './Vault.svelte';
   import Log from './Log.svelte';
+  import HideCode from '../HideCode.svelte';
   import Notepad from './Notepad.svelte';
   import HelpDialog from './HelpDialog.svelte';
   import StatsDialog from './StatsDialog.svelte';
@@ -59,6 +60,7 @@
   />
   <Vault onStats={() => stats.show()} />
   <p id="msg" role="status">{game.msg}</p>
+  {#if game.guesses.length && !won()}<div class="logbar"><HideCode /></div>{/if}
   <Log />
   <Notepad />
 </main>

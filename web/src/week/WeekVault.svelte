@@ -1,5 +1,6 @@
 <script>
-  import { ui } from '../lib/app.svelte.js';
+  import { mask, ui } from '../lib/app.svelte.js';
+  import HideCode from '../HideCode.svelte';
   import Wheel from '../Wheel.svelte';
   import { wk, refs, stepChar, fillFrom, submit, isChar, msUntilNextWeek, safeLetter } from './week.svelte.js';
 
@@ -88,9 +89,10 @@
 <div class="vault" data-tier={wk.tier} class:fresh={!wk.instant} bind:this={refs.vault}>
   <div class="inside" aria-live="polite">
     {#if wk.view.solved}
+      <HideCode />
       <div>
         <p class="eyebrow">{t('opened')}</p>
-        <p class="loot long" class:wall={grid}>{#each loot as line, i (i)}<span style:--i={i}>{line}</span>{/each}</p>
+        <p class="loot long" class:wall={grid}>{#each loot as line, i (i)}<span style:--i={i}>{mask(line)}</span>{/each}</p>
         <p>{shareFailed ? t('copyFail') : t('weekSolved', { n: wk.view.tries.length })}</p>
         {#if wk.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}
         <p class="next"><span>{t('weekEnds')}</span> <b>{countdown}</b></p>

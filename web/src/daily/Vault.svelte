@@ -1,6 +1,7 @@
 <script>
   import { LEN, msUntilNextDay } from '../../../shared/logic.js';
-  import { ui } from '../lib/app.svelte.js';
+  import { mask, ui } from '../lib/app.svelte.js';
+  import HideCode from '../HideCode.svelte';
   import Wheel from '../Wheel.svelte';
   import { game, refs, dayNo, archived, pad, won, stepDigit, fillFrom, submit } from './game.svelte.js';
 
@@ -89,9 +90,10 @@
 <div class="vault" data-tier={game.tier} class:fresh={!game.instant} bind:this={refs.vault}>
   <div class="inside" aria-live="polite">
     {#if won()}
+      <HideCode />
       <div>
         <p class="eyebrow">{t('opened')}</p>
-        <p class="loot">{#each game.guesses.at(-1) as c, i (i)}<span style:--i={i}>{c}</span>{/each}</p>
+        <p class="loot">{#each mask(game.guesses.at(-1)) as c, i (i)}<span style:--i={i}>{c}</span>{/each}</p>
         <p>{shareFailed ? t('copyFail') : `${t('tries', { n: game.guesses.length })} · ${t('safeNo', { d: dayNo })}`}</p>
         {#if game.rank?.beaten}<p class="rank-line">{t('rankBeaten', { p: game.rank.beaten, n: game.rank.peers })}</p>{/if}
         {#if game.padUsed}<p class="padbadge">{t('withPad')}</p>{/if}

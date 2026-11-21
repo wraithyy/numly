@@ -1,5 +1,5 @@
 <script>
-  import { ui } from '../lib/app.svelte.js';
+  import { mask, ui } from '../lib/app.svelte.js';
   import { wk, safeLetter } from './week.svelte.js';
 
   const t = $derived(ui.t);
@@ -13,7 +13,7 @@
     {#each { length: spec.safes } as _, i (i)}
       <li class:done={i < current} class:now={i === current}>
         <b>{safeLetter(i)}</b>
-        <span>{openedCodes[i] ?? (i === current ? '?'.repeat(spec.len) : '····')}</span>
+        <span>{openedCodes[i] ? mask(openedCodes[i]) : (i === current ? '?'.repeat(spec.len) : '····')}</span>
         {#if spec.sums}<small>Σ {spec.sums[i]}</small>{/if}
       </li>
     {/each}

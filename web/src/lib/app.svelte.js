@@ -6,7 +6,7 @@ import { createSfx } from './audio.js';
 const savedLang = load('numly-lang', '');
 const lang = LANGS.includes(savedLang) ? savedLang : detectLang(navigator.languages || [navigator.language]);
 
-export const ui = $state({ lang, t: translator(lang), muted: load('numly-mute', false), online: navigator.onLine });
+export const ui = $state({ lang, t: translator(lang), muted: load('numly-mute', false), online: navigator.onLine, hideCode: false });
 
 export function setLang(next) {
   ui.lang = next;
@@ -18,6 +18,9 @@ export function toggleMute() {
   ui.muted = !ui.muted;
   store('numly-mute', ui.muted);
 }
+
+/** Dots instead of the code's digits, so an open safe can be screenshotted and shown without spoiling it. */
+export const mask = code => (ui.hideCode ? code.replace(/./g, '\u2022') : code);
 
 export const sfx = createSfx(() => ui.muted);
 
